@@ -232,5 +232,3 @@ for the authenticated user:
     } else {
         echo "CSRF attacks only affect unsafe requests by authenticated users.";
     }
-
-* * *
