@@ -181,4 +181,3 @@ class Segment
         unset($this->data['__flash']);
     }
 }
-

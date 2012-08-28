@@ -80,4 +80,3 @@ class CsrfToken
         $this->segment->value = uniqid(mt_rand(), true);
     }
 }
-

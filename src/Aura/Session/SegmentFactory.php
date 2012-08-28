@@ -36,4 +36,3 @@ class SegmentFactory
         return new Segment($name, $_SESSION[$name]);
     }
 }
-

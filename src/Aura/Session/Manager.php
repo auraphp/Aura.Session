@@ -398,4 +398,3 @@ class Manager
         return session_status();
     }
 }
-

@@ -34,4 +34,3 @@ class CsrfTokenFactory
         return new CsrfToken($segment);
     }
 }
-
