@@ -91,8 +91,8 @@ $session->commit();
 > If you do not commit the session, its values will not be available when we 
 > continue the session later.
 
-Any time an authenticated user has a change in privilege (that is, gaining or
-losing access rights within a system) be sure to regenerate the session ID:
+Any time a user has a change in privilege (that is, gaining or losing access
+rights within a system) be sure to regenerate the session ID:
 
 ```php
 <?php
@@ -205,8 +205,8 @@ To defend against CSRF attacks, server-side logic should:
 > incidentally is an improper use of GET), we should also check for CSRF on
 > GET requests from authenticated users.
 
-For this example, the form field name will `'__csrf_value''`. In each form we
-want to protect against CSRF, we use the session CSRF token value for that
+For this example, the form field name will be `'__csrf_value''`. In each form
+we want to protect against CSRF, we use the session CSRF token value for that
 field:
 
 ```php
@@ -222,7 +222,7 @@ field:
         $csrf_value = $session->getCsrfToken()->getValue();
         echo '<input type="hidden" name="__csrf_value" value="'
            . $csrf_value
-           . '"></input>";
+           . '"></input>';
     } ?>
     
     <!-- other form fields -->
