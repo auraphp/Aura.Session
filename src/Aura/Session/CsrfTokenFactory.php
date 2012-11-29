@@ -12,7 +12,7 @@ namespace Aura\Session;
 
 /**
  * 
- * A factory to create csrf token
+ * A factory to create CSRF token objects.
  * 
  * @package Aura.Session
  * 
@@ -21,11 +21,11 @@ class CsrfTokenFactory
 {
     /**
      * 
-     * create a CsrfToken object
+     * Creates a CsrfToken object.
      * 
-     * @param \Aura\Session\Manager $manager
+     * @param Manager $manager The session manager.
      * 
-     * @return \Aura\Session\CsrfToken
+     * @return CsrfToken
      * 
      */
     public function newInstance(Manager $manager)
@@ -34,4 +34,3 @@ class CsrfTokenFactory
         return new CsrfToken($segment);
     }
 }
-

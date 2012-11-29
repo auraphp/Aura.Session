@@ -12,41 +12,35 @@ namespace Aura\Session;
 
 /**
  * 
- * we can't inject $_SESSION. the problem is, it is not available
- * until after session_start().  this means we can't lazy-start the
- * sessions *and* inject session data at the same time. and, session_start()
- * kills off any previous $_SESSION values.
+ * A central control point for all session segments, PHP session management
+ * values, and CSRF token checking.
  * 
- * we don't do lazy session-starting, exactly. in theory it shouldn't try to
- * start until you read or write, but if you call getSegment(), we assume
- * you're going to be reading and writing, so we start a session when you get
- * a segment.
- * 
- *  * @package Aura.Session
+ * @package Aura.Session
  * 
  */
 class Manager
 {
     /**
      *
-     * Aura\Session\Segment instances
+     * Segment instances.
      * 
      * @var array
+     * 
      */
     protected $segment = [];
 
     /**
      *
-     * Aura\Session\SegmentFactory object
+     * A session segment factory.
      * 
-     * @var Aura\Session\SegmentFactory 
+     * @var SegmentFactory 
      * 
      */
     protected $segment_factory;
 
     /**
      *
-     * csrf token
+     * The CSRF token for this session.
      * 
      * @var CsrfToken
      * 
@@ -54,26 +48,30 @@ class Manager
     protected $csrf_token;
 
     /**
-     *
-     * @var Aura\Session\CsrfTokenFactory
+     * 
+     * A CSRF token factory, for lazy-creating the CSRF token.
+     * 
+     * @var CsrfTokenFactory
+     * 
      */
     protected $csrf_token_factory;
 
     /**
      * 
-     * cookie params
+     * Session cookie parameters.
      * 
-     * @var array cookie params
+     * @var array
      * 
      */
     protected $cookie_params = [];
 
     /**
-     * constructor
      * 
-     * @param \Aura\Session\SegmentFactory $segment_factory
+     * Constructor
      * 
-     * @param \Aura\Session\CsrfTokenFactory $csrf_token_factory
+     * @param SegmentFactory $segment_factory A session segment factory.
+     * 
+     * @param CsrfTokenFactory A CSRF token factory.
      * 
      */
     public function __construct(
@@ -85,14 +83,18 @@ class Manager
         $this->cookie_params      = session_get_cookie_params();
     }
 
-    // 
     /**
      * 
-     * gets a session segment. starts the session if needed.
+     * Gets a named session segment; starts the session if needed.
      * 
-     * @param string $name
+     * This is not exactly lazy session-starting. In theory, we shouldn't 
+     * try to start until a read or write, but if you call getSegment(), we 
+     * assume you're going to be reading or writing, so we start a session.
      * 
-     * @return \Aura\Session\Segment object of Aura\Session\Segment
+     * @param string $name The name of the session segment, typically a 
+     * fully-qualified class name.
+     * 
+     * @return Segment
      * 
      */
     public function getSegment($name)
@@ -115,7 +117,7 @@ class Manager
 
     /**
      * 
-     * tells us if a session *exists*, not if it has started yet
+     * Tells us if a session *exists* (but *not* if it has started yet).
      * 
      * @return bool
      */
@@ -125,7 +127,8 @@ class Manager
     }
 
     /**
-     * tells us if a session has started
+     * 
+     * Tells us if a session has started.
      * 
      * @return bool
      * 
@@ -137,9 +140,10 @@ class Manager
 
     /**
      * 
-     * Start new or resume existing session
+     * Starts a new session, or resumes an existing one.
      * 
      * @return bool
+     * 
      */
     public function start()
     {
@@ -148,7 +152,7 @@ class Manager
 
     /**
      * 
-     * Free all session variables
+     * Clears all session variables across all segments.
      * 
      * @return null
      * 
@@ -160,7 +164,7 @@ class Manager
 
     /**
      * 
-     * Write session data and end session
+     * Writes session data from all segments and ends the session.
      * 
      * @return null
      * 
@@ -172,7 +176,7 @@ class Manager
 
     /**
      * 
-     * Destroys all data registered to a session
+     * Destroys the session entirely.
      * 
      * @return bool
      * 
@@ -185,9 +189,10 @@ class Manager
 
     /**
      * 
-     * get a CsrfToken object
+     * Returns the CSRF token, creating it if needed (and thereby starting a
+     * session).
      * 
-     * @return \Aura\Session\CsrfToken
+     * @return CsrfToken
      * 
      */
     public function getCsrfToken()
@@ -206,11 +211,13 @@ class Manager
 
     /**
      * 
-     * the current cache expire is replaced with $expire
+     * Sets the session cache expire time.
      * 
-     * @param string $expire
+     * @param int $expire The expiration time in seconds.
      * 
      * @return int
+     * 
+     * @see session_cache_expire()
      * 
      */
     public function setCacheExpire($expire)
@@ -220,9 +227,11 @@ class Manager
 
     /**
      * 
-     * Return current cache expire
+     * Gets the session cache expire time.
      * 
-     * @return int
+     * @return int The cache expiration time in seconds.
+     * 
+     * @see session_cache_expire()
      * 
      */
     public function getCacheExpire()
@@ -232,11 +241,13 @@ class Manager
 
     /**
      * 
-     * set the current cache limiter
+     * Sets the session cache limiter value.
      * 
-     * @param type $limiter
+     * @param string $limiter The limiter value.
      * 
      * @return string
+     * 
+     * @see session_cache_limiter()
      * 
      */
     public function setCacheLimiter($limiter)
@@ -246,9 +257,11 @@ class Manager
 
     /**
      * 
-     * Get the current cache limiter
+     * Gets the session cache limiter value.
      * 
-     * @return string
+     * @return string The limiter value.
+     * 
+     * @see session_cache_limiter()
      * 
      */
     public function getCacheLimiter()
@@ -258,25 +271,27 @@ class Manager
 
     /**
      * 
-     * Set the session cookie params
+     * Sets the session cookie params.  Param array keys are:
      * 
-     * Where params as 
+     * - `lifetime` : Lifetime of the session cookie, defined in seconds.
      * 
-     * lifetime : Lifetime of the session cookie, defined in seconds.
+     * - `path` : Path on the domain where the cookie will work. 
+     *   Use a single slash ('/') for all paths on the domain.
      * 
-     * path : Path on the domain where the cookie will work. 
-     * Use a single slash ('/') for all paths on the domain.
+     * - `domain` : Cookie domain, for example 'www.php.net'. 
+     *   To make cookies visible on all subdomains then the domain must be 
+     *   prefixed with a dot like '.php.net'.
      * 
-     * domain : Cookie domain, for example 'www.php.net'. 
-     * To make cookies visible on all subdomains then the domain must be 
-     * prefixed with a dot like '.php.net'.
+     * - `secure` : If TRUE cookie will only be sent over secure connections.
      * 
-     * secure : If TRUE cookie will only be sent over secure connections.
+     * - `httponly` : If set to TRUE then PHP will attempt to send the httponly 
+     *   flag when setting the session cookie.
      * 
-     * httponly : If set to TRUE then PHP will attempt to send the httponly 
-     * flag when setting the session cookie.
+     * @param array $params The array of session cookie param keys and values.
      * 
-     * @param array $params
+     * @return void
+     * 
+     * @see session_set_cookie_params()
      * 
      */
     public function setCookieParams(array $params)
@@ -293,7 +308,7 @@ class Manager
 
     /**
      * 
-     * Return cookie params
+     * Gets the session cookie params.
      * 
      * @return array
      * 
@@ -305,7 +320,7 @@ class Manager
 
     /**
      * 
-     * Get the current session id
+     * Gets the current session id.
      * 
      * @return string
      * 
@@ -317,9 +332,10 @@ class Manager
 
     /**
      * 
-     * Update the current session id with a newly generated one
+     * Regenerates and replaces the current session id; also regenerates the
+     * CSRF token value if one exists.
      * 
-     * @return bool
+     * @return bool True is regeneration worked, false if not.
      * 
      */
     public function regenerateId()
@@ -333,11 +349,13 @@ class Manager
 
     /**
      * 
-     * set the current session name
+     * Sets the current session name.
      * 
-     * @param string $name
+     * @param string $name The session name to use.
      * 
      * @return string
+     * 
+     * @see session_name()
      * 
      */
     public function setName($name)
@@ -347,9 +365,10 @@ class Manager
 
     /**
      * 
-     * Get the current session name
+     * Returns the current session name.
      * 
      * @return string
+     * 
      */
     public function getName()
     {
@@ -358,11 +377,13 @@ class Manager
 
     /**
      * 
-     * set the current session save path
+     * Sets the session save path.
      * 
-     * @param string $path
+     * @param string $path The new save path.
      * 
      * @return string
+     * 
+     * @see session_save_path()
      * 
      */
     public function setSavePath($path)
@@ -372,9 +393,11 @@ class Manager
 
     /**
      * 
-     * Get the current session save path
+     * Gets the session save path.
      * 
      * @return string
+     * 
+     * @see session_save_path()
      * 
      */
     public function getSavePath()
@@ -384,13 +407,15 @@ class Manager
 
     /**
      * 
-     * Returns the current session status
+     * Returns the current session status:
      * 
-     * PHP_SESSION_DISABLED if sessions are disabled.
-     * PHP_SESSION_NONE if sessions are enabled, but none exists.
-     * PHP_SESSION_ACTIVE if sessions are enabled, and one exists.
+     * - `PHP_SESSION_DISABLED` if sessions are disabled.
+     * - `PHP_SESSION_NONE` if sessions are enabled, but none exists.
+     * - `PHP_SESSION_ACTIVE` if sessions are enabled, and one exists.
      * 
-     * @return type
+     * @return int
+     * 
+     * @see session_status()
      * 
      */
     public function getStatus()
@@ -398,4 +423,3 @@ class Manager
         return session_status();
     }
 }
-
