@@ -14,7 +14,7 @@ use Aura\Session\SegmentFactory;
 
 /**
  * 
- * CsrfToken
+ * Cross-site request forgery token tools.
  * 
  * @package Aura.Session
  * 
@@ -23,17 +23,18 @@ class CsrfToken
 {
     /**
      *
-     * \Aura\Session\Segment object
+     * Session segment for values in this class.
      * 
-     * @var \Aura\Session\Segment 
+     * @var Segment 
+     * 
      */
     protected $segment;
 
     /**
      * 
-     * constructor
+     * Constructor.
      * 
-     * @param \Aura\Session\Segment $segment
+     * @param Segment $segment A segment for values in this class.
      * 
      */
     public function __construct(Segment $segment)
@@ -46,23 +47,23 @@ class CsrfToken
 
     /**
      * 
-     * check whether segment value is same
+     * Checks whether an incoming CSRF token value is valid.
      * 
-     * @param string $value
+     * @param string $value The incoming token value.
      * 
-     * @return bool
+     * @return bool True if valid, false if not.
      * 
      */
     public function isValid($value)
     {
-        return $value === $this->segment->value;
+        return $value === $this->getValue();
     }
 
     /**
      * 
-     * get segment value
+     * Gets the value of the outgoing CSRF token.
      * 
-     * @return type
+     * @return string
      * 
      */
     public function getValue()
@@ -72,7 +73,7 @@ class CsrfToken
 
     /**
      * 
-     * regenerate segment value
+     * Regenerates the value of the outgoing CSRF token.
      * 
      */
     public function regenerateValue()

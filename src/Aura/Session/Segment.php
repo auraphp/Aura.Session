@@ -12,7 +12,7 @@ namespace Aura\Session;
 
 /**
  * 
- * Segment
+ * A session segment.
  * 
  * @package Aura.Session
  * 
@@ -21,7 +21,7 @@ class Segment
 {
     /**
      *
-     * segment name
+     * The segment name.
      * 
      * @var string 
      * 
@@ -30,18 +30,21 @@ class Segment
 
     /**
      * 
-     * @var string|array
+     * The data in the segment.
+     * 
+     * @var array
      * 
      */
     protected $data;
 
     /**
      * 
-     * constructor
+     * Constructor
      * 
-     * @param string $name
+     * @param string $name The name of the segment.
      * 
-     * @param string|array $data
+     * @param array &$data The reference to segment data, typically from
+     * $_SESSION.
      * 
      */
     public function __construct($name, &$data)
@@ -52,11 +55,11 @@ class Segment
 
     /**
      * 
-     * returns the data
+     * Returns a reference to the value of a key in the segment.
      * 
-     * @param string $key
+     * @param string $key The key in the segment.
      * 
-     * @return string|array
+     * @return mixed
      * 
      */
     public function &__get($key)
@@ -66,11 +69,11 @@ class Segment
 
     /**
      * 
-     * set the data for the key
+     * Sets the value of a key in the segment.
      * 
-     * @param string $key
+     * @param string $key The key to set.
      * 
-     * @param string|array $val
+     * @param mixed $val The value to set it to.
      * 
      */
     public function __set($key, $val)
@@ -80,9 +83,9 @@ class Segment
 
     /**
      * 
-     * check whether the data is set for the key
+     * Check whether a key is set in the segment.
      * 
-     * @param string $key
+     * @param string $key The key to check.
      * 
      * @return bool
      * 
@@ -94,9 +97,11 @@ class Segment
 
     /**
      * 
-     * unset the data for the key
+     * Unsets a key in the segment.
      * 
-     * @param string $key
+     * @param string $key The key to unset.
+     * 
+     * @return void
      * 
      */
     public function __unset($key)
@@ -106,7 +111,9 @@ class Segment
 
     /**
      * 
-     * clear all data
+     * Clear all data from the segment.
+     * 
+     * @return void
      * 
      */
     public function clear()
@@ -116,7 +123,7 @@ class Segment
 
     /**
      * 
-     * return segment name
+     * Gets the segment name.
      * 
      * @return string
      * 
@@ -128,11 +135,11 @@ class Segment
 
     /**
      * 
-     * set flash message
+     * Sets a read-once flash value on the segment.
      * 
-     * @param string $key
+     * @param string $key The key for the flash value.
      * 
-     * @param mixed $val
+     * @param mixed $val The flash value itself.
      * 
      */
     public function setFlash($key, $val)
@@ -142,11 +149,11 @@ class Segment
 
     /**
      * 
-     * get the flash message for the key
+     * Reads the flash value for a key, thereby removing it from the session.
      * 
-     * @param string $key
+     * @param string $key The key for the flash value.
      * 
-     * @return mixed
+     * @return mixed The flash value itself.
      * 
      */
     public function getFlash($key)
@@ -160,11 +167,12 @@ class Segment
 
     /**
      * 
-     * check whether the flash message is there for the key
+     * Checks whether a flash key is set, without reading it.
      * 
-     * @param string $key
+     * @param string $key The flash key to check.
      * 
-     * @return bool
+     * @return bool True if it is set, false if not.
+     * 
      */
     public function hasFlash($key)
     {
@@ -173,7 +181,9 @@ class Segment
 
     /**
      * 
-     * clear all flash message
+     * Clears all flash values.
+     * 
+     * @return void
      * 
      */
     public function clearFlash()
