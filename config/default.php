@@ -13,6 +13,8 @@ $di->params['Aura\Session\Manager'] = [
     'cookie' => $_COOKIE,
 ];
 
+$di->params['Aura\Session\Segment']['session'] = $di->lazyGet('session_manager');
+
 /**
  * Dependency services.
  */

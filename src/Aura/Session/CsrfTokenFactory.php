@@ -30,7 +30,7 @@ class CsrfTokenFactory
      */
     public function newInstance(Manager $manager)
     {
-        $segment = $manager->getSegment('Aura\Session\CsrfToken');
+        $segment = $manager->newSegment('Aura\Session\CsrfToken');
         return new CsrfToken($segment);
     }
 }

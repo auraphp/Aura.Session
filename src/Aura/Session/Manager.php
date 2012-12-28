@@ -12,7 +12,7 @@ namespace Aura\Session;
 
 /**
  * 
- * A central control point for all session segments, PHP session management
+ * A central control point for new session segments, PHP session management
  * values, and CSRF token checking.
  * 
  * @package Aura.Session
@@ -20,15 +20,6 @@ namespace Aura\Session;
  */
 class Manager
 {
-    /**
-     *
-     * Segment instances.
-     * 
-     * @var array
-     * 
-     */
-    protected $segment = [];
-
     /**
      *
      * A session segment factory.
@@ -100,8 +91,10 @@ class Manager
 
     /**
      * 
-     * Gets a named session segment; the session will reactivate on reads from,
-     * and start or reactivate on writes to, the segment object.
+     * Gets a new session segment instance by name. Segments with the same
+     * name will be different objects but will reference the same $_SESSION
+     * values, so it is possible to have two or more objects that share state.
+     * For good or bad, this a function of how $_SESSION works.
      * 
      * @param string $name The name of the session segment, typically a 
      * fully-qualified class name.
@@ -109,23 +102,15 @@ class Manager
      * @return Segment
      * 
      */
-    public function getSegment($name)
+    public function newSegment($name)
     {
-        // create a segment object if needed
-        if (! isset($this->segment[$name])) {
-            // create and retain the segment object
-            $segment = $this->segment_factory->newInstance($this, $name);
-            $this->segment[$name] = $segment;
-        }
-
-        // return the segment object
-        return $this->segment[$name];
+        return $this->segment_factory->newInstance($this, $name);
     }
 
     /**
      * 
-     * Tells us if a session is available to be started, but not if it has
-     * started yet; indicates if a session will be reactivated.
+     * Tells us if a session is available to be reactivated, but not if it has
+     * started yet.
      * 
      * @return bool
      * 

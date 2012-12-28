@@ -38,7 +38,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testClear()
     {
         // get a test segment and set some data
-        $segment = $this->session->getSegment('test');
+        $segment = $this->session->newSegment('test');
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
@@ -53,7 +53,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->getSegment('test');
+        $segment = $this->session->newSegment('test');
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
@@ -71,17 +71,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isStarted());
     }
     
-    public function testGetSegment()
+    public function testNewSegment()
     {
-        // get a test segment
-        $segment = $this->session->getSegment('test');
-        
-        // should be a segment instance
+        $segment = $this->session->newSegment('test');
         $this->assertInstanceof('Aura\Session\Segment', $segment);
-        
-        // get it again, should be the same
-        $actual = $this->session->getSegment('test');
-        $this->assertSame($segment, $actual);
     }
     
     public function testGetCsrfToken()

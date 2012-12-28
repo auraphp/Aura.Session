@@ -41,7 +41,7 @@ segment will be a reference to `$_SESSION['ClassName']`. All values in the
 <?php
 // get a session segment; starts the session if it is not already,
 // and creates the $_SESSION key if it does not exist.
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // set some values on the segment
 $segment->foo = 'bar';
@@ -147,7 +147,7 @@ To set a read-once value on a segment, use the `setFlash()` method.
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // set a read-once value on the segment
 $segment->setFlash('message', 'Hello world!');
@@ -158,7 +158,7 @@ Then, in subsequent sessions, we can read the flash value using `getFlash()`:
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // get the read-once value
 $message = $segment->getFlash('message'); // 'Hello world!'
@@ -174,7 +174,7 @@ yet (thereby removing it from the session). In these cases, we can use the
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // is there a read-once 'message' available?
 // this will *not* cause a read-once removal.
@@ -190,7 +190,7 @@ To clear all flash values on a segment, use the `clearFlash()` method:
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // clear all flash values, but leave all other segment values in place
 $segment->clearFlash();
