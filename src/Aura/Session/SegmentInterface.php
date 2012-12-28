@@ -21,7 +21,7 @@ interface SegmentInterface
 {
     /**
      * 
-     * Returns a reference to the value of a key in the segment.
+     * Returns the value of a key in the segment.
      * 
      * @param string $key The key in the segment.
      * 
