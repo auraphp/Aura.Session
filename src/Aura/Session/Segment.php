@@ -17,7 +17,7 @@ namespace Aura\Session;
  * @package Aura.Session
  * 
  */
-class Segment
+class Segment implements SegmentInterface
 {
     /**
      *
