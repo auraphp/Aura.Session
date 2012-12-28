@@ -1,4 +1,4 @@
-<phpunit bootstrap="./bootstrap.php">
+<phpunit bootstrap="./bootstrap.php" processIsolation="true">
     <testsuites>
         <testsuite>
             <directory>.</directory>
