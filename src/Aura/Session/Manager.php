@@ -58,6 +58,16 @@ class Manager
 
     /**
      * 
+     * Incoming cookies from the client, typically a copy of the $_COOKIE
+     * superglobal.
+     * 
+     * @var array
+     * 
+     */
+    protected $cookies;
+    
+    /**
+     * 
      * Session cookie parameters.
      * 
      * @var array
@@ -73,13 +83,18 @@ class Manager
      * 
      * @param CsrfTokenFactory A CSRF token factory.
      * 
+     * @param array $cookies An arry of cookies from the client, typically a
+     * copy of $_COOKIE.
+     * 
      */
     public function __construct(
         SegmentFactory   $segment_factory,
-        CsrfTokenFactory $csrf_token_factory
+        CsrfTokenFactory $csrf_token_factory,
+        array $cookies = []
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
+        $this->cookies            = $cookies;
         $this->cookie_params      = session_get_cookie_params();
     }
 
@@ -120,10 +135,12 @@ class Manager
      * Tells us if a session *exists* (but *not* if it has started yet).
      * 
      * @return bool
+     * 
      */
     public function isActive()
     {
-        return $this->getStatus() == PHP_SESSION_ACTIVE;
+        $name = $this->getName();
+        return isset($this->cookies[$name]);
     }
 
     /**
