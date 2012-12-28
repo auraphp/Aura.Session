@@ -28,12 +28,6 @@ $session = include "/path/to/Aura.Session/scripts/instance.php";
 
 You can then use the `Manager` to work with the session values.
 
-Instantiating a session manager *does not* start a session. The manager is
-lazy; it will only start a session when we call `getSegment()` to get a
-session segment, or when we call `getCsrfToken()` to get the CSRF token. Of
-course, we can force a session start or continuation by calling the `start()`
-method, but that defeats the purpose of lazy-loaded sessions.
-
 
 Segments
 --------
@@ -74,6 +68,27 @@ The benefit of a session segment is that we can deconflict the keys in the
 `$_SESSION` superglobal by using class names (or some other unique name) for
 the segment names. With segments, different packages can use the `$_SESSION`
 superglobal without stepping on each other's toes.
+
+
+Lazy Session Starting
+---------------------
+
+Merely instantiating the `Manager` and getting a session segment does *not*
+start a session automatically. Instead, the session is started only when you
+read or write to a session segment.  This means we can create segments at
+will, and no session will start until we read from or write to one them.
+
+If we *read* from a session segment, it will check to see if a previously
+available session exists, and reactivate it if it does. Reading from a segment
+will not start a new session.
+
+If we *write* to a session segment, it will check to see if a previously
+available session exists, and reactivate it if it does. If there is no
+previously available session, it will start a new session, and write to it.
+
+Of course, we can force a session start or reactivation by calling the
+`Manager`'s `start()` method, but that defeats the purpose of lazy-loaded
+sessions.
 
 
 Session Security
