@@ -100,11 +100,8 @@ class Manager
 
     /**
      * 
-     * Gets a named session segment; starts the session if needed.
-     * 
-     * This is not exactly lazy session-starting. In theory, we shouldn't 
-     * try to start until a read or write, but if you call getSegment(), we 
-     * assume you're going to be reading or writing, so we start a session.
+     * Gets a named session segment; the session will reactivate on reads from,
+     * and start or reactivate on writes to, the segment object.
      * 
      * @param string $name The name of the session segment, typically a 
      * fully-qualified class name.
@@ -114,15 +111,10 @@ class Manager
      */
     public function getSegment($name)
     {
-        // start session if needed
-        if (! $this->isStarted()) {
-            $this->start();
-        }
-
         // create a segment object if needed
         if (! isset($this->segment[$name])) {
             // create and retain the segment object
-            $segment = $this->segment_factory->newInstance($name);
+            $segment = $this->segment_factory->newInstance($this, $name);
             $this->segment[$name] = $segment;
         }
 
@@ -132,12 +124,13 @@ class Manager
 
     /**
      * 
-     * Tells us if a session *exists* (but *not* if it has started yet).
+     * Tells us if a session is available to be started, but not if it has
+     * started yet; indicates if a session will be reactivated.
      * 
      * @return bool
      * 
      */
-    public function isActive()
+    public function isAvailable()
     {
         $name = $this->getName();
         return isset($this->cookies[$name]);
@@ -152,7 +145,7 @@ class Manager
      */
     public function isStarted()
     {
-        return $this->getId() !== '';
+        return $this->getStatus() == PHP_SESSION_ACTIVE;
     }
 
     /**

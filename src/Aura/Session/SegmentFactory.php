@@ -25,14 +25,11 @@ class SegmentFactory
      * 
      * @param string $name
      * 
-     * @return \Aura\Session\Segment
+     * @return Segment
      * 
      */
-    public function newInstance($name)
+    public function newInstance(Manager $manager, $name)
     {
-        if (! isset($_SESSION[$name])) {
-            $_SESSION[$name] = [];
-        }
-        return new Segment($name, $_SESSION[$name]);
+        return new Segment($manager, $name);
     }
 }
