@@ -13,7 +13,8 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
     {
         $this->session = new Manager(
             new SegmentFactory,
-            new CsrfTokenFactory
+            new CsrfTokenFactory,
+            $_COOKIE
         );
     }
     

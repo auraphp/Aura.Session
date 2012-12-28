@@ -9,9 +9,15 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         session_set_save_handler(new MockSessionHandler);
-        $this->session = new Manager(
+        $this->session = $this->newSession();
+    }
+    
+    protected function newSession(array $cookies = [])
+    {
+        return new Manager(
             new SegmentFactory,
-            new CsrfTokenFactory
+            new CsrfTokenFactory,
+            $cookies
         );
     }
     
@@ -93,8 +99,16 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     
     public function testIsActive()
     {
+        // should not look active
         $this->assertFalse($this->session->isActive());
-        $this->session->start();
+        
+        // fake a cookie
+        $cookies = [
+            $this->session->getName() => 'fake-cookie-value',
+        ];
+        $this->session = $this->newSession($cookies);
+        
+        // now it should look active
         $this->assertTrue($this->session->isActive());
     }
     

@@ -9,11 +9,26 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     // a hypothetical subarray in $_SESSION
     protected $data = [];
     
-    protected $name = __CLASS__;
+    protected $name;
     
     protected function setUp()
     {
+        $this->name = __CLASS__;
         $this->segment = new Segment($this->name, $this->data);
+    }
+    
+    protected function getValue($key = null)
+    {
+        if ($key) {
+            return $this->data[$key];
+        } else {
+            return $this->data;
+        }
+    }
+    
+    protected function setValue($key, $val)
+    {
+        $this->data[$key] = $val;
     }
     
     public function testGetName()
@@ -34,27 +49,32 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $this->segment->foo);
         
         // is the var value referenced in the data location?
-        $this->assertSame('bar', $this->data['foo']);
+        $this->assertSame('bar', $this->getValue('foo'));
         
         // unset and check
         unset($this->segment->foo);
         $this->assertFalse(isset($this->segment->foo));
         
         // set var from outside and check
-        $this->data['foo'] = 'zim';
+        $this->setValue('foo', 'zim');
         $this->assertSame('zim', $this->segment->foo);
+    }
+    
+    public function test__getNoSuchKey()
+    {
+        $this->assertNull($this->segment->foo);
     }
     
     public function testClear()
     {
         $this->segment->foo = 'bar';
         $this->segment->baz = 'dib';
-        $this->assertSame('bar', $this->data['foo']);
-        $this->assertSame('dib', $this->data['baz']);
+        $this->assertSame('bar', $this->getValue('foo'));
+        $this->assertSame('dib', $this->getValue('baz'));
         
         // now clear the data
         $this->segment->clear();
-        $this->assertSame([], $this->data);
+        $this->assertSame([], $this->getValue());
         $this->assertNull($this->segment->foo);
         $this->assertNull($this->segment->baz);
     }
