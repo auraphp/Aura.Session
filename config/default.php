@@ -10,7 +10,7 @@ $loader->add('Aura\Session\\', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src');
 $di->params['Aura\Session\Manager'] = [
     'segment_factory' => $di->lazyNew('Aura\Session\SegmentFactory'),
     'csrf_token_factory' => $di->lazyNew('Aura\Session\CsrfTokenFactory'),
-    'cookie' => $_COOKIE,
+    'cookies' => $_COOKIE,
 ];
 
 $di->params['Aura\Session\Segment']['session'] = $di->lazyGet('session_manager');
