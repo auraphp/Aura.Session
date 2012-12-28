@@ -116,20 +116,18 @@ class Segment implements SegmentInterface
     
     /**
      * 
-     * Returns a reference to the value of a key in the segment.
+     * Returns a the value of a key in the segment.
      * 
      * @param string $key The key in the segment.
      * 
      * @return mixed
      * 
      */
-    public function &__get($key)
+    public function __get($key)
     {
-        $val = null;
         if ($this->isLoaded()) {
-            $val = &$this->data[$key];
+            return isset($this->data[$key]) ? $this->data[$key] : null;
         }
-        return $val;
     }
 
     /**
