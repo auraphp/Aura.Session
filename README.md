@@ -200,7 +200,7 @@ $segment->clearFlash();
 CSRF Token
 ----------
 
-A "cross-site request forgery" is an security issue where the attacker, via
+A "cross-site request forgery" is a security issue where the attacker, via
 malicious JavaScript or other means, issues a request in-the-blind from a
 client browser to a server where the user has already authenticated. The
 request *looks* valid to the server, but in fact is a forgery, since the user
