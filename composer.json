@@ -15,6 +15,10 @@
         "php": ">=5.4.0",
         "aura/installer-default": "1.0.0"
     },
+    "suggest": {
+        "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
+        "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens."
+    }
     "autoload": {
         "psr-0": {
             "Aura\\Session": "src/"

@@ -83,15 +83,21 @@ class CsrfToken
         // number of bytes
         $len = 32;
         
-        // pick how we'll generate the value
+        // eventual value
+        $value = false;
+        
+        // best
         if (extension_loaded('openssl')) {
-            // best
-            $value = openssl_random_pseudo_bytes($len);
-        } elseif (extension_loaded('mcrypt')) {
-            // good
+            $value = openssl_random_pseudo_bytes($len, $strong);
+        }
+        
+        // good
+        if (! $value && extension_loaded('mcrypt')) {
             $value = mcrypt_create_iv($len, MCRYPT_DEV_URANDOM);
-        } else {
-            // ok-ish but not good
+        }
+        
+        // merely ok
+        if (! $value) {
             $value = uniqid(mt_rand(), true);
         }
         
