@@ -75,9 +75,27 @@ class CsrfToken
      * 
      * Regenerates the value of the outgoing CSRF token.
      * 
+     * @return void
+     * 
      */
     public function regenerateValue()
     {
-        $this->segment->value = uniqid(mt_rand(), true);
+        // number of bytes
+        $len = 32;
+        
+        // pick how we'll generate the value
+        if (extension_loaded('openssl')) {
+            // best
+            $value = openssl_random_pseudo_bytes($len);
+        } elseif (extension_loaded('mcrypt')) {
+            // good
+            $value = mcrypt_create_iv($len, MCRYPT_DEV_URANDOM);
+        } else {
+            // ok-ish but not good
+            $value = uniqid(mt_rand(), true);
+        }
+        
+        // set the value
+        $this->segment->value = base64_encode($value);
     }
 }
