@@ -101,7 +101,7 @@ class CsrfToken
             $value = uniqid(mt_rand(), true);
         }
         
-        // set the value
-        $this->segment->value = base64_encode($value);
+        // set the value (hash helps hide some info w/ uniqid)
+        $this->segment->value = hash('sha1', $value);
     }
 }
