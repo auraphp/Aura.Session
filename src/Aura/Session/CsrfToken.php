@@ -102,6 +102,6 @@ class CsrfToken
         }
         
         // set the value (hash helps hide some info w/ uniqid)
-        $this->segment->value = hash('sha1', $value);
+        $this->segment->value = hash('sha512', $value);
     }
 }
