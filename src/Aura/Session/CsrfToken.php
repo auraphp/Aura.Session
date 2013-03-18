@@ -22,6 +22,15 @@ use Aura\Session\SegmentFactory;
 class CsrfToken
 {
     /**
+     * 
+     * A cryptographically-secure random value generator.
+     * 
+     * @var RandvalInterface
+     * 
+     */
+    protected $randval;
+    
+    /**
      *
      * Session segment for values in this class.
      * 
@@ -36,10 +45,14 @@ class CsrfToken
      * 
      * @param Segment $segment A segment for values in this class.
      * 
+     * @param RandvalInterface $randval A cryptographically-secure random
+     * value generator.
+     * 
      */
-    public function __construct(Segment $segment)
+    public function __construct(Segment $segment, RandvalInterface $randval)
     {
         $this->segment = $segment;
+        $this->randval = $randval;
         if (! isset($this->segment->value)) {
             $this->regenerateValue();
         }
@@ -80,28 +93,6 @@ class CsrfToken
      */
     public function regenerateValue()
     {
-        // number of bytes
-        $len = 32;
-        
-        // eventual value
-        $value = false;
-        
-        // best
-        if (extension_loaded('openssl')) {
-            $value = openssl_random_pseudo_bytes($len, $strong);
-        }
-        
-        // good
-        if (! $value && extension_loaded('mcrypt')) {
-            $value = mcrypt_create_iv($len, MCRYPT_DEV_URANDOM);
-        }
-        
-        // merely ok
-        if (! $value) {
-            $value = uniqid(mt_rand(), true);
-        }
-        
-        // set the value (hash helps hide some info w/ uniqid)
-        $this->segment->value = hash('sha512', $value);
+        $this->segment->value = hash('sha512', $this->randval->generate());
     }
 }

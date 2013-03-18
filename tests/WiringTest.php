@@ -19,6 +19,7 @@ class WiringTest extends \PHPUnit_Framework_TestCase
 
     public function testInstances()
     {
+        $this->assertNewInstance('Aura\Session\CsrfTokenFactory');
         $this->assertNewInstance('Aura\Session\Manager');
         $this->assertNewInstance('Aura\Session\Segment');
     }

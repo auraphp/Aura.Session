@@ -19,7 +19,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         return new Manager(
             new SegmentFactory,
-            new CsrfTokenFactory,
+            new CsrfTokenFactory(new Randval(new Phpfunc)),
             $cookies
         );
     }

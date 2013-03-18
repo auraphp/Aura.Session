@@ -197,8 +197,9 @@ $segment->clearFlash();
 ```
 
 
-CSRF Token
-----------
+Cross-Site Request Forgery
+==========================
+
 
 A "cross-site request forgery" is a security issue where the attacker, via
 malicious JavaScript or other means, issues a request in-the-blind from a
@@ -207,6 +208,9 @@ request *looks* valid to the server, but in fact is a forgery, since the user
 did not actually make the request (the malicious JavaScript did).
 
 <http://en.wikipedia.org/wiki/Cross-site_request_forgery>
+
+Defending Against CSRF
+----------------------
 
 To defend against CSRF attacks, server-side logic should:
 
@@ -271,3 +275,14 @@ if ($unsafe && $user->isAuthenticated()) {
     echo "CSRF attacks only affect unsafe requests by authenticated users.";
 }
 ```
+
+CSRF Value Generation
+---------------------
+
+For a CSRF token to be useful, its random value must be cryptographically
+secure. Using things like `mt_rand()` is insufficient. Aura.Session comes with
+a `Randval` class that implements a `RandvalInterface`, and uses either the
+`openssl` or the `mcrypt` extension to generate a random value. If you do not
+have one of these extensions installed, you will need your own random-value
+implementation of the `RandvalInterface`. We suggest a wrapper around
+[RandomLib](https://github.com/ircmaxell/RandomLib).

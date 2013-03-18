@@ -9,11 +9,15 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
     
     protected $name = __CLASS__;
     
+    protected $phpfunc;
+    
     protected function setUp()
     {
+        $this->phpfunc = new MockPhpfunc;
+        
         $this->session = new Manager(
             new SegmentFactory,
-            new CsrfTokenFactory,
+            new CsrfTokenFactory(new Randval($this->phpfunc)),
             $_COOKIE
         );
     }
@@ -40,9 +44,22 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         $old = $token->getValue();
         $this->assertTrue($old != '');
         
+        // with openssl
+        $this->phpfunc->setExtensions(['openssl']);
         $token->regenerateValue();
-        $new = $token->getValue();
-        $this->assertTrue($old != $new);
+        $openssl = $token->getValue();
+        $this->assertTrue($old != $openssl);
+        
+        // with mcrypt
+        $this->phpfunc->setExtensions(['mcrypt']);
+        $token->regenerateValue();
+        $mcrypt = $token->getValue();
+        $this->assertTrue($old != $openssl && $old != $mcrypt);
+        
+        // with nothing
+        $this->phpfunc->setExtensions([]);
+        $this->setExpectedException('Aura\Session\Exception');
+        $token->regenerateValue();
     }
     
     public function testIsValid()
