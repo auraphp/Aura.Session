@@ -10,8 +10,6 @@
  */
 namespace Aura\Session;
 
-use Aura\Session\SegmentFactory;
-
 /**
  * 
  * Cross-site request forgery token tools.
