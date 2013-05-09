@@ -1,15 +1,48 @@
 <?php
+/**
+ * 
+ * This file is part of the Aura Project for PHP.
+ * 
+ * @package Aura.Session
+ * 
+ * @license http://opensource.org/licenses/bsd-license.php BSD
+ * 
+ */
 namespace Aura\Session;
 
 use Aura\Session\Exception;
 
+/**
+ * 
+ * Generates cryptographically-secure random values.
+ * 
+ * @package Aura.Session
+ * 
+ */
 class Randval implements RandvalInterface
 {
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param Phpfunc $phpfunc An object to intercept PHP function calls;
+     * this makes testing easier.
+     * 
+     */
     public function __construct(Phpfunc $phpfunc)
     {
         $this->phpfunc = $phpfunc;
     }
     
+    /**
+     * 
+     * Returns a cryptographically secure random value.
+     * 
+     * @return string
+     * 
+     * @throws Exception if neither openssl nor mcrypt is available.
+     * 
+     */
     public function generate()
     {
         $bytes = 32;
