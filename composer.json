@@ -1,5 +1,6 @@
 {
     "name": "aura/session",
+    "version": "1.0.0",
     "type": "aura-package",
     "description": "The Aura Session provides session management functionality, including session\nsegments, read-once (\"flash\") values, CSRF tools, and lazy session starting.",
     "keywords": [
@@ -7,8 +8,7 @@
         "sessions"
     ],
     "homepage": "http://auraphp.github.com/Aura.Session",
-    "version": "1.0.0-beta1",
-    "time": "2012-11-29",
+    "time": "2013-05-09",
     "license": "BSD-2-Clause",
     "authors": [
         {
@@ -19,6 +19,11 @@
             "name": "Paul M. Jones",
             "email": "pmjones88@gmail.com",
             "homepage": "http://paul-m-jones.com"
+        },
+        {
+            "name": "Akihito Koriyama",
+            "email": "akihito.koriyama@gmail.com",
+            "homepage": ""
         }
     ],
     "require": {
