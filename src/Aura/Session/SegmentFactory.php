@@ -12,7 +12,7 @@ namespace Aura\Session;
 
 /**
  * 
- * a factory to create Aura\Session\Segment
+ * A factory to create session segment objects.
  * 
  * @package Aura.Session
  * 
@@ -21,18 +21,15 @@ class SegmentFactory
 {
     /**
      * 
-     * create a Aura\Session\Segment object
+     * Creates a session segment object.
      * 
-     * @param string $name
-     * 
-     * @return \Aura\Session\Segment
-     * 
+     * @param Manager $manager
+     * @param string  $name
+     *
+     * @return Segment
      */
-    public function newInstance($name)
+    public function newInstance(Manager $manager, $name)
     {
-        if (! isset($_SESSION[$name])) {
-            $_SESSION[$name] = [];
-        }
-        return new Segment($name, $_SESSION[$name]);
+        return new Segment($manager, $name);
     }
 }

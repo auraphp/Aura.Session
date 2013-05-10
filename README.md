@@ -28,12 +28,6 @@ $session = include "/path/to/Aura.Session/scripts/instance.php";
 
 You can then use the `Manager` to work with the session values.
 
-Instantiating a session manager *does not* start a session. The manager is
-lazy; it will only start a session when we call `getSegment()` to get a
-session segment, or when we call `getCsrfToken()` to get the CSRF token. Of
-course, we can force a session start or continuation by calling the `start()`
-method, but that defeats the purpose of lazy-loaded sessions.
-
 
 Segments
 --------
@@ -47,7 +41,7 @@ segment will be a reference to `$_SESSION['ClassName']`. All values in the
 <?php
 // get a session segment; starts the session if it is not already,
 // and creates the $_SESSION key if it does not exist.
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // set some values on the segment
 $segment->foo = 'bar';
@@ -74,6 +68,27 @@ The benefit of a session segment is that we can deconflict the keys in the
 `$_SESSION` superglobal by using class names (or some other unique name) for
 the segment names. With segments, different packages can use the `$_SESSION`
 superglobal without stepping on each other's toes.
+
+
+Lazy Session Starting
+---------------------
+
+Merely instantiating the `Manager` and getting a session segment does *not*
+start a session automatically. Instead, the session is started only when you
+read or write to a session segment.  This means we can create segments at
+will, and no session will start until we read from or write to one them.
+
+If we *read* from a session segment, it will check to see if a previously
+available session exists, and reactivate it if it does. Reading from a segment
+will not start a new session.
+
+If we *write* to a session segment, it will check to see if a previously
+available session exists, and reactivate it if it does. If there is no
+previously available session, it will start a new session, and write to it.
+
+Of course, we can force a session start or reactivation by calling the
+`Manager`'s `start()` method, but that defeats the purpose of lazy-loaded
+sessions.
 
 
 Session Security
@@ -132,7 +147,7 @@ To set a read-once value on a segment, use the `setFlash()` method.
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // set a read-once value on the segment
 $segment->setFlash('message', 'Hello world!');
@@ -143,7 +158,7 @@ Then, in subsequent sessions, we can read the flash value using `getFlash()`:
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // get the read-once value
 $message = $segment->getFlash('message'); // 'Hello world!'
@@ -159,7 +174,7 @@ yet (thereby removing it from the session). In these cases, we can use the
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // is there a read-once 'message' available?
 // this will *not* cause a read-once removal.
@@ -175,23 +190,27 @@ To clear all flash values on a segment, use the `clearFlash()` method:
 ```php
 <?php
 // get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment = $session->newSegment('Vendor\Package\ClassName');
 
 // clear all flash values, but leave all other segment values in place
 $segment->clearFlash();
 ```
 
 
-CSRF Token
-----------
+Cross-Site Request Forgery
+==========================
 
-A "cross-site request forgery" is an security issue where the attacker, via
+
+A "cross-site request forgery" is a security issue where the attacker, via
 malicious JavaScript or other means, issues a request in-the-blind from a
 client browser to a server where the user has already authenticated. The
 request *looks* valid to the server, but in fact is a forgery, since the user
 did not actually make the request (the malicious JavaScript did).
 
 <http://en.wikipedia.org/wiki/Cross-site_request_forgery>
+
+Defending Against CSRF
+----------------------
 
 To defend against CSRF attacks, server-side logic should:
 
@@ -256,3 +275,14 @@ if ($unsafe && $user->isAuthenticated()) {
     echo "CSRF attacks only affect unsafe requests by authenticated users.";
 }
 ```
+
+CSRF Value Generation
+---------------------
+
+For a CSRF token to be useful, its random value must be cryptographically
+secure. Using things like `mt_rand()` is insufficient. Aura.Session comes with
+a `Randval` class that implements a `RandvalInterface`, and uses either the
+`openssl` or the `mcrypt` extension to generate a random value. If you do not
+have one of these extensions installed, you will need your own random-value
+implementation of the `RandvalInterface`. We suggest a wrapper around
+[RandomLib](https://github.com/ircmaxell/RandomLib).

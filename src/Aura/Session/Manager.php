@@ -12,7 +12,7 @@ namespace Aura\Session;
 
 /**
  * 
- * A central control point for all session segments, PHP session management
+ * A central control point for new session segments, PHP session management
  * values, and CSRF token checking.
  * 
  * @package Aura.Session
@@ -20,15 +20,6 @@ namespace Aura\Session;
  */
 class Manager
 {
-    /**
-     *
-     * Segment instances.
-     * 
-     * @var array
-     * 
-     */
-    protected $segment = [];
-
     /**
      *
      * A session segment factory.
@@ -58,6 +49,16 @@ class Manager
 
     /**
      * 
+     * Incoming cookies from the client, typically a copy of the $_COOKIE
+     * superglobal.
+     * 
+     * @var array
+     * 
+     */
+    protected $cookies;
+    
+    /**
+     * 
      * Session cookie parameters.
      * 
      * @var array
@@ -73,23 +74,27 @@ class Manager
      * 
      * @param CsrfTokenFactory A CSRF token factory.
      * 
+     * @param array $cookies An arry of cookies from the client, typically a
+     * copy of $_COOKIE.
+     * 
      */
     public function __construct(
         SegmentFactory   $segment_factory,
-        CsrfTokenFactory $csrf_token_factory
+        CsrfTokenFactory $csrf_token_factory,
+        array $cookies = []
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
+        $this->cookies            = $cookies;
         $this->cookie_params      = session_get_cookie_params();
     }
 
     /**
      * 
-     * Gets a named session segment; starts the session if needed.
-     * 
-     * This is not exactly lazy session-starting. In theory, we shouldn't 
-     * try to start until a read or write, but if you call getSegment(), we 
-     * assume you're going to be reading or writing, so we start a session.
+     * Gets a new session segment instance by name. Segments with the same
+     * name will be different objects but will reference the same $_SESSION
+     * values, so it is possible to have two or more objects that share state.
+     * For good or bad, this a function of how $_SESSION works.
      * 
      * @param string $name The name of the session segment, typically a 
      * fully-qualified class name.
@@ -97,33 +102,23 @@ class Manager
      * @return Segment
      * 
      */
-    public function getSegment($name)
+    public function newSegment($name)
     {
-        // start session if needed
-        if (! $this->isStarted()) {
-            $this->start();
-        }
-
-        // create a segment object if needed
-        if (! isset($this->segment[$name])) {
-            // create and retain the segment object
-            $segment = $this->segment_factory->newInstance($name);
-            $this->segment[$name] = $segment;
-        }
-
-        // return the segment object
-        return $this->segment[$name];
+        return $this->segment_factory->newInstance($this, $name);
     }
 
     /**
      * 
-     * Tells us if a session *exists* (but *not* if it has started yet).
+     * Tells us if a session is available to be reactivated, but not if it has
+     * started yet.
      * 
      * @return bool
+     * 
      */
-    public function isActive()
+    public function isAvailable()
     {
-        return $this->getStatus() == PHP_SESSION_ACTIVE;
+        $name = $this->getName();
+        return isset($this->cookies[$name]);
     }
 
     /**
@@ -135,7 +130,7 @@ class Manager
      */
     public function isStarted()
     {
-        return $this->getId() !== '';
+        return $this->getStatus() == PHP_SESSION_ACTIVE;
     }
 
     /**

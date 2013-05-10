@@ -9,9 +9,15 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         session_set_save_handler(new MockSessionHandler);
-        $this->session = new Manager(
+        $this->session = $this->newSession();
+    }
+    
+    protected function newSession(array $cookies = [])
+    {
+        return new Manager(
             new SegmentFactory,
-            new CsrfTokenFactory
+            new CsrfTokenFactory(new Randval(new Phpfunc)),
+            $cookies
         );
     }
     
@@ -32,7 +38,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testClear()
     {
         // get a test segment and set some data
-        $segment = $this->session->getSegment('test');
+        $segment = $this->session->newSegment('test');
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
@@ -47,7 +53,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     public function testDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->getSegment('test');
+        $segment = $this->session->newSegment('test');
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
@@ -65,23 +71,10 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isStarted());
     }
     
-    public function testGetSegment()
+    public function testNewSegment()
     {
-        // get a test segment
-        $segment = $this->session->getSegment('test');
-        
-        // should have started the session
-        $this->assertTrue($this->session->isStarted());
-        
-        // should have created the fake $_SESSION
-        $this->assertSame($_SESSION, ['test' => []]);
-        
-        // should be a segment instance
+        $segment = $this->session->newSegment('test');
         $this->assertInstanceof('Aura\Session\Segment', $segment);
-        
-        // get it again, should be the same
-        $actual = $this->session->getSegment('test');
-        $this->assertSame($segment, $actual);
     }
     
     public function testGetCsrfToken()
@@ -91,11 +84,19 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf($expect, $actual);
     }
     
-    public function testIsActive()
+    public function testisAvailable()
     {
-        $this->assertFalse($this->session->isActive());
-        $this->session->start();
-        $this->assertTrue($this->session->isActive());
+        // should not look active
+        $this->assertFalse($this->session->isAvailable());
+        
+        // fake a cookie
+        $cookies = [
+            $this->session->getName() => 'fake-cookie-value',
+        ];
+        $this->session = $this->newSession($cookies);
+        
+        // now it should look active
+        $this->assertTrue($this->session->isAvailable());
     }
     
     public function testGetAndRegenerateId()
@@ -151,6 +152,18 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $expect = 'private_no_cache';
         $this->session->setCacheLimiter($expect);
         $actual = $this->session->getCacheLimiter();
+        $this->assertSame($expect, $actual);
+    }
+    
+    public function testGetStatus()
+    {
+        $expect = PHP_SESSION_NONE;
+        $actual = $this->session->getStatus();
+        $this->assertSame($expect, $actual);
+
+        $expect = PHP_SESSION_ACTIVE;
+        $this->session->start();
+        $actual = $this->session->getStatus();
         $this->assertSame($expect, $actual);
     }
 }
