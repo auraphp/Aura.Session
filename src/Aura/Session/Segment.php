@@ -218,6 +218,25 @@ class Segment implements SegmentInterface
         $this->load();
         $this->data['__flash'][$key] = $val;
     }
+    
+    /**
+     * 
+     * Add a read-once flash value on the segment.
+     * 
+     * @param string $key The key for the flash value.
+     * 
+     * @param mixed $val The flash value itself.
+     * 
+     */
+    public function addFlash($key, $val)
+    {
+        $this->load();
+        if (isset($this->data['__flash'][$key])) {
+            $this->data['__flash'][$key] = array_merge($this->data['__flash'][$key], (array) $val);
+        } else {
+            $this->data['__flash'][$key] = (array) $val;
+        }
+    }
 
     /**
      * 
