@@ -217,4 +217,19 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->segment->hasFlash('foo'));
         $this->assertFalse($this->session->isStarted());
     }
+    
+    public function testAddFlash()
+    {
+        $this->segment->addFlash('foo', 'bar');
+        $this->segment->addFlash('foo', 'baz');
+        $this->segment->addFlash('foo', array('another', 'flash'));
+        $expected = array(
+            'bar',
+            'baz',
+            'another',
+            'flash'
+        );
+        $actual = $this->segment->getFlash('foo');
+        $this->assertSame($expected, $actual);
+    }
 }
