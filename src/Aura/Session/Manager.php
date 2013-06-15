@@ -178,6 +178,9 @@ class Manager
      */
     public function destroy()
     {
+        if (! $this->isStarted()) {
+            $this->start();
+        }
         $this->clear();
         return session_destroy();
     }
