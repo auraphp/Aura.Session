@@ -1,6 +1,8 @@
 Aura Session
 ============
 
+[![Build Status](https://travis-ci.org/auraphp/Aura.Session.png)](https://travis-ci.org/auraphp/Aura.Session)
+
 The Aura Session provides session management functionality, including session
 segments, read-once ("flash") values, CSRF tools, and lazy session starting.
 
