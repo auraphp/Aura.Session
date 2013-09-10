@@ -71,6 +71,22 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isStarted());
     }
     
+    public function testCommitAndDestroy()
+    {
+        // get a test segment and set some data
+        $segment = $this->session->newSegment('test');
+        $segment->foo = 'bar';
+        $segment->baz = 'dib';
+
+        $expect = ['test' => ['foo' => 'bar', 'baz' => 'dib']];
+        $this->assertSame($expect, $_SESSION);
+
+        $this->session->commit();
+        $this->session->destroy();
+        $segment = $this->session->newSegment('test');
+        $this->assertSame([], $_SESSION);
+    }
+
     public function testNewSegment()
     {
         $segment = $this->session->newSegment('test');
