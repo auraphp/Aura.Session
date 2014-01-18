@@ -15,7 +15,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
     {
         $this->phpfunc = new MockPhpfunc;
         
-        $this->session = new Manager(
+        $this->session = new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval($this->phpfunc)),
             $_COOKIE

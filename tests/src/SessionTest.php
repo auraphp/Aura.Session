@@ -1,7 +1,7 @@
 <?php
 namespace Aura\Session;
 
-class ManagerTest extends \PHPUnit_Framework_TestCase
+class SessionTest extends \PHPUnit_Framework_TestCase
 {
     // the session object
     protected $session;
@@ -14,7 +14,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     
     protected function newSession(array $cookies = [])
     {
-        return new Manager(
+        return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
             $cookies

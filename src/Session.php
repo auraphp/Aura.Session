@@ -18,7 +18,7 @@ namespace Aura\Session;
  * @package Aura.Session
  * 
  */
-class Manager
+class Session
 {
     /**
      *

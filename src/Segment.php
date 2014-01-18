@@ -23,7 +23,7 @@ class Segment implements SegmentInterface
      * 
      * The session manager.
      * 
-     * @var Manager
+     * @var Session
      * 
      */
     protected $session;
@@ -50,12 +50,12 @@ class Segment implements SegmentInterface
      * 
      * Constructor.
      * 
-     * @param Manager $session The session manager.
+     * @param Session $session The session manager.
      * 
      * @param string $name The segment name.
      * 
      */
-    public function __construct(Manager $session, $name)
+    public function __construct(Session $session, $name)
     {
         $this->session = $session;
         $this->name = $name;

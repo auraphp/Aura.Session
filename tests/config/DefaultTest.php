@@ -14,13 +14,13 @@ class DefaultTest extends \PHPUnit_Framework_TestCase
 
     public function testServices()
     {
-        $this->assertGet('session_manager', 'Aura\Session\Manager');
+        $this->assertGet('session_manager', 'Aura\Session\Session');
     }
 
     public function testInstances()
     {
         $this->assertNewInstance('Aura\Session\CsrfTokenFactory');
-        $this->assertNewInstance('Aura\Session\Manager');
+        $this->assertNewInstance('Aura\Session\Session');
         $this->assertNewInstance('Aura\Session\Segment');
     }
 }

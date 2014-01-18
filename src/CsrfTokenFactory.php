@@ -45,12 +45,12 @@ class CsrfTokenFactory
      * 
      * Creates a CsrfToken object.
      * 
-     * @param Manager $manager The session manager.
+     * @param Session $manager The session manager.
      * 
      * @return CsrfToken
      * 
      */
-    public function newInstance(Manager $manager)
+    public function newInstance(Session $manager)
     {
         $segment = $manager->newSegment('Aura\Session\CsrfToken');
         return new CsrfToken($segment, $this->randval);

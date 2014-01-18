@@ -17,7 +17,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     
     protected function newSession(array $cookies = [])
     {
-        return new Manager(
+        return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
             $cookies

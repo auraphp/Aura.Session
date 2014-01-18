@@ -23,12 +23,12 @@ class SegmentFactory
      * 
      * Creates a session segment object.
      * 
-     * @param Manager $manager
+     * @param Session $manager
      * @param string  $name
      *
      * @return Segment
      */
-    public function newInstance(Manager $manager, $name)
+    public function newInstance(Session $manager, $name)
     {
         return new Segment($manager, $name);
     }
