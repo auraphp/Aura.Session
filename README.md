@@ -3,8 +3,6 @@ Aura Session
 
 [![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop)](https://travis-ci.org/auraphp/Aura.Session)
 
-The Aura Session provides session management functionality, including session
-segments, read-once ("flash") values, CSRF tools, and lazy session starting.
 
 This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][]. If you
 notice compliance oversights, please send a patch via pull request.
@@ -14,25 +12,65 @@ notice compliance oversights, please send a patch via pull request.
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 
 
-Getting Started
-===============
+# Aura.Session
 
-Instantiation
--------------
+Provides session management functionality, including session
+segments, read-once ("flash") values, CSRF tools, and lazy session starting.
+
+## Foreword
+
+### Requirements
+
+This library requires PHP {PHP_VERSION} or later, and has no userland dependencies.
+
+### Installation
+
+This library is installable and autoloadable via Composer with the following
+`require` element in your `composer.json` file:
+
+    "require": {
+        "aura/session": "dev-develop-2"
+    }
+    
+Alternatively, download or clone this repository, then require or include its
+_autoload.php_ file.
+
+### Tests
+
+[![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop-2)](https://travis-ci.org/auraphp/Aura.Session)
+
+This library has 100% code coverage with [PHPUnit][]. To run the tests at the
+command line, go to the _tests_ directory and issue `phpunit`.
+
+[phpunit]: http://phpunit.de/manual/
+
+### PSR Compliance
+
+This library attempts to comply with [PSR-1][], [PSR-2][], and [PSR-4][]. If
+you notice compliance oversights, please send a patch via pull request.
+
+[PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
+[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+[PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
+
+
+## Getting Started
+
+### Instantiation
 
 The easiest way to get started is to use the `scripts/instance.php` script to
-instantiate a session `Manager` object.
+instantiate a session `Session` object.
 
 ```php
 <?php
 $session = include "/path/to/Aura.Session/scripts/instance.php";
+?>
 ```
 
-You can then use the `Manager` to work with the session values.
+You can then use the `Session` to work with the session values.
 
 
-Segments
---------
+### Segments
 
 A session segment is a reference to an array key in the `$_SESSION`
 superglobal. For example, if you ask for a segment named `ClassName`, the
@@ -64,6 +102,7 @@ echo $segment->foo; // 'bar'
 // the superglobal directly and the segment values will also change.
 $_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
 echo $segment->zim; // 'gir'
+?>
 ```
     
 The benefit of a session segment is that we can deconflict the keys in the
@@ -71,11 +110,9 @@ The benefit of a session segment is that we can deconflict the keys in the
 the segment names. With segments, different packages can use the `$_SESSION`
 superglobal without stepping on each other's toes.
 
+### Lazy Session Starting
 
-Lazy Session Starting
----------------------
-
-Merely instantiating the `Manager` and getting a session segment does *not*
+Merely instantiating the `Session` and getting a session segment does *not*
 start a session automatically. Instead, the session is started only when you
 read or write to a session segment.  This means we can create segments at
 will, and no session will start until we read from or write to one them.
@@ -89,55 +126,10 @@ available session exists, and reactivate it if it does. If there is no
 previously available session, it will start a new session, and write to it.
 
 Of course, we can force a session start or reactivation by calling the
-`Manager`'s `start()` method, but that defeats the purpose of lazy-loaded
+`Session`'s `start()` method, but that defeats the purpose of lazy-loaded
 sessions.
 
-
-Session Security
-----------------
-
-When you are done with a session and want its data to be available later, call
-the `commit()` method:
-
-```php
-<?php
-$session->commit();
-```
-
-> N.b.: The `commit()` method is the equivalent of `session_write_close()`. 
-> If you do not commit the session, its values will not be available when we 
-> continue the session later.
-
-Any time a user has a change in privilege (that is, gaining or losing access
-rights within a system) be sure to regenerate the session ID:
-
-```php
-<?php
-$session->regenerateId();
-```
-    
-> N.b.: The `regenerateId()` method also regenerates the CSRF token value.
-
-To clear the in-memory session data, but leave the session active, use the
-`clear()` method:
-
-```php
-<?php
-$session->clear();
-```
-
-To end a session and remove its data (both committed and in-memory), generally
-after a user signs out or when authentication timeouts occur, call the
-`destroy()` method:
-
-```php
-<?php
-$session->destroy();
-```
-
-
-Read-Once ("Flash") Values
---------------------------
+### Read-Once ("Flash") Values
 
 Session segment values persist until a session is cleared or destroyed.
 However, sometimes it is useful to set a value that propagates only until it
@@ -153,6 +145,7 @@ $segment = $session->newSegment('Vendor\Package\ClassName');
 
 // set a read-once value on the segment
 $segment->setFlash('message', 'Hello world!');
+?>
 ```
 
 Then, in subsequent sessions, we can read the flash value using `getFlash()`:
@@ -167,6 +160,7 @@ $message = $segment->getFlash('message'); // 'Hello world!'
 
 // if we try to read it again, it won't be there
 $not_there = $segment->getFlash('message'); // null
+?>
 ```
 
 Sometimes we need to know if a flash value exists, but don't want to read it
@@ -185,6 +179,7 @@ if ($segment->hasFlash('message')) {
 } else {
     echo "No message available.";
 }
+?>
 ```
     
 To clear all flash values on a segment, use the `clearFlash()` method:
@@ -196,12 +191,61 @@ $segment = $session->newSegment('Vendor\Package\ClassName');
 
 // clear all flash values, but leave all other segment values in place
 $segment->clearFlash();
+?>
 ```
 
+### Saving Session Data
 
-Cross-Site Request Forgery
-==========================
+When you are done with a session and want its data to be available later, call
+the `commit()` method:
 
+```php
+<?php
+$session->commit();
+?>
+```
+
+> N.b.: The `commit()` method is the equivalent of `session_write_close()`. 
+> If you do not commit the session, its values will not be available when we 
+> continue the session later.
+
+## Session Security
+
+### Session ID Regeneration
+
+Any time a user has a change in privilege (that is, gaining or losing access
+rights within a system) be sure to regenerate the session ID:
+
+```php
+<?php
+$session->regenerateId();
+?>
+```
+    
+> N.b.: The `regenerateId()` method also regenerates the CSRF token value.
+
+### Clearing and Destroying Sessions
+
+To clear the in-memory session data, but leave the session active, use the
+`clear()` method:
+
+```php
+<?php
+$session->clear();
+?>
+```
+
+To end a session and remove its data (both committed and in-memory), generally
+after a user signs out or when authentication timeouts occur, call the
+`destroy()` method:
+
+```php
+<?php
+$session->destroy();
+?>
+```
+
+### Cross-Site Request Forgery
 
 A "cross-site request forgery" is a security issue where the attacker, via
 malicious JavaScript or other means, issues a request in-the-blind from a
@@ -211,8 +255,7 @@ did not actually make the request (the malicious JavaScript did).
 
 <http://en.wikipedia.org/wiki/Cross-site_request_forgery>
 
-Defending Against CSRF
-----------------------
+#### Defending Against CSRF
 
 To defend against CSRF attacks, server-side logic should:
 
@@ -234,7 +277,7 @@ field:
 <?php
 /**  
  * @var Vendor\Package\User $user A user-authentication object.
- * @var Aura\Session\Manager $session A session management object.
+ * @var Aura\Session\Session $session A session management object.
  */
 ?>
 <form method="post">
@@ -258,7 +301,7 @@ for the authenticated user:
 <?php
 /**  
  * @var Vendor\Package\User $user A user-authentication object.
- * @var Aura\Session\Manager $session A session management object.
+ * @var Aura\Session\Session $session A session management object.
  */
 
 $unsafe = $_SERVER['REQUEST_METHOD'] == 'POST'
@@ -276,10 +319,10 @@ if ($unsafe && $user->isAuthenticated()) {
 } else {
     echo "CSRF attacks only affect unsafe requests by authenticated users.";
 }
+?>
 ```
 
-CSRF Value Generation
----------------------
+#### CSRF Value Generation
 
 For a CSRF token to be useful, its random value must be cryptographically
 secure. Using things like `mt_rand()` is insufficient. Aura.Session comes with
