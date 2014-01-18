@@ -107,7 +107,7 @@ class Segment implements SegmentInterface
         
         // if we don't have a $_SESSION key for the segment, create one
         if (! isset($_SESSION[$this->name])) {
-            $_SESSION[$this->name] = [];
+            $_SESSION[$this->name] = array();
         }
         
         // set $data as a reference to the $_SESSION key
@@ -188,7 +188,7 @@ class Segment implements SegmentInterface
     public function clear()
     {
         if ($this->isLoaded()) {
-            $this->data = [];
+            $this->data = array();
         }
     }
 

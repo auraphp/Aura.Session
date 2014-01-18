@@ -64,7 +64,7 @@ class Session
      * @var array
      * 
      */
-    protected $cookie_params = [];
+    protected $cookie_params = array();
 
     /**
      * 
@@ -81,7 +81,7 @@ class Session
     public function __construct(
         SegmentFactory   $segment_factory,
         CsrfTokenFactory $csrf_token_factory,
-        array $cookies = []
+        array $cookies = array()
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
