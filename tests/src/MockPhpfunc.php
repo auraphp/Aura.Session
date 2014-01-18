@@ -3,7 +3,7 @@ namespace Aura\Session;
 
 class MockPhpfunc extends Phpfunc
 {
-    protected $extensions = [];
+    protected $extensions = array();
     
     public function __construct()
     {
@@ -18,7 +18,7 @@ class MockPhpfunc extends Phpfunc
     public function extension_loaded($name)
     {
         // for parent coverage
-        $this->__call('extension_loaded', [$name]);
+        $this->__call('extension_loaded', array($name));
         
         // for testing
         return in_array($name, $this->extensions);

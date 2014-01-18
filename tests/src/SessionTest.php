@@ -12,7 +12,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->newSession();
     }
     
-    protected function newSession(array $cookies = [])
+    protected function newSession(array $cookies = array())
     {
         return new Session(
             new SegmentFactory,
@@ -42,7 +42,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
-        $expect = ['test' => ['foo' => 'bar', 'baz' => 'dib']];
+        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);
         
         // now clear it
@@ -57,7 +57,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->foo = 'bar';
         $segment->baz = 'dib';
         
-        $expect = ['test' => ['foo' => 'bar', 'baz' => 'dib']];
+        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);
         
         // now destroy it
@@ -78,7 +78,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->foo = 'bar';
         $segment->baz = 'dib';
 
-        $expect = ['test' => ['foo' => 'bar', 'baz' => 'dib']];
+        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);
 
         $this->session->commit();
@@ -106,9 +106,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isAvailable());
         
         // fake a cookie
-        $cookies = [
+        $cookies = array(
             $this->session->getName() => 'fake-cookie-value',
-        ];
+        );
         $this->session = $this->newSession($cookies);
         
         // now it should look active

@@ -15,7 +15,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->segment = $this->session->newSegment($this->name);
     }
     
-    protected function newSession(array $cookies = [])
+    protected function newSession(array $cookies = array())
     {
         return new Session(
             new SegmentFactory,
@@ -122,9 +122,9 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     public function test__getReactivatesSession()
     {
         // fake a cookie
-        $cookies = [
+        $cookies = array(
             $this->session->getName() => 'fake-cookie-value',
-        ];
+        );
         $this->session = $this->newSession($cookies);
         
         // should be active now, even though not started
