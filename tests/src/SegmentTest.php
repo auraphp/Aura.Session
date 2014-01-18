@@ -81,7 +81,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         
         // now clear the data
         $this->segment->clear();
-        $this->assertSame([], $this->getValue());
+        $this->assertSame(array(), $this->getValue());
         $this->assertNull($this->segment->foo);
         $this->assertNull($this->segment->baz);
     }

@@ -47,7 +47,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         
         // now clear it
         $this->session->clear();
-        $this->assertSame([], $_SESSION);
+        $this->assertSame(array(), $_SESSION);
     }
     
     public function testDestroy()
@@ -84,7 +84,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->session->commit();
         $this->session->destroy();
         $segment = $this->session->newSegment('test');
-        $this->assertSame([], $_SESSION);
+        $this->assertSame(array(), $_SESSION);
     }
 
     public function testNewSegment()
