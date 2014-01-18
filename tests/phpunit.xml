@@ -1,7 +1,7 @@
 <phpunit bootstrap="./bootstrap.php" processIsolation="true">
     <testsuites>
         <testsuite>
-            <directory>./Aura/Session</directory>
+            <directory>./src</directory>
         </testsuite>
     </testsuites>
 </phpunit>

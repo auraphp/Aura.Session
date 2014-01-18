@@ -1,1 +1,0 @@
-Session management functionality, including session segments, read-once ("flash") values, CSRF tools, and lazy session starting.

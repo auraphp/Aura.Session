@@ -1,27 +1,32 @@
 {
     "name": "aura/session",
-    "type": "aura-package",
-    "description": "The Aura Session provides session management functionality, including session segments, read-once (flash) values, CSRF tools, and lazy session starting.",
-    "keywords": [ "session", "flash message", "csrf" ],
+    "type": "library",
+    "description": "Provides session management functionality, including session segments, read-once (flash) values, CSRF tools, and lazy session starting.",
+    "keywords": [
+        "session",
+        "sessions",
+        "flash",
+        "flash message",
+        "csrf"
+    ],
     "homepage": "http://auraphp.github.com/Aura.Session",
     "license": "BSD-2-Clause",
     "authors": [
         {
-            "name": "Aura Contributors",
+            "name": "Aura.Session Contributors",
             "homepage": "https://github.com/auraphp/Aura.Session/contributors"
         }
     ],
     "require": {
         "php": ">=5.4.0",
-        "aura/installer-default": "1.0.0"
     },
     "suggest": {
         "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens."
     },
     "autoload": {
-        "psr-0": {
-            "Aura\\Session": "src/"
-        }
+        "files": [
+            "autoload.php"
+        ]
     }
 }

@@ -3,7 +3,7 @@ namespace Aura\Session;
 
 use Aura\Framework\Test\WiringAssertionsTrait;
 
-class WiringTest extends \PHPUnit_Framework_TestCase
+class DefaultTest extends \PHPUnit_Framework_TestCase
 {
     use WiringAssertionsTrait;
 
