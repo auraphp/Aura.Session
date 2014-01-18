@@ -21,7 +21,7 @@ segments, read-once ("flash") values, CSRF tools, and lazy session starting.
 
 ### Requirements
 
-This library requires PHP 5.3 or later, and has no userland dependencies.
+This library requires PHP 5.4 or later, and has no userland dependencies.
 
 ### Installation
 
