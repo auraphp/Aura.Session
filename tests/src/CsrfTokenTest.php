@@ -45,19 +45,19 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($old != '');
         
         // with openssl
-        $this->phpfunc->setExtensions(['openssl']);
+        $this->phpfunc->setExtensions(array('openssl'));
         $token->regenerateValue();
         $openssl = $token->getValue();
         $this->assertTrue($old != $openssl);
         
         // with mcrypt
-        $this->phpfunc->setExtensions(['mcrypt']);
+        $this->phpfunc->setExtensions(array('mcrypt'));
         $token->regenerateValue();
         $mcrypt = $token->getValue();
         $this->assertTrue($old != $openssl && $old != $mcrypt);
         
         // with nothing
-        $this->phpfunc->setExtensions([]);
+        $this->phpfunc->setExtensions(array());
         $this->setExpectedException('Aura\Session\Exception');
         $token->regenerateValue();
     }
