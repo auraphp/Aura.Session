@@ -25,9 +25,9 @@
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens."
     },
     "autoload": {
-        "files": [
-            "autoload.php"
-        ]
+        "psr-4": {
+            "Aura\\Session\\": "src/"
+        }
     },
     "extra": {
         "aura": {
