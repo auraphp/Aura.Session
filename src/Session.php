@@ -10,6 +10,17 @@
  */
 namespace Aura\Session;
 
+// Define session_status() constants if they aren't defined already.
+if (!defined('PHP_SESSION_DISABLED')) {
+    define('PHP_SESSION_DISABLED', 0);
+}
+if (!defined('PHP_SESSION_NONE')) {
+    define('PHP_SESSION_NONE', 1);
+}
+if (!defined('PHP_SESSION_ACTIVE')) {
+    define('PHP_SESSION_ACTIVE', 2);
+}
+
 /**
  * 
  * A central control point for new session segments, PHP session management
@@ -414,10 +425,29 @@ class Session
      * @return int
      * 
      * @see session_status()
+     * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
      * 
      */
     public function getStatus()
     {
-        return session_status();
+        if (function_exists('session_status')) {
+            return session_status();
+        }
+
+        // PHP 5.3 specific support for retrieving session status.
+        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
+        // changed when a session is active.
+        $setting = 'session.use_trans_sid';
+        $current = ini_get($setting);
+        if ($current === false) {
+            return PHP_SESSION_DISABLED;
+        }
+
+        // I don't want to raise any error message, go away
+        $errorlevel = error_reporting(0);
+        $result     = ini_set($setting, $current);
+        error_reporting($errorlevel);
+
+        return $result !== $current ? PHP_SESSION_ACTIVE : PHP_SESSION_NONE;
     }
 }
