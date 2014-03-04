@@ -8,7 +8,15 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        session_set_save_handler(new MockSessionHandler);
+        $handler = new MockSessionHandler();
+        session_set_save_handler(
+            array($handler, 'open'),
+            array($handler, 'close'),
+            array($handler, 'read'),
+            array($handler, 'write'),
+            array($handler, 'destroy'),
+            array($handler, 'gc')
+        );
         $this->session = $this->newSession();
     }
     

@@ -1,10 +1,8 @@
 <?php
 namespace Aura\Session;
 
-use SessionHandlerInterface;
-
 // a session handler that does nothing, for testing purposes only
-class MockSessionHandler implements SessionHandlerInterface
+class MockSessionHandler
 {
     public $data;
     
