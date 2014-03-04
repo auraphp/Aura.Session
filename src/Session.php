@@ -10,15 +10,45 @@
  */
 namespace Aura\Session;
 
-// Define session_status() constants if they aren't defined already.
-if (!defined('PHP_SESSION_DISABLED')) {
-    define('PHP_SESSION_DISABLED', 0);
-}
-if (!defined('PHP_SESSION_NONE')) {
-    define('PHP_SESSION_NONE', 1);
-}
-if (!defined('PHP_SESSION_ACTIVE')) {
-    define('PHP_SESSION_ACTIVE', 2);
+// Definition of session_status() and its constants for PHP 5.3
+if (version_compare(PHP_VERSION, '5.4', '<')) {
+    if (!defined('PHP_SESSION_DISABLED')) {
+        define('PHP_SESSION_DISABLED', 0);
+    }
+    if (!defined('PHP_SESSION_NONE')) {
+        define('PHP_SESSION_NONE', 1);
+    }
+    if (!defined('PHP_SESSION_ACTIVE')) {
+        define('PHP_SESSION_ACTIVE', 2);
+    }
+    if (!function_exists('session_status')) {
+        /**
+         * PHP 5.3 implementation of session_status.
+         *
+         * Relies on the fact that ini setting 'session.use_trans_sid' cannot be
+         * changed when a session is active.
+         * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
+         *
+         * @return int
+         */
+        function session_status()
+        {
+            $setting = 'session.use_trans_sid';
+            $current = ini_get($setting);
+            if ($current === false) {
+                return PHP_SESSION_DISABLED;
+            }
+
+            // ini_set raises a warning when I attempt to change this setting
+            // and session is active, I don't want that.
+            $errorlevel = error_reporting(0);
+            $result     = ini_set($setting, $current);
+            error_reporting($errorlevel);
+
+            return $result !== $current ? PHP_SESSION_ACTIVE : PHP_SESSION_NONE;
+        }
+    }
+
 }
 
 /**
@@ -425,29 +455,10 @@ class Session
      * @return int
      * 
      * @see session_status()
-     * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
      * 
      */
     public function getStatus()
     {
-        if (function_exists('session_status')) {
-            return session_status();
-        }
-
-        // PHP 5.3 specific support for retrieving session status.
-        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
-        // changed when a session is active.
-        $setting = 'session.use_trans_sid';
-        $current = ini_get($setting);
-        if ($current === false) {
-            return PHP_SESSION_DISABLED;
-        }
-
-        // I don't want to raise any error message, go away
-        $errorlevel = error_reporting(0);
-        $result     = ini_set($setting, $current);
-        error_reporting($errorlevel);
-
-        return $result !== $current ? PHP_SESSION_ACTIVE : PHP_SESSION_NONE;
+        return session_status();
     }
 }
