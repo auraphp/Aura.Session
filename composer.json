@@ -22,6 +22,17 @@
     "autoload": {
         "psr-0": {
             "Aura\\Session": "src/"
+        },        
+        "psr-4": {
+            "Aura\\Session\\_Config\\": "config/"
+        }
+    },
+    "extra": {
+        "aura": {
+            "type": "library",
+            "config": {
+                "common": "Aura\\Session\\_Config\\Common"                
+            }
         }
     }
 }
