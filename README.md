@@ -1,57 +1,32 @@
-Aura Session
-============
+# Aura Session
 
-[![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop)](https://travis-ci.org/auraphp/Aura.Session)
-
-
-This package is compliant with [PSR-0][], [PSR-1][], and [PSR-2][]. If you
-notice compliance oversights, please send a patch via pull request.
-
-[PSR-0]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
-[PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
-[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
-
-
-# Aura.Session
-
-Provides session management functionality, including session
-segments, read-once ("flash") values, CSRF tools, and lazy session starting.
-
-## Foreword
-
-### Requirements
-
-This library requires PHP 5.4 or later, and has no userland dependencies.
+Provides session management functionality, including session segments, read-
+once ("flash") values, CSRF tools, and lazy session starting.
 
 ### Installation
 
-This library is installable and autoloadable via Composer with the following
-`require` element in your `composer.json` file:
+This library requires PHP 5.4 or later, and has no userland dependencies.
 
-    "require": {
-        "aura/session": "dev-develop-2"
-    }
-    
-Alternatively, download or clone this repository, then require or include its
-_autoload.php_ file.
+It is installable and autoloadable via Composer as [aura/session](https://packagist.org/packages/aura/session).
 
-### Tests
+Alternatively, [download a release](https://github.com/auraphp/Aura.Session/releases) or clone this repository, then require or include its _autoload.php_ file.
 
+### Quality
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/quality-score.png?s=b80c5c00129306b48a885ac641f7c39f78988762)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
+[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/coverage.png?s=3afb424a5ffd1f469cefc6790a557cb280411f65)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
 [![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop-2)](https://travis-ci.org/auraphp/Aura.Session)
 
-This library has 100% code coverage with [PHPUnit][]. To run the tests at the
-command line, go to the _tests_ directory and issue `phpunit`.
-
-[phpunit]: http://phpunit.de/manual/
-
-### PSR Compliance
+To run the [PHPUnit][] tests at the command line, go to the _tests_ directory and issue `phpunit`.
 
 This library attempts to comply with [PSR-1][], [PSR-2][], and [PSR-4][]. If
 you notice compliance oversights, please send a patch via pull request.
 
+[PHPUnit]: http://phpunit.de/manual/
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 [PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
+
 
 ### Community
 
