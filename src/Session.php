@@ -1,82 +1,82 @@
 <?php
 /**
- * 
+ *
  * This file is part of Aura for PHP.
- * 
+ *
  * @package Aura.Session
- * 
+ *
  * @license http://opensource.org/licenses/bsd-license.php BSD
- * 
+ *
  */
 namespace Aura\Session;
 
 /**
- * 
+ *
  * A central control point for new session segments, PHP session management
  * values, and CSRF token checking.
- * 
+ *
  * @package Aura.Session
- * 
+ *
  */
 class Session
 {
     /**
      *
      * A session segment factory.
-     * 
-     * @var SegmentFactory 
-     * 
+     *
+     * @var SegmentFactory
+     *
      */
     protected $segment_factory;
 
     /**
      *
      * The CSRF token for this session.
-     * 
+     *
      * @var CsrfToken
-     * 
+     *
      */
     protected $csrf_token;
 
     /**
-     * 
+     *
      * A CSRF token factory, for lazy-creating the CSRF token.
-     * 
+     *
      * @var CsrfTokenFactory
-     * 
+     *
      */
     protected $csrf_token_factory;
 
     /**
-     * 
+     *
      * Incoming cookies from the client, typically a copy of the $_COOKIE
      * superglobal.
-     * 
+     *
      * @var array
-     * 
+     *
      */
     protected $cookies;
-    
+
     /**
-     * 
+     *
      * Session cookie parameters.
-     * 
+     *
      * @var array
-     * 
+     *
      */
     protected $cookie_params = array();
 
     /**
-     * 
+     *
      * Constructor
-     * 
+     *
      * @param SegmentFactory $segment_factory A session segment factory.
-     * 
+     *
      * @param CsrfTokenFactory A CSRF token factory.
-     * 
+     *
      * @param array $cookies An arry of cookies from the client, typically a
      * copy of $_COOKIE.
-     * 
+     *
      */
     public function __construct(
         SegmentFactory   $segment_factory,
@@ -90,17 +90,17 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets a new session segment instance by name. Segments with the same
      * name will be different objects but will reference the same $_SESSION
      * values, so it is possible to have two or more objects that share state.
      * For good or bad, this a function of how $_SESSION works.
-     * 
-     * @param string $name The name of the session segment, typically a 
+     *
+     * @param string $name The name of the session segment, typically a
      * fully-qualified class name.
-     * 
+     *
      * @return Segment
-     * 
+     *
      */
     public function newSegment($name)
     {
@@ -108,12 +108,12 @@ class Session
     }
 
     /**
-     * 
+     *
      * Tells us if a session is available to be reactivated, but not if it has
      * started yet.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function isAvailable()
     {
@@ -122,11 +122,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Tells us if a session has started.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function isStarted()
     {
@@ -134,11 +134,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Starts a new session, or resumes an existing one.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function start()
     {
@@ -146,11 +146,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Clears all session variables across all segments.
-     * 
+     *
      * @return null
-     * 
+     *
      */
     public function clear()
     {
@@ -158,11 +158,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Writes session data from all segments and ends the session.
-     * 
+     *
      * @return null
-     * 
+     *
      */
     public function commit()
     {
@@ -170,11 +170,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Destroys the session entirely.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function destroy()
     {
@@ -186,12 +186,12 @@ class Session
     }
 
     /**
-     * 
+     *
      * Returns the CSRF token, creating it if needed (and thereby starting a
      * session).
-     * 
+     *
      * @return CsrfToken
-     * 
+     *
      */
     public function getCsrfToken()
     {
@@ -208,15 +208,15 @@ class Session
     //
 
     /**
-     * 
+     *
      * Sets the session cache expire time.
-     * 
+     *
      * @param int $expire The expiration time in seconds.
-     * 
+     *
      * @return int
-     * 
+     *
      * @see session_cache_expire()
-     * 
+     *
      */
     public function setCacheExpire($expire)
     {
@@ -224,13 +224,13 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets the session cache expire time.
-     * 
+     *
      * @return int The cache expiration time in seconds.
-     * 
+     *
      * @see session_cache_expire()
-     * 
+     *
      */
     public function getCacheExpire()
     {
@@ -238,15 +238,15 @@ class Session
     }
 
     /**
-     * 
+     *
      * Sets the session cache limiter value.
-     * 
+     *
      * @param string $limiter The limiter value.
-     * 
+     *
      * @return string
-     * 
+     *
      * @see session_cache_limiter()
-     * 
+     *
      */
     public function setCacheLimiter($limiter)
     {
@@ -254,13 +254,13 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets the session cache limiter value.
-     * 
+     *
      * @return string The limiter value.
-     * 
+     *
      * @see session_cache_limiter()
-     * 
+     *
      */
     public function getCacheLimiter()
     {
@@ -268,29 +268,29 @@ class Session
     }
 
     /**
-     * 
+     *
      * Sets the session cookie params.  Param array keys are:
-     * 
+     *
      * - `lifetime` : Lifetime of the session cookie, defined in seconds.
-     * 
-     * - `path` : Path on the domain where the cookie will work. 
+     *
+     * - `path` : Path on the domain where the cookie will work.
      *   Use a single slash ('/') for all paths on the domain.
-     * 
-     * - `domain` : Cookie domain, for example 'www.php.net'. 
-     *   To make cookies visible on all subdomains then the domain must be 
+     *
+     * - `domain` : Cookie domain, for example 'www.php.net'.
+     *   To make cookies visible on all subdomains then the domain must be
      *   prefixed with a dot like '.php.net'.
-     * 
+     *
      * - `secure` : If TRUE cookie will only be sent over secure connections.
-     * 
-     * - `httponly` : If set to TRUE then PHP will attempt to send the httponly 
+     *
+     * - `httponly` : If set to TRUE then PHP will attempt to send the httponly
      *   flag when setting the session cookie.
-     * 
+     *
      * @param array $params The array of session cookie param keys and values.
-     * 
+     *
      * @return void
-     * 
+     *
      * @see session_set_cookie_params()
-     * 
+     *
      */
     public function setCookieParams(array $params)
     {
@@ -305,11 +305,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets the session cookie params.
-     * 
+     *
      * @return array
-     * 
+     *
      */
     public function getCookieParams()
     {
@@ -317,11 +317,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets the current session id.
-     * 
+     *
      * @return string
-     * 
+     *
      */
     public function getId()
     {
@@ -329,12 +329,12 @@ class Session
     }
 
     /**
-     * 
+     *
      * Regenerates and replaces the current session id; also regenerates the
      * CSRF token value if one exists.
-     * 
+     *
      * @return bool True is regeneration worked, false if not.
-     * 
+     *
      */
     public function regenerateId()
     {
@@ -346,15 +346,15 @@ class Session
     }
 
     /**
-     * 
+     *
      * Sets the current session name.
-     * 
+     *
      * @param string $name The session name to use.
-     * 
+     *
      * @return string
-     * 
+     *
      * @see session_name()
-     * 
+     *
      */
     public function setName($name)
     {
@@ -362,11 +362,11 @@ class Session
     }
 
     /**
-     * 
+     *
      * Returns the current session name.
-     * 
+     *
      * @return string
-     * 
+     *
      */
     public function getName()
     {
@@ -374,15 +374,15 @@ class Session
     }
 
     /**
-     * 
+     *
      * Sets the session save path.
-     * 
+     *
      * @param string $path The new save path.
-     * 
+     *
      * @return string
-     * 
+     *
      * @see session_save_path()
-     * 
+     *
      */
     public function setSavePath($path)
     {
@@ -390,13 +390,13 @@ class Session
     }
 
     /**
-     * 
+     *
      * Gets the session save path.
-     * 
+     *
      * @return string
-     * 
+     *
      * @see session_save_path()
-     * 
+     *
      */
     public function getSavePath()
     {
@@ -404,17 +404,17 @@ class Session
     }
 
     /**
-     * 
+     *
      * Returns the current session status:
-     * 
+     *
      * - `PHP_SESSION_DISABLED` if sessions are disabled.
      * - `PHP_SESSION_NONE` if sessions are enabled, but none exists.
      * - `PHP_SESSION_ACTIVE` if sessions are enabled, and one exists.
-     * 
+     *
      * @return int
-     * 
+     *
      * @see session_status()
-     * 
+     *
      */
     public function getStatus()
     {

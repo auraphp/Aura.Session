@@ -1,59 +1,59 @@
 <?php
 /**
- * 
+ *
  * This file is part of Aura for PHP.
- * 
+ *
  * @package Aura.Session
- * 
+ *
  * @license http://opensource.org/licenses/bsd-license.php BSD
- * 
+ *
  */
 namespace Aura\Session;
 
 /**
- * 
+ *
  * A session segment; lazy-loads from the session.
- * 
+ *
  * @package Aura.Session
- * 
+ *
  */
 class Segment implements SegmentInterface
 {
     /**
-     * 
+     *
      * The session manager.
-     * 
+     *
      * @var Session
-     * 
+     *
      */
     protected $session;
-    
+
     /**
-     * 
+     *
      * The segment name.
-     * 
+     *
      * @var string
-     * 
+     *
      */
     protected $name;
-    
+
     /**
-     * 
+     *
      * The data in the segment is a reference to a $_SESSION key.
-     * 
+     *
      * @var array
-     * 
+     *
      */
     protected $data;
-    
+
     /**
-     * 
+     *
      * Constructor.
-     * 
+     *
      * @param Session $session The session manager.
-     * 
+     *
      * @param string $name The segment name.
-     * 
+     *
      */
     public function __construct(Session $session, $name)
     {
@@ -62,35 +62,35 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Checks to see if the segment data has been loaded; if not, checks to
      * see if a session has already been started or is available, and then
      * loads the segment data from the session.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     protected function isLoaded()
     {
         if ($this->data !== null) {
             return true;
         }
-        
+
         if ($this->session->isStarted() || $this->session->isAvailable()) {
             $this->load();
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
-     * 
+     *
      * Forces a session start (or reactivation) and loads the segment data
      * from the session.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     protected function load()
     {
@@ -99,29 +99,29 @@ class Segment implements SegmentInterface
             // no need to re-load
             return;
         }
-        
+
         // if the session is not started, start it
         if (! $this->session->isStarted()) {
             $this->session->start();
         }
-        
+
         // if we don't have a $_SESSION key for the segment, create one
         if (! isset($_SESSION[$this->name])) {
             $_SESSION[$this->name] = array();
         }
-        
+
         // set $data as a reference to the $_SESSION key
         $this->data = &$_SESSION[$this->name];
     }
-    
+
     /**
-     * 
+     *
      * Returns the value of a key in the segment.
-     * 
+     *
      * @param string $key The key in the segment.
-     * 
+     *
      * @return mixed
-     * 
+     *
      */
     public function __get($key)
     {
@@ -131,13 +131,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Sets the value of a key in the segment.
-     * 
+     *
      * @param string $key The key to set.
-     * 
+     *
      * @param mixed $val The value to set it to.
-     * 
+     *
      */
     public function __set($key, $val)
     {
@@ -146,13 +146,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Check whether a key is set in the segment.
-     * 
+     *
      * @param string $key The key to check.
-     * 
+     *
      * @return bool
-     * 
+     *
      */
     public function __isset($key)
     {
@@ -163,13 +163,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Unsets a key in the segment.
-     * 
+     *
      * @param string $key The key to unset.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     public function __unset($key)
     {
@@ -179,11 +179,11 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Clear all data from the segment.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     public function clear()
     {
@@ -193,11 +193,11 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Gets the segment name.
-     * 
+     *
      * @return string
-     * 
+     *
      */
     public function getName()
     {
@@ -205,13 +205,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Sets a read-once flash value on the segment.
-     * 
+     *
      * @param string $key The key for the flash value.
-     * 
+     *
      * @param mixed $val The flash value itself.
-     * 
+     *
      */
     public function setFlash($key, $val)
     {
@@ -220,13 +220,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Reads the flash value for a key, thereby removing it from the session.
-     * 
+     *
      * @param string $key The key for the flash value.
-     * 
+     *
      * @return mixed The flash value itself.
-     * 
+     *
      */
     public function getFlash($key)
     {
@@ -238,13 +238,13 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Checks whether a flash key is set, without reading it.
-     * 
+     *
      * @param string $key The flash key to check.
-     * 
+     *
      * @return bool True if it is set, false if not.
-     * 
+     *
      */
     public function hasFlash($key)
     {
@@ -255,11 +255,11 @@ class Segment implements SegmentInterface
     }
 
     /**
-     * 
+     *
      * Clears all flash values.
-     * 
+     *
      * @return void
-     * 
+     *
      */
     public function clearFlash()
     {
