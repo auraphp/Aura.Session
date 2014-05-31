@@ -1,38 +1,43 @@
 {
     "name": "aura/session",
+    "version": "1.0.2",
     "type": "aura-package",
-    "description": "The Aura Session provides session management functionality, including session segments, read-once (flash) values, CSRF tools, and lazy session starting.",
-    "keywords": [ "session", "flash message", "csrf" ],
-    "homepage": "http://auraphp.github.com/Aura.Session",
+    "description": "The Aura Session provides session management functionality, including session\nsegments, read-once (\"flash\") values, CSRF tools, and lazy session starting.",
+    "keywords": [
+        "session",
+        "sessions"
+    ],
+    "homepage": "http://auraphp.com/Aura.Session",
+    "time": "2014-05-31",
     "license": "BSD-2-Clause",
     "authors": [
         {
-            "name": "Aura Contributors",
+            "name": "Aura.Session Contributors",
             "homepage": "https://github.com/auraphp/Aura.Session/contributors"
+        },
+        {
+            "name": "Paul M. Jones",
+            "email": "pmjones88@gmail.com",
+            "homepage": "http://paul-m-jones.com"
+        },
+        {
+            "name": "Akihito Koriyama",
+            "email": "akihito.koriyama@gmail.com",
+            "homepage": "http://www.kumasystem.com"
+        },
+        {
+            "name": "Hari KT",
+            "email": "kthari85@gmail.com",
+            "homepage": "http://harikt.com"
         }
     ],
     "require": {
         "php": ">=5.4.0",
-        "aura/installer-default": "1.0.0"
-    },
-    "suggest": {
-        "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
-        "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens."
+        "aura/installer-default": "1.0.*"
     },
     "autoload": {
         "psr-0": {
             "Aura\\Session": "src/"
-        },        
-        "psr-4": {
-            "Aura\\Session\\_Config\\": "config/"
-        }
-    },
-    "extra": {
-        "aura": {
-            "type": "library",
-            "config": {
-                "common": "Aura\\Session\\_Config\\Common"                
-            }
         }
     }
 }
