@@ -1,4 +1,5 @@
-- [CHG] Manager::destroy() now checks whether the session is started; if not,
-  starts it, and then destroys.  This is because sessions are lazy-loading.
+Hygiene release.
 
-- [DOC] Add PHP 5.5 to the Travis build and update docs
+- Fix #8 related to unit tests failing because of ini_set values. Thanks @mindplay-dk
+
+- Merge pull request #12 from harikt/v2config, adds v2 config files.

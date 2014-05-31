@@ -1,4 +1,8 @@
 <?php
+// soothe the command line
+ini_set('session.use_cookies', 0);
+ini_set('session.cache_limiter', '');
+
 // preload source files
 require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src.php';
 
