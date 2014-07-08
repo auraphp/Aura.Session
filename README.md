@@ -5,7 +5,7 @@ once ("flash") values, CSRF tools, and lazy session starting.
 
 ### Installation
 
-This library requires PHP 5.4 or later, and has no userland dependencies.
+This library requires PHP 5.3 or later, and has no userland dependencies.
 
 It is installable and autoloadable via Composer as [aura/session](https://packagist.org/packages/aura/session).
 
