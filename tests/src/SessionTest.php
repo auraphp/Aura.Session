@@ -191,4 +191,22 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $actual = $this->session->getStatus();
         $this->assertSame($expect, $actual);
     }
+
+    public function testResume()
+    {
+        // should not look active
+        $this->assertFalse($this->session->isAvailable());
+        $this->assertFalse($this->session->resume());
+
+
+        // fake a cookie so a session looks available
+        $cookies = array(
+            $this->session->getName() => 'fake-cookie-value',
+        );
+        $this->session = $this->newSession($cookies);
+        $this->assertTrue($this->session->resume());
+
+        // now it should already active
+        $this->assertTrue($this->session->resume());
+    }
 }
