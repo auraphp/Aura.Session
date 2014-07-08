@@ -99,14 +99,38 @@ class Session
         SegmentFactory $segment_factory,
         CsrfTokenFactory $csrf_token_factory,
         PhpFunc $phpfunc,
-        array $cookies = array()
+        array $cookies = array(),
+        $destroy_cookie = null
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
         $this->phpfunc            = $phpfunc;
         $this->cookies            = $cookies;
 
+        $this->setDestroyCookie($destroy_cookie);
+
         $this->cookie_params = $this->phpfunc->session_get_cookie_params();
+    }
+
+    protected function setDestroyCookie($destroy_cookie)
+    {
+        $this->destroy_cookie = $destroy_cookie;
+        if (! $this->destroy_cookie) {
+            $phpfunc = $this->phpfunc;
+            $this->destroy_cookie = function (
+                $name,
+                $path,
+                $domain
+            ) use ($phpfunc) {
+                $phpfunc->setcookie(
+                    $name,
+                    '',
+                    time() - 42000,
+                    $path,
+                    $domain
+                );
+            };
+        }
     }
 
     /**
@@ -215,7 +239,7 @@ class Session
      *
      * @return bool
      *
-     * @todo call setcookie() to delete the cookie at the client
+     * @see http://php.net/manual/en/function.session-destroy.php
      *
      */
     public function destroy()
@@ -223,8 +247,22 @@ class Session
         if (! $this->isStarted()) {
             $this->start();
         }
+
         $this->clear();
-        return $this->phpfunc->session_destroy();
+
+        $name = $this->getName();
+        $params = $this->getCookieParams();
+        if ($this->phpfunc->session_destroy()) {
+            call_user_func(
+                $this->destroy_cookie,
+                $name,
+                $params['path'],
+                $params['domain']
+            );
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -257,7 +295,7 @@ class Session
      *
      * @return int
      *
-     * @see $this->phpfunc->session_cache_expire()
+     * @see session_cache_expire()
      *
      */
     public function setCacheExpire($expire)
@@ -271,7 +309,7 @@ class Session
      *
      * @return int The cache expiration time in seconds.
      *
-     * @see $this->phpfunc->session_cache_expire()
+     * @see session_cache_expire()
      *
      */
     public function getCacheExpire()
@@ -287,7 +325,7 @@ class Session
      *
      * @return string
      *
-     * @see $this->phpfunc->session_cache_limiter()
+     * @see session_cache_limiter()
      *
      */
     public function setCacheLimiter($limiter)
@@ -301,7 +339,7 @@ class Session
      *
      * @return string The limiter value.
      *
-     * @see $this->phpfunc->session_cache_limiter()
+     * @see session_cache_limiter()
      *
      */
     public function getCacheLimiter()
@@ -331,7 +369,7 @@ class Session
      *
      * @return void
      *
-     * @see $this->phpfunc->session_set_cookie_params()
+     * @see session_set_cookie_params()
      *
      */
     public function setCookieParams(array $params)
@@ -395,7 +433,7 @@ class Session
      *
      * @return string
      *
-     * @see $this->phpfunc->session_name()
+     * @see session_name()
      *
      */
     public function setName($name)
@@ -423,7 +461,7 @@ class Session
      *
      * @return string
      *
-     * @see $this->phpfunc->session_save_path()
+     * @see session_save_path()
      *
      */
     public function setSavePath($path)
@@ -437,7 +475,7 @@ class Session
      *
      * @return string
      *
-     * @see $this->phpfunc->session_save_path()
+     * @see session_save_path()
      *
      */
     public function getSavePath()
@@ -455,7 +493,7 @@ class Session
      *
      * @return int
      *
-     * @see $this->phpfunc->session_status()
+     * @see session_status()
      *
      * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
      *
