@@ -161,6 +161,27 @@ class Session
 
     /**
      *
+     * Resumes an available session, but does not start a new one if there is no
+     * existing one.
+     *
+     * @return bool
+     *
+     */
+    public function resume()
+    {
+        if ($this->isStarted()) {
+            return true;
+        }
+
+        if ($this->isAvailable()) {
+            return $this->start();
+        }
+
+        return false;
+    }
+
+    /**
+     *
      * Clears all session variables across all segments.
      *
      * @return null
