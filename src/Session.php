@@ -10,17 +10,19 @@
  */
 namespace Aura\Session;
 
-// Definition of session_status() constants for PHP 5.3
-if (version_compare(PHP_VERSION, '5.4', '<')) {
-    if (!defined('PHP_SESSION_DISABLED')) {
-        define('PHP_SESSION_DISABLED', 0);
-    }
-    if (!defined('PHP_SESSION_NONE')) {
-        define('PHP_SESSION_NONE', 1);
-    }
-    if (!defined('PHP_SESSION_ACTIVE')) {
-        define('PHP_SESSION_ACTIVE', 2);
-    }
+/**
+ * Define constants for PHP versions earlier than 5.4.
+ */
+if (! defined('PHP_SESSION_DISABLED')) {
+    define('PHP_SESSION_DISABLED', 0);
+}
+
+if (! defined('PHP_SESSION_NONE')) {
+    define('PHP_SESSION_NONE', 1);
+}
+
+if (! defined('PHP_SESSION_ACTIVE')) {
+    define('PHP_SESSION_ACTIVE', 2);
 }
 
 /**
@@ -122,8 +124,7 @@ class Session
 
     /**
      *
-     * Tells us if a session is available to be reactivated, but not if it has
-     * started yet.
+     * Is a session available to be resumed?
      *
      * @return bool
      *
@@ -136,7 +137,7 @@ class Session
 
     /**
      *
-     * Tells us if a session has started.
+     * Is the session already started?
      *
      * @return bool
      *
@@ -148,7 +149,7 @@ class Session
 
     /**
      *
-     * Starts a new session, or resumes an existing one.
+     * Starts a new or existing session.
      *
      * @return bool
      *
@@ -187,6 +188,8 @@ class Session
      * Destroys the session entirely.
      *
      * @return bool
+     *
+     * @todo call setcookie() to delete the cookie at the client
      *
      */
     public function destroy()
@@ -346,7 +349,7 @@ class Session
      * Regenerates and replaces the current session id; also regenerates the
      * CSRF token value if one exists.
      *
-     * @return bool True is regeneration worked, false if not.
+     * @return bool True if regeneration worked, false if not.
      *
      */
     public function regenerateId()
@@ -428,6 +431,8 @@ class Session
      *
      * @see session_status()
      *
+     * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
+     *
      */
     public function getStatus()
     {
@@ -438,7 +443,6 @@ class Session
         // PHP 5.3 implementation of session_status.
         // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
         // changed when a session is active.
-        // @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
         $setting = 'session.use_trans_sid';
         $current = ini_get($setting);
         if ($current === false) {
