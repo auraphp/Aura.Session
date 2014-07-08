@@ -500,25 +500,27 @@ class Session
      */
     public function getStatus()
     {
-        if (function_exists('$this->phpfunc->session_status')) {
+        if ($this->phpfunc->function_exists('session_status')) {
             return $this->phpfunc->session_status();
         }
 
-        // PHP 5.3 implementation of $this->phpfunc->session_status.
+        // PHP 5.3 implementation of session_status.
         // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
         // changed when a session is active.
         $setting = 'session.use_trans_sid';
-        $current = ini_get($setting);
+        $current = $this->phpfunc->ini_get($setting);
         if ($current === false) {
             return PHP_SESSION_DISABLED;
         }
 
-        // ini_set raises a warning when I attempt to change this setting
-        // and session is active, I don't want that.
-        $errorlevel = error_reporting(0);
-        $result     = ini_set($setting, $current);
-        error_reporting($errorlevel);
+        // ini_set raises a warning when we attempt to change this setting
+        // and session is active
+        $level = $this->phpfunc->error_reporting(0);
+        $result = $this->phpfunc->ini_set($setting, $current);
+        $this->phpfunc->error_reporting($level);
 
-        return $result !== $current ? PHP_SESSION_ACTIVE : PHP_SESSION_NONE;
+        return $result !== $current
+             ? PHP_SESSION_ACTIVE
+             : PHP_SESSION_NONE;
     }
 }
