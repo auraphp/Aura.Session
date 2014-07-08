@@ -81,6 +81,8 @@ class Session
      */
     protected $cookie_params = array();
 
+    protected $phpfunc;
+
     /**
      *
      * Constructor
@@ -94,14 +96,17 @@ class Session
      *
      */
     public function __construct(
-        SegmentFactory   $segment_factory,
+        SegmentFactory $segment_factory,
         CsrfTokenFactory $csrf_token_factory,
+        PhpFunc $phpfunc,
         array $cookies = array()
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
+        $this->phpfunc            = $phpfunc;
         $this->cookies            = $cookies;
-        $this->cookie_params      = session_get_cookie_params();
+
+        $this->cookie_params = $this->phpfunc->session_get_cookie_params();
     }
 
     /**
@@ -156,7 +161,7 @@ class Session
      */
     public function start()
     {
-        return session_start();
+        return $this->phpfunc->session_start();
     }
 
     /**
@@ -189,7 +194,7 @@ class Session
      */
     public function clear()
     {
-        return session_unset();
+        return $this->phpfunc->session_unset();
     }
 
     /**
@@ -201,7 +206,7 @@ class Session
      */
     public function commit()
     {
-        return session_write_close();
+        return $this->phpfunc->session_write_close();
     }
 
     /**
@@ -219,7 +224,7 @@ class Session
             $this->start();
         }
         $this->clear();
-        return session_destroy();
+        return $this->phpfunc->session_destroy();
     }
 
     /**
@@ -252,12 +257,12 @@ class Session
      *
      * @return int
      *
-     * @see session_cache_expire()
+     * @see $this->phpfunc->session_cache_expire()
      *
      */
     public function setCacheExpire($expire)
     {
-        return session_cache_expire($expire);
+        return $this->phpfunc->session_cache_expire($expire);
     }
 
     /**
@@ -266,12 +271,12 @@ class Session
      *
      * @return int The cache expiration time in seconds.
      *
-     * @see session_cache_expire()
+     * @see $this->phpfunc->session_cache_expire()
      *
      */
     public function getCacheExpire()
     {
-        return session_cache_expire();
+        return $this->phpfunc->session_cache_expire();
     }
 
     /**
@@ -282,12 +287,12 @@ class Session
      *
      * @return string
      *
-     * @see session_cache_limiter()
+     * @see $this->phpfunc->session_cache_limiter()
      *
      */
     public function setCacheLimiter($limiter)
     {
-        return session_cache_limiter($limiter);
+        return $this->phpfunc->session_cache_limiter($limiter);
     }
 
     /**
@@ -296,12 +301,12 @@ class Session
      *
      * @return string The limiter value.
      *
-     * @see session_cache_limiter()
+     * @see $this->phpfunc->session_cache_limiter()
      *
      */
     public function getCacheLimiter()
     {
-        return session_cache_limiter();
+        return $this->phpfunc->session_cache_limiter();
     }
 
     /**
@@ -326,13 +331,13 @@ class Session
      *
      * @return void
      *
-     * @see session_set_cookie_params()
+     * @see $this->phpfunc->session_set_cookie_params()
      *
      */
     public function setCookieParams(array $params)
     {
         $this->cookie_params = array_merge($this->cookie_params, $params);
-        session_set_cookie_params(
+        $this->phpfunc->session_set_cookie_params(
             $this->cookie_params['lifetime'],
             $this->cookie_params['path'],
             $this->cookie_params['domain'],
@@ -362,7 +367,7 @@ class Session
      */
     public function getId()
     {
-        return session_id();
+        return $this->phpfunc->session_id();
     }
 
     /**
@@ -375,7 +380,7 @@ class Session
      */
     public function regenerateId()
     {
-        $result = session_regenerate_id(true);
+        $result = $this->phpfunc->session_regenerate_id(true);
         if ($result && $this->csrf_token) {
             $this->csrf_token->regenerateValue();
         }
@@ -390,12 +395,12 @@ class Session
      *
      * @return string
      *
-     * @see session_name()
+     * @see $this->phpfunc->session_name()
      *
      */
     public function setName($name)
     {
-        return session_name($name);
+        return $this->phpfunc->session_name($name);
     }
 
     /**
@@ -407,7 +412,7 @@ class Session
      */
     public function getName()
     {
-        return session_name();
+        return $this->phpfunc->session_name();
     }
 
     /**
@@ -418,12 +423,12 @@ class Session
      *
      * @return string
      *
-     * @see session_save_path()
+     * @see $this->phpfunc->session_save_path()
      *
      */
     public function setSavePath($path)
     {
-        return session_save_path($path);
+        return $this->phpfunc->session_save_path($path);
     }
 
     /**
@@ -432,12 +437,12 @@ class Session
      *
      * @return string
      *
-     * @see session_save_path()
+     * @see $this->phpfunc->session_save_path()
      *
      */
     public function getSavePath()
     {
-        return session_save_path();
+        return $this->phpfunc->session_save_path();
     }
 
     /**
@@ -450,18 +455,18 @@ class Session
      *
      * @return int
      *
-     * @see session_status()
+     * @see $this->phpfunc->session_status()
      *
      * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
      *
      */
     public function getStatus()
     {
-        if (function_exists('session_status')) {
-            return session_status();
+        if (function_exists('$this->phpfunc->session_status')) {
+            return $this->phpfunc->session_status();
         }
 
-        // PHP 5.3 implementation of session_status.
+        // PHP 5.3 implementation of $this->phpfunc->session_status.
         // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
         // changed when a session is active.
         $setting = 'session.use_trans_sid';

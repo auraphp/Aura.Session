@@ -25,6 +25,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
+            new Phpfunc,
             $cookies
         );
     }
