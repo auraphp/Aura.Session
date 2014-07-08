@@ -248,21 +248,21 @@ class Session
             $this->start();
         }
 
-        $this->clear();
-
         $name = $this->getName();
         $params = $this->getCookieParams();
-        if ($this->phpfunc->session_destroy()) {
+        $this->clear();
+
+        $destroyed = $this->phpfunc->session_destroy();
+        if ($destroyed) {
             call_user_func(
                 $this->destroy_cookie,
                 $name,
                 $params['path'],
                 $params['domain']
             );
-            return true;
         }
 
-        return false;
+        return $destroyed;
     }
 
     /**
