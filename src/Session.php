@@ -367,7 +367,7 @@ class Session
      *
      * @param array $params The array of session cookie param keys and values.
      *
-     * @return void
+     * @return null
      *
      * @see session_set_cookie_params()
      *
