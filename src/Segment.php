@@ -63,71 +63,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Has the segment been loaded with session values?
-     *
-     * @return bool
-     *
-     */
-    protected function isLoaded()
-    {
-        return $this->data !== null;
-    }
-
-    /**
-     *
-     * Loads the segment only if the session has already been started, or if
-     * a session is available (in which case it resumes the session first).
-     *
-     * @return bool
-     *
-     */
-    protected function resumeSession()
-    {
-        if ($this->isLoaded()) {
-            return true;
-        }
-
-        if ($this->session->isStarted() || $this->session->resume()) {
-            $this->load();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     *
-     * Sets the segment properties to $_SESSION references.
-     *
-     * @return null
-     *
-     */
-    protected function load()
-    {
-        if (! isset($_SESSION[$this->name])) {
-            $_SESSION[$this->name] = array();
-        }
-
-        $this->data =& $_SESSION[$this->name];
-    }
-
-    /**
-     *
-     * Resumes a previous session, or starts a new one, and loads the segment.
-     *
-     * @return null
-     *
-     */
-    protected function resumeOrStartSession()
-    {
-        if (! $this->resumeSession()) {
-            $this->session->start();
-            $this->load();
-        }
-    }
-
-    /**
-     *
      * Returns the value of a key in the segment.
      *
      * @param string $key The key in the segment.
@@ -234,6 +169,71 @@ class Segment implements SegmentInterface
     {
         if ($this->resumeSession()) {
             unset($this->data['__flash']);
+        }
+    }
+
+    /**
+     *
+     * Has the segment been loaded with session values?
+     *
+     * @return bool
+     *
+     */
+    protected function isLoaded()
+    {
+        return $this->data !== null;
+    }
+
+    /**
+     *
+     * Loads the segment only if the session has already been started, or if
+     * a session is available (in which case it resumes the session first).
+     *
+     * @return bool
+     *
+     */
+    protected function resumeSession()
+    {
+        if ($this->isLoaded()) {
+            return true;
+        }
+
+        if ($this->session->isStarted() || $this->session->resume()) {
+            $this->load();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * Sets the segment properties to $_SESSION references.
+     *
+     * @return null
+     *
+     */
+    protected function load()
+    {
+        if (! isset($_SESSION[$this->name])) {
+            $_SESSION[$this->name] = array();
+        }
+
+        $this->data =& $_SESSION[$this->name];
+    }
+
+    /**
+     *
+     * Resumes a previous session, or starts a new one, and loads the segment.
+     *
+     * @return null
+     *
+     */
+    protected function resumeOrStartSession()
+    {
+        if (! $this->resumeSession()) {
+            $this->session->start();
+            $this->load();
         }
     }
 }
