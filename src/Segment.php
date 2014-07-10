@@ -48,8 +48,7 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Flash data available in *both* the current *and* the next request; a
-     * reference to a $_SESSION key.
+     * Flash values for this request; a reference to a $_SESSION key.
      *
      * @var array
      *
@@ -58,8 +57,7 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Flash data available in *only* the next request; a reference to a
-     * $_SESSION key.
+     * Flash values for the next request; a reference to a $_SESSION key.
      *
      * @var array
      *
