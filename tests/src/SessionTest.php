@@ -55,17 +55,17 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('baz', 'dib');
 
         $expect = array(
-            'test' => array(
-                'foo' => 'bar',
-                'baz' => 'dib',
-            ),
             'Aura\Session' => array(
-                'flash_now' => array(
-                    'test' => array(),
-                ),
                 'flash_next' => array(
                     'test' => array(),
                 ),
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
             ),
         );
 
@@ -84,17 +84,17 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('baz', 'dib');
 
         $expect = array(
-            'test' => array(
-                'foo' => 'bar',
-                'baz' => 'dib',
-            ),
             'Aura\Session' => array(
-                'flash_now' => array(
-                    'test' => array(),
-                ),
                 'flash_next' => array(
                     'test' => array(),
                 ),
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
             ),
         );
 
@@ -119,17 +119,17 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('baz', 'dib');
 
         $expect = array(
-            'test' => array(
-                'foo' => 'bar',
-                'baz' => 'dib',
-            ),
             'Aura\Session' => array(
-                'flash_now' => array(
-                    'test' => array(),
-                ),
                 'flash_next' => array(
                     'test' => array(),
                 ),
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
             ),
         );
 

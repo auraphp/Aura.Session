@@ -185,7 +185,20 @@ class Session
      */
     public function start()
     {
-        return $this->phpfunc->session_start();
+        $result = $this->phpfunc->session_start();
+        if ($result) {
+            $this->moveFlash();
+        }
+        return $result;
+    }
+
+    protected function moveFlash()
+    {
+        if (! isset($_SESSION['Aura\Session']['flash_next'])) {
+            $_SESSION['Aura\Session']['flash_next'] = array();
+        }
+        $_SESSION['Aura\Session']['flash_now'] = $_SESSION['Aura\Session']['flash_next'];
+        $_SESSION['Aura\Session']['flash_next'] = array();
     }
 
     /**
