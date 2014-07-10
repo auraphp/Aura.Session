@@ -48,6 +48,26 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Flash data available in *both* the current *and* the next request; a
+     * reference to a $_SESSION key.
+     *
+     * @var array
+     *
+     */
+    protected $flash_now;
+
+    /**
+     *
+     * Flash data available in *only* the next request; a reference to a
+     * $_SESSION key.
+     *
+     * @var array
+     *
+     */
+    protected $flash_next;
+
+    /**
+     *
      * Constructor.
      *
      * @param Session $session The session manager.
@@ -202,7 +222,17 @@ class Segment implements SegmentInterface
             $_SESSION[$this->name] = array();
         }
 
-        $this->data =& $_SESSION[$this->name];
+        if (! isset($_SESSION['Aura\Session']['flash_now'][$this->name])) {
+            $_SESSION['Aura\Session']['flash_now'][$this->name] = array();
+        }
+
+        if (! isset($_SESSION['Aura\Session']['flash_next'][$this->name])) {
+            $_SESSION['Aura\Session']['flash_next'][$this->name] = array();
+        }
+
+        $this->data       =& $_SESSION[$this->name];
+        $this->flash_now  =& $_SESSION['Aura\Session']['flash_now'][$this->name];
+        $this->flash_next =& $_SESSION['Aura\Session']['flash_next'][$this->name];
     }
 
     /**
