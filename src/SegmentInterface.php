@@ -52,15 +52,6 @@ interface SegmentInterface
 
     /**
      *
-     * Gets the segment name.
-     *
-     * @return string
-     *
-     */
-    public function getName();
-
-    /**
-     *
      * Sets a read-once flash value on the segment.
      *
      * @param string $key The key for the flash value.

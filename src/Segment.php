@@ -163,18 +163,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Gets the segment name.
-     *
-     * @return string
-     *
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *
      * Sets a read-once flash value on the segment.
      *
      * @param string $key The key for the flash value.

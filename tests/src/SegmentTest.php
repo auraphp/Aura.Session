@@ -39,11 +39,6 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $_SESSION[$this->name][$key] = $val;
     }
 
-    public function testGetName()
-    {
-        $this->assertSame($this->name, $this->segment->getName());
-    }
-
     public function testMagicMethods()
     {
         $this->assertNull($this->segment->get('foo'));
