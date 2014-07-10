@@ -131,30 +131,14 @@ class Segment implements SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key)
+    public function getFlash($key, $alt = null)
     {
         if ($this->resumeSession() && isset($this->data['__flash'][$key])) {
             $val = $this->data['__flash'][$key];
             unset($this->data['__flash'][$key]);
             return $val;
         }
-    }
-
-    /**
-     *
-     * Checks whether a flash key is set, without reading it.
-     *
-     * @param string $key The flash key to check.
-     *
-     * @return bool True if it is set, false if not.
-     *
-     */
-    public function hasFlash($key)
-    {
-        if ($this->resumeSession()) {
-            return isset($this->data['__flash'][$key]);
-        }
-        return false;
+        return $alt;
     }
 
     /**

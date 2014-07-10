@@ -70,18 +70,7 @@ interface SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key);
-
-    /**
-     *
-     * Checks whether a flash key is set, without reading it.
-     *
-     * @param string $key The flash key to check.
-     *
-     * @return bool True if it is set, false if not.
-     *
-     */
-    public function hasFlash($key);
+    public function getFlash($key, $alt = null);
 
     /**
      *

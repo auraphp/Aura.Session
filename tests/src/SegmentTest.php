@@ -68,25 +68,17 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     public function testFlash()
     {
         // no message yet
-        $this->assertFalse($this->segment->hasFlash('message'));
+        $this->assertNull($this->segment->getFlash('message'));
 
         // add a message
         $this->segment->setFlash('message', 'doom');
-        $this->assertTrue($this->segment->hasFlash('message'));
-
-        // read the message
         $expect = 'doom';
         $actual = $this->segment->getFlash('message');
         $this->assertSame($expect, $actual);
 
-        // read-once means the message should be gone now
-        $this->assertFalse($this->segment->hasFlash('message'));
-        $this->assertNull($this->segment->getFlash('message'));
-
         // add message then clear it
         $this->segment->setFlash('message', 'doom');
         $this->segment->clearFlash();
-        $this->assertFalse($this->segment->hasFlash('message'));
         $this->assertNull($this->segment->getFlash('message'));
     }
 
@@ -154,9 +146,6 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         // session should have started
         $this->assertTrue($this->session->isStarted());
 
-        // should see it in the segment
-        $this->assertTrue($this->segment->hasFlash('foo'));
-
         // should see it in the session
         $this->assertSame('bar', $_SESSION[$this->name]['__flash']['foo']);
 
@@ -165,7 +154,6 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $foo);
 
         // should not be there any more
-        $this->assertFalse($this->segment->hasFlash('foo'));
         $this->assertFalse(isset($_SESSION[$this->name]['__flash']['foo']));
     }
 
@@ -173,13 +161,6 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->session->isStarted());
         $this->assertNull($this->segment->getFlash('foo'));
-        $this->assertFalse($this->session->isStarted());
-    }
-
-    public function testHasFlashDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        $this->assertFalse($this->segment->hasFlash('foo'));
         $this->assertFalse($this->session->isStarted());
     }
 }
