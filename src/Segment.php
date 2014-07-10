@@ -63,9 +63,7 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Checks to see if the segment data has been loaded; if not, checks to
-     * see if a session has already been started or is available, and then
-     * loads the segment data from the session.
+     * Has the segment been loaded with session values?
      *
      * @return bool
      *
@@ -75,6 +73,14 @@ class Segment implements SegmentInterface
         return $this->data !== null;
     }
 
+    /**
+     *
+     * Loads the segment only if the session has already been started, or if
+     * a session is available (in which case it resumes the session first).
+     *
+     * @return bool
+     *
+     */
     protected function resumeSession()
     {
         if ($this->isLoaded()) {
