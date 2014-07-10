@@ -127,7 +127,7 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Sets a read-once flash value on the segment.
+     * Sets a flash value for the *next* request.
      *
      * @param string $key The key for the flash value.
      *
@@ -137,12 +137,12 @@ class Segment implements SegmentInterface
     public function setFlash($key, $val)
     {
         $this->resumeOrStartSession();
-        $this->data['__flash'][$key] = $val;
+        $this->flash_next[$key] = $val;
     }
 
     /**
      *
-     * Reads the flash value for a key, thereby removing it from the session.
+     * Gets the flash value for a key in the *current* request.
      *
      * @param string $key The key for the flash value.
      *
@@ -151,17 +151,15 @@ class Segment implements SegmentInterface
      */
     public function getFlash($key, $alt = null)
     {
-        if ($this->resumeSession() && isset($this->data['__flash'][$key])) {
-            $val = $this->data['__flash'][$key];
-            unset($this->data['__flash'][$key]);
-            return $val;
-        }
-        return $alt;
+        $this->resumeSession();
+        return isset($this->flash_now[$key])
+             ? $this->flash_now[$key]
+             : $alt;
     }
 
     /**
      *
-     * Clears all flash values.
+     * Clears flash values for *only* the next request.
      *
      * @return null
      *
@@ -169,7 +167,73 @@ class Segment implements SegmentInterface
     public function clearFlash()
     {
         if ($this->resumeSession()) {
-            unset($this->data['__flash']);
+            $this->flash_next = array();
+        }
+    }
+
+    /**
+     *
+     * Gets the flash value for a key in the *next* request.
+     *
+     * @param string $key The key for the flash value.
+     *
+     * @return mixed The flash value itself.
+     *
+     */
+    public function getFlashNext($key, $alt = null)
+    {
+        $this->resumeSession();
+        return isset($this->flash_next[$key])
+             ? $this->flash_next[$key]
+             : $alt;
+    }
+
+    /**
+     *
+     * Sets a flash value for the *next* request *and* the current one.
+     *
+     * @param string $key The key for the flash value.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function setFlashNow($key, $val)
+    {
+        $this->resumeOrStartSession();
+        $this->flash_now[$key] = $val;
+        $this->flash_next[$key] = $val;
+    }
+
+    /**
+     *
+     * Clears flash values for *both* the next request *and* the current one.
+     *
+     * @return null
+     *
+     */
+    public function clearFlashNow()
+    {
+        if ($this->resumeSession()) {
+            $this->flash_now = array();
+            $this->flash_next = array();
+        }
+    }
+
+    /**
+     *
+     * Retains all the current flash values for the next request; values that
+     * already exist for the next request take precedence.
+     *
+     * @return null
+     *
+     */
+    public function keepFlash()
+    {
+        if ($this->resumeSession()) {
+            $this->flash_next = array_merge(
+                $this->flash_next,
+                $this->flash_now
+            );
         }
     }
 
