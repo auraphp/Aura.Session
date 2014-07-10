@@ -54,7 +54,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($this->segment->foo));
 
         // is the var value correct?
-        $this->assertSame('bar', $this->segment->foo);
+        $this->assertSame('bar', $this->segment->get('foo'));
 
         // is the var value referenced in the data location?
         $this->assertSame('bar', $this->getValue('foo'));
@@ -65,12 +65,12 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
         // set var from outside and check
         $this->setValue('foo', 'zim');
-        $this->assertSame('zim', $this->segment->foo);
+        $this->assertSame('zim', $this->segment->get('foo'));
     }
 
     public function test__getNoSuchKey()
     {
-        $this->assertNull($this->segment->foo);
+        $this->assertNull($this->segment->get('foo'));
     }
 
     public function testClear()
@@ -83,8 +83,8 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         // now clear the data
         $this->segment->clear();
         $this->assertSame(array(), $this->getValue());
-        $this->assertNull($this->segment->foo);
-        $this->assertNull($this->segment->baz);
+        $this->assertNull($this->segment->get('foo'));
+        $this->assertNull($this->segment->get('baz'));
     }
 
     public function testFlash()
@@ -115,7 +115,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     public function test__getDoesNotStartSession()
     {
         $this->assertFalse($this->session->isStarted());
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertNull($foo);
         $this->assertFalse($this->session->isStarted());
     }
@@ -135,7 +135,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->segment = $this->session->newSegment($this->name);
 
         // this should restart the session
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertTrue($this->session->isStarted());
     }
 
@@ -151,7 +151,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->session->isStarted());
 
         // get it from the session
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertSame('bar', $foo);
 
         // make sure it's actually in $_SESSION

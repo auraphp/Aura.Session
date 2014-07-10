@@ -79,7 +79,7 @@ class CsrfToken
      */
     public function getValue()
     {
-        return $this->segment->value;
+        return $this->segment->get('value');
     }
 
     /**

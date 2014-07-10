@@ -28,7 +28,7 @@ interface SegmentInterface
      * @return mixed
      *
      */
-    public function __get($key);
+    public function get($key);
 
     /**
      *

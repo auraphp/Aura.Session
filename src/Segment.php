@@ -123,7 +123,7 @@ class Segment implements SegmentInterface
      * @return mixed
      *
      */
-    public function __get($key)
+    public function get($key)
     {
         if ($this->isLoaded()) {
             return isset($this->data[$key]) ? $this->data[$key] : null;
