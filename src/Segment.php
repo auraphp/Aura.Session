@@ -147,39 +147,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Check whether a key is set in the segment.
-     *
-     * @param string $key The key to check.
-     *
-     * @return bool
-     *
-     */
-    public function __isset($key)
-    {
-        if ($this->isLoaded()) {
-            return isset($this->data[$key]);
-        }
-        return false;
-    }
-
-    /**
-     *
-     * Unsets a key in the segment.
-     *
-     * @param string $key The key to unset.
-     *
-     * @return null
-     *
-     */
-    public function __unset($key)
-    {
-        if ($this->isLoaded()) {
-            unset($this->data[$key]);
-        }
-    }
-
-    /**
-     *
      * Clear all data from the segment.
      *
      * @return null

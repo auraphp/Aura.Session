@@ -46,31 +46,14 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
     public function testMagicMethods()
     {
-        // var not set
-        $this->assertFalse(isset($this->segment->foo));
+        $this->assertNull($this->segment->get('foo'));
 
-        // set the var and check isset
         $this->segment->foo = 'bar';
-        $this->assertTrue(isset($this->segment->foo));
-
-        // is the var value correct?
         $this->assertSame('bar', $this->segment->get('foo'));
-
-        // is the var value referenced in the data location?
         $this->assertSame('bar', $this->getValue('foo'));
 
-        // unset and check
-        unset($this->segment->foo);
-        $this->assertFalse(isset($this->segment->foo));
-
-        // set var from outside and check
         $this->setValue('foo', 'zim');
         $this->assertSame('zim', $this->segment->get('foo'));
-    }
-
-    public function test__getNoSuchKey()
-    {
-        $this->assertNull($this->segment->get('foo'));
     }
 
     public function testClear()
@@ -156,20 +139,6 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
         // make sure it's actually in $_SESSION
         $this->assertSame($foo, $_SESSION[$this->name]['foo']);
-    }
-
-    public function test__issetDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        $this->assertFalse(isset($this->segment->foo));
-        $this->assertFalse($this->session->isStarted());
-    }
-
-    public function test__unsetDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        unset($this->segment->foo);
-        $this->assertFalse($this->session->isStarted());
     }
 
     public function testClearDoesNotStartSession()

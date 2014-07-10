@@ -43,28 +43,6 @@ interface SegmentInterface
 
     /**
      *
-     * Check whether a key is set in the segment.
-     *
-     * @param string $key The key to check.
-     *
-     * @return bool
-     *
-     */
-    public function __isset($key);
-
-    /**
-     *
-     * Unsets a key in the segment.
-     *
-     * @param string $key The key to unset.
-     *
-     * @return null
-     *
-     */
-    public function __unset($key);
-
-    /**
-     *
      * Clear all data from the segment.
      *
      * @return null
