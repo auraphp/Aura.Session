@@ -72,11 +72,16 @@ class Segment implements SegmentInterface
      */
     protected function isLoaded()
     {
-        if ($this->data !== null) {
+        return $this->data !== null;
+    }
+
+    protected function resumeSession()
+    {
+        if ($this->isLoaded()) {
             return true;
         }
 
-        if ($this->session->isStarted() || $this->session->isAvailable()) {
+        if ($this->session->isStarted() || $this->session->resume()) {
             $this->load();
             return true;
         }
@@ -125,7 +130,7 @@ class Segment implements SegmentInterface
      */
     public function get($key, $alt = null)
     {
-        if ($this->isLoaded()) {
+        if ($this->resumeSession()) {
             return isset($this->data[$key]) ? $this->data[$key] : null;
         }
 
@@ -156,7 +161,7 @@ class Segment implements SegmentInterface
      */
     public function clear()
     {
-        if ($this->isLoaded()) {
+        if ($this->resumeSession()) {
             $this->data = array();
         }
     }
@@ -187,7 +192,7 @@ class Segment implements SegmentInterface
      */
     public function getFlash($key)
     {
-        if ($this->isLoaded() && isset($this->data['__flash'][$key])) {
+        if ($this->resumeSession() && isset($this->data['__flash'][$key])) {
             $val = $this->data['__flash'][$key];
             unset($this->data['__flash'][$key]);
             return $val;
@@ -205,7 +210,7 @@ class Segment implements SegmentInterface
      */
     public function hasFlash($key)
     {
-        if ($this->isLoaded()) {
+        if ($this->resumeSession()) {
             return isset($this->data['__flash'][$key]);
         }
         return false;
@@ -220,7 +225,7 @@ class Segment implements SegmentInterface
      */
     public function clearFlash()
     {
-        if ($this->isLoaded()) {
+        if ($this->resumeSession()) {
             unset($this->data['__flash']);
         }
     }
