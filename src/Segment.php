@@ -72,11 +72,10 @@ class Segment implements SegmentInterface
      */
     public function get($key, $alt = null)
     {
-        if ($this->resumeSession()) {
-            return isset($this->data[$key]) ? $this->data[$key] : null;
-        }
-
-        return $alt;
+        $this->resumeSession();
+        return isset($this->data[$key])
+             ? $this->data[$key]
+             : $alt;
     }
 
     /**
