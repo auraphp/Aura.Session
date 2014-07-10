@@ -83,6 +83,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
+        $this->assertTrue($this->session->isStarted());
+
         $expect = array(
             'Aura\Session' => array(
                 'flash_next' => array(
@@ -117,6 +119,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment = $this->session->newSegment('test');
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
+
+        $this->assertTrue($this->session->isStarted());
 
         $expect = array(
             'Aura\Session' => array(
