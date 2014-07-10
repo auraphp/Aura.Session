@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class CsrfTokenTest extends \PHPUnit_Framework_TestCase
 {
     protected $session;

@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class SegmentTest extends \PHPUnit_Framework_TestCase
 {
     protected $session;

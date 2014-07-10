@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class SessionTest extends \PHPUnit_Framework_TestCase
 {
     // the session object
@@ -51,7 +54,21 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $expect = array(
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+            'Aura\Session' => array(
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+                'flash_next' => array(
+                    'test' => array(),
+                ),
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         // now clear it
@@ -66,7 +83,21 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $expect = array(
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+            'Aura\Session' => array(
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+                'flash_next' => array(
+                    'test' => array(),
+                ),
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         // now destroy it
@@ -87,7 +118,21 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $expect = array(
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+            'Aura\Session' => array(
+                'flash_now' => array(
+                    'test' => array(),
+                ),
+                'flash_next' => array(
+                    'test' => array(),
+                ),
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         $this->session->commit();
