@@ -97,32 +97,33 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Forces a session start (or reactivation) and loads the segment data
-     * from the session.
+     * Sets the segment properties to $_SESSION references.
      *
      * @return null
      *
      */
     protected function load()
     {
-        // is data already loaded?
-        if ($this->data !== null) {
-            // no need to re-load
-            return;
-        }
-
-        // if the session is not started, start it
-        if (! $this->session->isStarted()) {
-            $this->session->start();
-        }
-
-        // if we don't have a $_SESSION key for the segment, create one
         if (! isset($_SESSION[$this->name])) {
             $_SESSION[$this->name] = array();
         }
 
-        // set $data as a reference to the $_SESSION key
-        $this->data = &$_SESSION[$this->name];
+        $this->data =& $_SESSION[$this->name];
+    }
+
+    /**
+     *
+     * Resumes a previous session, or starts a new one, and loads the segment.
+     *
+     * @return null
+     *
+     */
+    protected function resumeOrStartSession()
+    {
+        if (! $this->resumeSession()) {
+            $this->session->start();
+            $this->load();
+        }
     }
 
     /**
@@ -154,7 +155,7 @@ class Segment implements SegmentInterface
      */
     public function set($key, $val)
     {
-        $this->load();
+        $this->resumeOrStartSession();
         $this->data[$key] = $val;
     }
 
@@ -183,7 +184,7 @@ class Segment implements SegmentInterface
      */
     public function setFlash($key, $val)
     {
-        $this->load();
+        $this->resumeOrStartSession();
         $this->data['__flash'][$key] = $val;
     }
 
