@@ -39,7 +39,7 @@ interface SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function __set($key, $val);
+    public function set($key, $val);
 
     /**
      *

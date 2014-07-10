@@ -48,8 +48,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     {
         // get a test segment and set some data
         $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
         $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);
@@ -63,8 +63,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     {
         // get a test segment and set some data
         $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
         $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);
@@ -84,8 +84,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     {
         // get a test segment and set some data
         $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
         $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
         $this->assertSame($expect, $_SESSION);

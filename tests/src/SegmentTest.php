@@ -48,7 +48,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->segment->get('foo'));
 
-        $this->segment->foo = 'bar';
+        $this->segment->set('foo', 'bar');
         $this->assertSame('bar', $this->segment->get('foo'));
         $this->assertSame('bar', $this->getValue('foo'));
 
@@ -58,8 +58,8 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
     public function testClear()
     {
-        $this->segment->foo = 'bar';
-        $this->segment->baz = 'dib';
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
         $this->assertSame('bar', $this->getValue('foo'));
         $this->assertSame('dib', $this->getValue('baz'));
 
@@ -128,7 +128,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isStarted());
 
         // set it
-        $this->segment->foo = 'bar';
+        $this->segment->set('foo', 'bar');
 
         // session should have started
         $this->assertTrue($this->session->isStarted());

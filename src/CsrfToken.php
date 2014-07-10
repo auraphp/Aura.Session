@@ -91,6 +91,7 @@ class CsrfToken
      */
     public function regenerateValue()
     {
-        $this->segment->value = hash('sha512', $this->randval->generate());
+        $hash = hash('sha512', $this->randval->generate());
+        $this->segment->set('value', $hash);
     }
 }
