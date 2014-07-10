@@ -89,7 +89,7 @@ class Segment implements SegmentInterface
      * Forces a session start (or reactivation) and loads the segment data
      * from the session.
      *
-     * @return void
+     * @return null
      *
      */
     protected function load()
@@ -168,7 +168,7 @@ class Segment implements SegmentInterface
      *
      * @param string $key The key to unset.
      *
-     * @return void
+     * @return null
      *
      */
     public function __unset($key)
@@ -182,7 +182,7 @@ class Segment implements SegmentInterface
      *
      * Clear all data from the segment.
      *
-     * @return void
+     * @return null
      *
      */
     public function clear()
@@ -258,7 +258,7 @@ class Segment implements SegmentInterface
      *
      * Clears all flash values.
      *
-     * @return void
+     * @return null
      *
      */
     public function clearFlash()

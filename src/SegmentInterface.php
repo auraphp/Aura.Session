@@ -58,7 +58,7 @@ interface SegmentInterface
      *
      * @param string $key The key to unset.
      *
-     * @return void
+     * @return null
      *
      */
     public function __unset($key);
@@ -67,7 +67,7 @@ interface SegmentInterface
      *
      * Clear all data from the segment.
      *
-     * @return void
+     * @return null
      *
      */
     public function clear();
@@ -118,7 +118,7 @@ interface SegmentInterface
      *
      * Clears all flash values.
      *
-     * @return void
+     * @return null
      *
      */
     public function clearFlash();

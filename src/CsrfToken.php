@@ -86,7 +86,7 @@ class CsrfToken
      *
      * Regenerates the value of the outgoing CSRF token.
      *
-     * @return void
+     * @return null
      *
      */
     public function regenerateValue()
