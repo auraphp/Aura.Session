@@ -11,21 +11,6 @@
 namespace Aura\Session;
 
 /**
- * Define constants for PHP versions earlier than 5.4.
- */
-if (! defined('PHP_SESSION_DISABLED')) {
-    define('PHP_SESSION_DISABLED', 0);
-}
-
-if (! defined('PHP_SESSION_NONE')) {
-    define('PHP_SESSION_NONE', 1);
-}
-
-if (! defined('PHP_SESSION_ACTIVE')) {
-    define('PHP_SESSION_ACTIVE', 2);
-}
-
-/**
  *
  * A central control point for new session segments, PHP session management
  * values, and CSRF token checking.
@@ -173,7 +158,26 @@ class Session
      */
     public function isStarted()
     {
-        return $this->getStatus() == PHP_SESSION_ACTIVE;
+        if ($this->phpfunc->function_exists('session_status')) {
+            return $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
+        }
+
+        // PHP 5.3 implementation of session_status.
+        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
+        // changed when a session is active.
+        //
+        // ini_set raises a warning when we attempt to change this setting
+        // and session is active. note that the attempted change is to the
+        // pre-existing value, so nothing will actually change on success.
+
+        $setting = 'session.use_trans_sid';
+        $current = $this->phpfunc->ini_get($setting);
+        $level   = $this->phpfunc->error_reporting(0);
+        $result  = $this->phpfunc->ini_set($setting, $current);
+        $this->phpfunc->error_reporting($level);
+        return $result !== $current
+             ? true
+             : false;
     }
 
     /**
@@ -203,7 +207,7 @@ class Session
 
     /**
      *
-     * Resumes an available session, but does not start a new one if there is no
+     * Resumes a session, but does not start a new one if there is no
      * existing one.
      *
      * @return bool
@@ -514,7 +518,7 @@ class Session
     public function getStatus()
     {
         if ($this->phpfunc->function_exists('session_status')) {
-            return $this->phpfunc->session_status();
+            return $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
         }
 
         // PHP 5.3 implementation of session_status.
@@ -522,12 +526,10 @@ class Session
         // changed when a session is active.
         $setting = 'session.use_trans_sid';
         $current = $this->phpfunc->ini_get($setting);
-        if ($current === false) {
-            return PHP_SESSION_DISABLED;
-        }
 
         // ini_set raises a warning when we attempt to change this setting
-        // and session is active
+        // and session is active. note that the attempted change is to the
+        // pre-existing value, so nothing will actually change on success.
         $level = $this->phpfunc->error_reporting(0);
         $result = $this->phpfunc->ini_set($setting, $current);
         $this->phpfunc->error_reporting($level);
