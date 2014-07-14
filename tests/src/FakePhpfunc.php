@@ -5,6 +5,8 @@ class FakePhpfunc extends Phpfunc
 {
     public $extensions = array();
 
+    public $functions = array();
+
     public function __construct()
     {
         $this->extensions = get_loaded_extensions();
@@ -17,5 +19,14 @@ class FakePhpfunc extends Phpfunc
 
         // for testing
         return in_array($name, $this->extensions);
+    }
+
+    public function function_exists($name)
+    {
+        if (isset($this->functions[$name])) {
+            return $this->functions[$name];
+        } else {
+            return $this->__call('function_exists', array($name));
+        }
     }
 }

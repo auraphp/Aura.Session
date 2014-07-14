@@ -11,6 +11,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->phpfunc = new FakePhpfunc;
         $handler = new FakeSessionHandler();
         session_set_save_handler(
             array($handler, 'open'),
@@ -28,7 +29,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
-            new Phpfunc,
+            $this->phpfunc,
             $cookies
         );
     }
@@ -244,5 +245,14 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
         // now it should already active
         $this->assertTrue($this->session->resume());
+    }
+
+    public function testIsStarted_php53()
+    {
+        $this->phpfunc->functions = array('session_status' => false);
+        $this->session = $this->newSession();
+        $this->assertFalse($this->session->isStarted());
+        $this->session->start();
+        $this->assertTrue($this->session->isStarted());
     }
 }
