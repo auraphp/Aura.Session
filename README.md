@@ -1,7 +1,9 @@
 # Aura Session
 
-Provides session management functionality, including session segments, read-
-once ("flash") values, CSRF tools, and lazy session starting.
+Provides session management functionality, including lazy session starting,
+session segments, next-request-only ("flash") values, and CSRF tools.
+
+## Foreword
 
 ### Installation
 
@@ -26,7 +28,6 @@ you notice compliance oversights, please send a patch via pull request.
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
 [PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
 [PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
-
 
 ### Community
 
@@ -83,7 +84,7 @@ $_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
 echo $segment->zim; // 'gir'
 ?>
 ```
-    
+
 The benefit of a session segment is that we can deconflict the keys in the
 `$_SESSION` superglobal by using class names (or some other unique name) for
 the segment names. With segments, different packages can use the `$_SESSION`
@@ -160,7 +161,7 @@ if ($segment->hasFlash('message')) {
 }
 ?>
 ```
-    
+
 To clear all flash values on a segment, use the `clearFlash()` method:
 
 ```php
@@ -184,8 +185,8 @@ $session->commit();
 ?>
 ```
 
-> N.b.: The `commit()` method is the equivalent of `session_write_close()`. 
-> If you do not commit the session, its values will not be available when we 
+> N.b.: The `commit()` method is the equivalent of `session_write_close()`.
+> If you do not commit the session, its values will not be available when we
 > continue the session later.
 
 ## Session Security
@@ -200,7 +201,7 @@ rights within a system) be sure to regenerate the session ID:
 $session->regenerateId();
 ?>
 ```
-    
+
 > N.b.: The `regenerateId()` method also regenerates the CSRF token value.
 
 ### Clearing and Destroying Sessions
@@ -254,7 +255,7 @@ field:
 
 ```php
 <?php
-/**  
+/**
  * @var Vendor\Package\User $user A user-authentication object.
  * @var Aura\Session\Session $session A session management object.
  */
@@ -267,9 +268,9 @@ field:
            . $csrf_value
            . '"></input>';
     } ?>
-    
+
     <!-- other form fields -->
-    
+
 </form>
 ```
 
@@ -278,7 +279,7 @@ for the authenticated user:
 
 ```php
 <?php
-/**  
+/**
  * @var Vendor\Package\User $user A user-authentication object.
  * @var Aura\Session\Session $session A session management object.
  */
