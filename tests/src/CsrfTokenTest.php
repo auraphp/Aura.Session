@@ -16,7 +16,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->phpfunc = new MockPhpfunc;
+        $this->phpfunc = new FakePhpfunc;
 
         $this->session = new Session(
             new SegmentFactory,

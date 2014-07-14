@@ -2,7 +2,7 @@
 namespace Aura\Session;
 
 // a session handler that does nothing, for testing purposes only
-class MockSessionHandler
+class FakeSessionHandler
 {
     public $data;
 
