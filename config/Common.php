@@ -21,11 +21,11 @@ class Common extends Config
         /**
          * Aura\Session\Session
          */
-        $di->params['Aura\Session\Session'] = [
+        $di->params['Aura\Session\Session'] = array(
             'segment_factory' => $di->lazyNew('Aura\Session\SegmentFactory'),
             'csrf_token_factory' => $di->lazyNew('Aura\Session\CsrfTokenFactory'),
             'cookies' => $_COOKIE,
-        ];
+        );
 
         /**
          * Aura\Session\Randval
@@ -35,8 +35,8 @@ class Common extends Config
         /**
          * Aura\Session\Segment
          */
-        $di->params['Aura\Session\Segment'] = [
+        $di->params['Aura\Session\Segment'] = array(
             'session' => $di->lazyGet('session'),
-        ];
+        );
     }
 }
