@@ -143,7 +143,7 @@ class Session
      * @return bool
      *
      */
-    public function isAvailable()
+    public function isResumable()
     {
         $name = $this->getName();
         return isset($this->cookies[$name]);
@@ -219,7 +219,7 @@ class Session
             return true;
         }
 
-        if ($this->isAvailable()) {
+        if ($this->isResumable()) {
             return $this->start();
         }
 

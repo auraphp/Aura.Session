@@ -122,7 +122,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->newSession($cookies);
 
         // should be active now, even though not started
-        $this->assertTrue($this->session->isAvailable());
+        $this->assertTrue($this->session->isResumable());
 
         // reset the segment to use the new session manager
         $this->segment = $this->session->newSegment($this->name);

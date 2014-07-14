@@ -158,10 +158,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf($expect, $actual);
     }
 
-    public function testisAvailable()
+    public function testisResumable()
     {
         // should not look active
-        $this->assertFalse($this->session->isAvailable());
+        $this->assertFalse($this->session->isResumable());
 
         // fake a cookie
         $cookies = array(
@@ -170,7 +170,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->newSession($cookies);
 
         // now it should look active
-        $this->assertTrue($this->session->isAvailable());
+        $this->assertTrue($this->session->isResumable());
     }
 
     public function testGetAndRegenerateId()
@@ -232,7 +232,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testResume()
     {
         // should not look active
-        $this->assertFalse($this->session->isAvailable());
+        $this->assertFalse($this->session->isResumable());
         $this->assertFalse($this->session->resume());
 
         // fake a cookie so a session looks available
