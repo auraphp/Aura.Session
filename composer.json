@@ -26,12 +26,16 @@
     },
     "autoload": {
         "psr-4": {
-            "Aura\\Session\\": "src/"
+            "Aura\\Session\\": "src/",
+            "Aura\\Session\\_Config\\": "config/"
         }
     },
     "extra": {
         "aura": {
-            "type": "library"
+            "type": "library",
+            "config": {
+                 "common": "Aura\\Session\\_Config\\Common"
+            }
         },
         "branch-alias": {
             "dev-develop-2": "2.0.x-dev"
