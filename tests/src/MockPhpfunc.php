@@ -3,16 +3,13 @@ namespace Aura\Session;
 
 class MockPhpfunc extends Phpfunc
 {
-    protected $extensions = array();
+    public $extensions = array();
+
+    public $functions = array();
 
     public function __construct()
     {
-        $this->setExtensions(get_loaded_extensions());
-    }
-
-    public function setExtensions(array $extensions)
-    {
-        $this->extensions = $extensions;
+        $this->extensions = get_loaded_extensions();
     }
 
     public function extension_loaded($name)

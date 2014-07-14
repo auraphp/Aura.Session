@@ -229,24 +229,11 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetStatus()
-    {
-        $expect = PHP_SESSION_NONE;
-        $actual = $this->session->getStatus();
-        $this->assertSame($expect, $actual);
-
-        $expect = PHP_SESSION_ACTIVE;
-        $this->session->start();
-        $actual = $this->session->getStatus();
-        $this->assertSame($expect, $actual);
-    }
-
     public function testResume()
     {
         // should not look active
         $this->assertFalse($this->session->isAvailable());
         $this->assertFalse($this->session->resume());
-
 
         // fake a cookie so a session looks available
         $cookies = array(
