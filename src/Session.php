@@ -159,10 +159,17 @@ class Session
     public function isStarted()
     {
         if ($this->phpfunc->function_exists('session_status')) {
-            return $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
+            $started = $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
+        } else {
+            $started = $this->sessionStatus();
         }
 
-        // PHP 5.3 implementation of session_status.
+        return $started;
+    }
+
+    protected function sessionStatus()
+    {
+        // PHP 5.3 implementation of session_status for only active/none.
         // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
         // changed when a session is active.
         //
@@ -175,9 +182,7 @@ class Session
         $level   = $this->phpfunc->error_reporting(0);
         $result  = $this->phpfunc->ini_set($setting, $current);
         $this->phpfunc->error_reporting($level);
-        return $result !== $current
-             ? true
-             : false;
+        return $result !== $current;
     }
 
     /**
@@ -498,44 +503,5 @@ class Session
     public function getSavePath()
     {
         return $this->phpfunc->session_save_path();
-    }
-
-    /**
-     *
-     * Returns the current session status:
-     *
-     * - `PHP_SESSION_DISABLED` if sessions are disabled.
-     * - `PHP_SESSION_NONE` if sessions are enabled, but none exists.
-     * - `PHP_SESSION_ACTIVE` if sessions are enabled, and one exists.
-     *
-     * @return int
-     *
-     * @see session_status()
-     *
-     * @see http://stackoverflow.com/questions/3788369/how-to-tell-if-a-session-is-active/7656468#7656468
-     *
-     */
-    public function getStatus()
-    {
-        if ($this->phpfunc->function_exists('session_status')) {
-            return $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
-        }
-
-        // PHP 5.3 implementation of session_status.
-        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
-        // changed when a session is active.
-        $setting = 'session.use_trans_sid';
-        $current = $this->phpfunc->ini_get($setting);
-
-        // ini_set raises a warning when we attempt to change this setting
-        // and session is active. note that the attempted change is to the
-        // pre-existing value, so nothing will actually change on success.
-        $level = $this->phpfunc->error_reporting(0);
-        $result = $this->phpfunc->ini_set($setting, $current);
-        $this->phpfunc->error_reporting($level);
-
-        return $result !== $current
-             ? PHP_SESSION_ACTIVE
-             : PHP_SESSION_NONE;
     }
 }
