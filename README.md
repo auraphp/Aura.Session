@@ -38,57 +38,54 @@ To ask questions, provide feedback, or otherwise communicate with the Aura commu
 
 ### Instantiation
 
-The easiest way to get started is to use the `scripts/instance.php` script to
-instantiate a session `Session` object.
+The easiest way to get started is to use the _SessionFactory_ to create a _Session_ manager object.
 
 ```php
 <?php
-$session = include "/path/to/Aura.Session/scripts/instance.php";
+$session_factory = new \Aura\Session\SessionFactory;
+$session = $session_factory->newInstance($_COOKIE);
 ?>
 ```
 
-You can then use the `Session` to work with the session values.
+We can then use the _Session_ instance to create _Segment_ objects to manage session values and flashes. (In general, we should not need to manipulate the _Session_ manager directly -- we will work mostly with _Segment_ objects.)
 
 
 ### Segments
 
-A session segment is a reference to an array key in the `$_SESSION`
-superglobal. For example, if you ask for a segment named `ClassName`, the
-segment will be a reference to `$_SESSION['ClassName']`. All values in the
-`ClassName` segment will be stored in an array under that key.
+In normal PHP, we keep session values in the `$_SESSION` array. However, when different libraries and projects try to modify the same keys, the resulting conflicts can result in unexpected behavior. To resolve this, we use _Segment_ objects. Each _Segment_ addresses a named key within the `$_SESSION` array for deconfliction purposes.
+
+For example, if we create a _Segment_  for _Vendor\\Package\\ClassName_, that _Segment_ will contain a reference to `$_SESSION['Vendor\Package\ClassName']`. We can then `set()` and `get()` values on the _Segment_, and the values will reside in an array under that reference.
 
 ```php
 <?php
-// get a session segment; starts the session if it is not already,
-// and creates the $_SESSION key if it does not exist.
-$segment = $session->newSegment('Vendor\Package\ClassName');
+// get a segment object
+$segment = $session->getSegment('Vendor\Package\ClassName');
+
+// try to get a value that does not exist yet
+echo $segment->get('foo', 'not set'); // 'not set'
 
 // set some values on the segment
-$segment->foo = 'bar';
-$segment->baz = 'dib';
+$segment->set('foo', 'bar');
 
-// the $_SESSION superglobal is now:
+// the $_SESSION array is now:
 // $_SESSION = [
 //      'Vendor\Package\ClassName' => [
 //          'foo' => 'bar',
-//          'baz' => 'dib',
 //      ],
 // ];
 
-// get the values from the segment
-echo $segment->foo; // 'bar'
+// now get a value from the segment
+echo $segment->get('foo', 'not set'); // 'bar'
 
-// because the segment is a reference to $_SESSION, you can modify
+// because the segment is a reference to $_SESSION, we can modify
 // the superglobal directly and the segment values will also change.
 $_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
-echo $segment->zim; // 'gir'
+echo $segment->get('zim'); // 'gir'
 ?>
 ```
 
-The benefit of a session segment is that we can deconflict the keys in the
-`$_SESSION` superglobal by using class names (or some other unique name) for
-the segment names. With segments, different packages can use the `$_SESSION`
-superglobal without stepping on each other's toes.
+Again, the benefit of a session segment is that we can deconflict the keys in the `$_SESSION` superglobal by using class names (or some other unique name) for the segment names. With segments, different packages can use the `$_SESSION` superglobal without stepping on each other's toes.
+
 
 ### Lazy Session Starting
 
@@ -121,7 +118,7 @@ To set a read-once value on a segment, use the `setFlash()` method.
 ```php
 <?php
 // get a segment
-$segment = $session->newSegment('Vendor\Package\ClassName');
+$segment = $session->getSegment('Vendor\Package\ClassName');
 
 // set a read-once value on the segment
 $segment->setFlash('message', 'Hello world!');
@@ -133,7 +130,7 @@ Then, in subsequent sessions, we can read the flash value using `getFlash()`:
 ```php
 <?php
 // get a segment
-$segment = $session->newSegment('Vendor\Package\ClassName');
+$segment = $session->getSegment('Vendor\Package\ClassName');
 
 // get the read-once value
 $message = $segment->getFlash('message'); // 'Hello world!'
@@ -150,7 +147,7 @@ yet (thereby removing it from the session). In these cases, we can use the
 ```php
 <?php
 // get a segment
-$segment = $session->newSegment('Vendor\Package\ClassName');
+$segment = $session->getSegment('Vendor\Package\ClassName');
 
 // is there a read-once 'message' available?
 // this will *not* cause a read-once removal.
@@ -167,7 +164,7 @@ To clear all flash values on a segment, use the `clearFlash()` method:
 ```php
 <?php
 // get a segment
-$segment = $session->newSegment('Vendor\Package\ClassName');
+$segment = $session->getSegment('Vendor\Package\ClassName');
 
 // clear all flash values, but leave all other segment values in place
 $segment->clearFlash();

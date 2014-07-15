@@ -131,7 +131,7 @@ class Session
      * @return Segment
      *
      */
-    public function newSegment($name)
+    public function getSegment($name)
     {
         return $this->segment_factory->newInstance($this, $name);
     }

@@ -25,6 +25,7 @@ class Common extends Config
             'segment_factory' => $di->lazyNew('Aura\Session\SegmentFactory'),
             'csrf_token_factory' => $di->lazyNew('Aura\Session\CsrfTokenFactory'),
             'cookies' => $_COOKIE,
+            'phpfunc' => $di->lazyNew('Aura\Session\Phpfunc'),
         );
 
         /**

@@ -15,7 +15,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->session = $this->newSession();
-        $this->segment = $this->session->newSegment($this->name);
+        $this->segment = $this->session->getSegment($this->name);
     }
 
     protected function newSession(array $cookies = array())
@@ -125,7 +125,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->session->isResumable());
 
         // reset the segment to use the new session manager
-        $this->segment = $this->session->newSegment($this->name);
+        $this->segment = $this->session->getSegment($this->name);
 
         // this should restart the session
         $foo = $this->segment->get('foo');
