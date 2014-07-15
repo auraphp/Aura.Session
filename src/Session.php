@@ -85,24 +85,24 @@ class Session
         CsrfTokenFactory $csrf_token_factory,
         PhpFunc $phpfunc,
         array $cookies = array(),
-        $destroy_cookie = null
+        $delete_cookie = null
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
         $this->phpfunc            = $phpfunc;
         $this->cookies            = $cookies;
 
-        $this->setDestroyCookie($destroy_cookie);
+        $this->setDeleteCookie($delete_cookie);
 
         $this->cookie_params = $this->phpfunc->session_get_cookie_params();
     }
 
-    protected function setDestroyCookie($destroy_cookie)
+    public function setDeleteCookie($delete_cookie)
     {
-        $this->destroy_cookie = $destroy_cookie;
-        if (! $this->destroy_cookie) {
+        $this->delete_cookie = $delete_cookie;
+        if (! $this->delete_cookie) {
             $phpfunc = $this->phpfunc;
-            $this->destroy_cookie = function (
+            $this->delete_cookie = function (
                 $name,
                 $path,
                 $domain
@@ -277,7 +277,7 @@ class Session
         $destroyed = $this->phpfunc->session_destroy();
         if ($destroyed) {
             call_user_func(
-                $this->destroy_cookie,
+                $this->delete_cookie,
                 $name,
                 $params['path'],
                 $params['domain']

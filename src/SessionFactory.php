@@ -3,14 +3,15 @@ namespace Aura\Session;
 
 class SessionFactory
 {
-    public function newInstance(array $cookies)
+    public function newInstance(array $cookies, $delete_cookie = null)
     {
         $phpfunc = new Phpfunc;
         return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval($phpfunc)),
             $phpfunc,
-            $cookies
+            $cookies,
+            $delete_cookie
         );
     }
 }
