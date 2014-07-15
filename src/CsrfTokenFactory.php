@@ -52,7 +52,7 @@ class CsrfTokenFactory
      */
     public function newInstance(Session $session)
     {
-        $segment = $session->newSegment('Aura\Session\CsrfToken');
+        $segment = $session->getSegment('Aura\Session\CsrfToken');
         return new CsrfToken($segment, $this->randval);
     }
 }

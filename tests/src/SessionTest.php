@@ -51,7 +51,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testClear()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
@@ -80,7 +80,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
@@ -117,7 +117,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testCommitAndDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $segment->set('foo', 'bar');
         $segment->set('baz', 'dib');
 
@@ -142,13 +142,13 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
         $this->session->commit();
         $this->session->destroy();
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $this->assertSame(array(), $_SESSION);
     }
 
-    public function testNewSegment()
+    public function testGetSegment()
     {
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $this->assertInstanceof('Aura\Session\Segment', $segment);
     }
 
