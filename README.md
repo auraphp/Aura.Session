@@ -54,137 +54,95 @@ We can then use the _Session_ instance to create _Segment_ objects to manage ses
 
 In normal PHP, we keep session values in the `$_SESSION` array. However, when different libraries and projects try to modify the same keys, the resulting conflicts can result in unexpected behavior. To resolve this, we use _Segment_ objects. Each _Segment_ addresses a named key within the `$_SESSION` array for deconfliction purposes.
 
-For example, if we create a _Segment_  for _Vendor\\Package\\ClassName_, that _Segment_ will contain a reference to `$_SESSION['Vendor\Package\ClassName']`. We can then `set()` and `get()` values on the _Segment_, and the values will reside in an array under that reference.
+For example, if we get a _Segment_  for `Vendor\\Package\\ClassName`, that _Segment_ will contain a reference to `$_SESSION['Vendor\Package\ClassName']`. We can then `set()` and `get()` values on the _Segment_, and the values will reside in an array under that reference.
 
 ```php
 <?php
-// get a segment object
+// get a _Segment_ object
 $segment = $session->getSegment('Vendor\Package\ClassName');
 
-// try to get a value that does not exist yet
-echo $segment->get('foo', 'not set'); // 'not set'
+// try to get a value from the segment;
+// if it does not exist, return an alternative value
+echo $segment->get('foo'); // null
+echo $segment->get('baz', 'not set'); // 'not set'
 
 // set some values on the segment
 $segment->set('foo', 'bar');
+$segment->set('baz', 'dib');
 
 // the $_SESSION array is now:
-// $_SESSION = [
-//      'Vendor\Package\ClassName' => [
+// $_SESSION = array(
+//      'Vendor\Package\ClassName' => array(
 //          'foo' => 'bar',
-//      ],
-// ];
+//          'baz' => 'dib',
+//      ),
+// );
 
-// now get a value from the segment
-echo $segment->get('foo', 'not set'); // 'bar'
+// try again to get a value from the segment
+echo $segment->get('foo'); // 'bar'
 
 // because the segment is a reference to $_SESSION, we can modify
-// the superglobal directly and the segment values will also change.
+// the superglobal directly and the segment values will also change
 $_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
 echo $segment->get('zim'); // 'gir'
 ?>
 ```
 
-Again, the benefit of a session segment is that we can deconflict the keys in the `$_SESSION` superglobal by using class names (or some other unique name) for the segment names. With segments, different packages can use the `$_SESSION` superglobal without stepping on each other's toes.
+To clear all the values on a _Segment_, use the `clear()` method.
 
 
 ### Lazy Session Starting
 
-Merely instantiating the `Session` and getting a session segment does *not*
-start a session automatically. Instead, the session is started only when you
-read or write to a session segment.  This means we can create segments at
-will, and no session will start until we read from or write to one them.
+Merely instantiating the _Session_ manager and getting a _Segment_ from it does *not* call `session_start()`. Instead, `session_start()` occurs only in certain circumstances:
 
-If we *read* from a session segment, it will check to see if a previously
-available session exists, and reactivate it if it does. Reading from a segment
-will not start a new session.
+- If we *read* from a _Segment_ (e.g. with `get()`) the _Session_ looks to see if a session cookie has already been set. If so, it will call `session_start()` to resume the previously-started session. If not, it knows there are no previously existing `$_SESSION` values, so it will not call `session_start()`.
 
-If we *write* to a session segment, it will check to see if a previously
-available session exists, and reactivate it if it does. If there is no
-previously available session, it will start a new session, and write to it.
+- If we *write* to a _Segment_ (e.g. with `set()`) the _Session_ will always call `session_start()`. This will resume a previous session if it exists, or start a new one if it does not.
 
-Of course, we can force a session start or reactivation by calling the
-`Session`'s `start()` method, but that defeats the purpose of lazy-loaded
-sessions.
+This means we can create each _Segment_ at will, and `session_start()` will not be invoked until we actually interact with a _Segment_ in a particular way. This helps to conserve the resources involved in starting a session.
 
-### Read-Once ("Flash") Values
+Of course, we can force a session start or reactivation by calling the _Session_ `start()` method, but that defeats the purpose of lazy-loaded sessions.
 
-Session segment values persist until a session is cleared or destroyed.
-However, sometimes it is useful to set a value that propagates only until it
-is used, and then automatically clears itself. These are called "flash" or
-"read-once" values.
 
-To set a read-once value on a segment, use the `setFlash()` method.
+### Saving, Clearing, and Destroying Sessions
+
+To save the session data and end its use during the current request, call the `commit()` method on the _Session_ manager:
 
 ```php
 <?php
-// get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
-
-// set a read-once value on the segment
-$segment->setFlash('message', 'Hello world!');
+$session->commit(); // equivalent of session_write_close()
 ?>
 ```
 
-Then, in subsequent sessions, we can read the flash value using `getFlash()`:
+To clear all session data and flash values for all segments, but leave the session active during the current session, use the `clear()` method on the _Session_ manager.
 
 ```php
 <?php
-// get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
-
-// get the read-once value
-$message = $segment->getFlash('message'); // 'Hello world!'
-
-// if we try to read it again, it won't be there
-$not_there = $segment->getFlash('message'); // null
+$session->clear();
 ?>
 ```
 
-Sometimes we need to know if a flash value exists, but don't want to read it
-yet (thereby removing it from the session). In these cases, we can use the
-`hasFlash()` method:
+To clear the data *and* terminate the session, thereby destroying it completely, call the `destroy()` method:
 
 ```php
 <?php
-// get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
+$session->destroy(); // equivalent of session_destroy()
+?>
+```
 
-// is there a read-once 'message' available?
-// this will *not* cause a read-once removal.
-if ($segment->hasFlash('message')) {
-    echo "Yes, there is a message available.";
-} else {
-    echo "No message available.";
+Calling `destroy()` will also delete the session cookie via `setcookie()`. If we have an alternative means by which we delete cookies, we should pass a callable as the second argument to the _SessionFactory_ method `newInstance()`. The callable should take three parameters: the cookie name, path, and domain.
+
+```php
+<?php
+// assume $response is a framework response object.
+// this will be used to delete the session cookie.
+$delete_cookie = function ($name, $path, $domain) use ($response) {
+    $response->cookies->delete($name, $path, $domain);
 }
+
+$session = $session_factory->newInstance($_COOKIE, $delete_cookie);
 ?>
 ```
-
-To clear all flash values on a segment, use the `clearFlash()` method:
-
-```php
-<?php
-// get a segment
-$segment = $session->getSegment('Vendor\Package\ClassName');
-
-// clear all flash values, but leave all other segment values in place
-$segment->clearFlash();
-?>
-```
-
-### Saving Session Data
-
-When you are done with a session and want its data to be available later, call
-the `commit()` method:
-
-```php
-<?php
-$session->commit();
-?>
-```
-
-> N.b.: The `commit()` method is the equivalent of `session_write_close()`.
-> If you do not commit the session, its values will not be available when we
-> continue the session later.
 
 ## Session Security
 
@@ -200,27 +158,6 @@ $session->regenerateId();
 ```
 
 > N.b.: The `regenerateId()` method also regenerates the CSRF token value.
-
-### Clearing and Destroying Sessions
-
-To clear the in-memory session data, but leave the session active, use the
-`clear()` method:
-
-```php
-<?php
-$session->clear();
-?>
-```
-
-To end a session and remove its data (both committed and in-memory), generally
-after a user signs out or when authentication timeouts occur, call the
-`destroy()` method:
-
-```php
-<?php
-$session->destroy();
-?>
-```
 
 ### Cross-Site Request Forgery
 
@@ -246,7 +183,7 @@ To defend against CSRF attacks, server-side logic should:
 > incidentally is an improper use of GET), we should also check for CSRF on
 > GET requests from authenticated users.
 
-For this example, the form field name will be `'__csrf_value''`. In each form
+For this example, the form field name will be `__csrf_value`. In each form
 we want to protect against CSRF, we use the session CSRF token value for that
 field:
 
@@ -259,10 +196,10 @@ field:
 ?>
 <form method="post">
 
-    <?php if ($user->isAuthenticated()) {
+    <?php if ($user->auth->isValid()) {
         $csrf_value = $session->getCsrfToken()->getValue();
         echo '<input type="hidden" name="__csrf_value" value="'
-           . $csrf_value
+           . htmlspecialchars($csrf_value, ENT_QUOTES, 'UTF-8')
            . '"></input>';
     } ?>
 
@@ -285,7 +222,7 @@ $unsafe = $_SERVER['REQUEST_METHOD'] == 'POST'
        || $_SERVER['REQUEST_METHOD'] == 'PUT'
        || $_SERVER['REQUEST_METHOD'] == 'DELETE';
 
-if ($unsafe && $user->isAuthenticated()) {
+if ($unsafe && $user->auth->isValid()) {
     $csrf_value = $_POST['__csrf_value'];
     $csrf_token = $session->getCsrfToken();
     if (! $csrf_token->isValid($csrf_value)) {
@@ -308,3 +245,37 @@ a `Randval` class that implements a `RandvalInterface`, and uses either the
 have one of these extensions installed, you will need your own random-value
 implementation of the `RandvalInterface`. We suggest a wrapper around
 [RandomLib](https://github.com/ircmaxell/RandomLib).
+
+
+## Flash Values
+
+_Segment_ values persist until the session is cleared or destroyed. However, sometimes it is useful to set a value that propagates only through the next request, and is then discarded. These are called "flash" values.
+
+To set a flash value on a _Segment_, use the `setFlash()` method.
+
+```php
+<?php
+$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment->setFlash('message', 'Hello world!');
+?>
+```
+
+Then, in subsequent requests, we can read the flash value using `getFlash()`:
+
+```php
+<?php
+$segment = $session->getSegment('Vendor\Package\ClassName');
+$message = $segment->getFlash('message'); // 'Hello world!'
+?>
+```
+
+> N.b. As with `get()`, we can provide an alternative value if the flash key does not exist. For example, `getFlash('foo', 'not set')` will return 'not set' if there is no 'foo' key available.
+
+Using `setFlash()` makes the flash value available only in the *next* request, not the current one. To make the flash value available immediately as well as in the next request, use `setFlashNow($key, $val)`.
+
+Using `getFlash()` returns only the values that are available now from having been set in the previous request. To read a value that will be available in the next request, use `getFlashNext($key, $alt)`.
+
+Use the `clearFlash()` method to clear all flash values on a _Segment_.
+
+
+
