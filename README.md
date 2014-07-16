@@ -54,7 +54,7 @@ We can then use the _Session_ instance to create _Segment_ objects to manage ses
 
 In normal PHP, we keep session values in the `$_SESSION` array. However, when different libraries and projects try to modify the same keys, the resulting conflicts can result in unexpected behavior. To resolve this, we use _Segment_ objects. Each _Segment_ addresses a named key within the `$_SESSION` array for deconfliction purposes.
 
-For example, if we get a _Segment_  for `Vendor\\Package\\ClassName`, that _Segment_ will contain a reference to `$_SESSION['Vendor\Package\ClassName']`. We can then `set()` and `get()` values on the _Segment_, and the values will reside in an array under that reference.
+For example, if we get a _Segment_  for `Vendor\Package\ClassName`, that _Segment_ will contain a reference to `$_SESSION['Vendor\Package\ClassName']`. We can then `set()` and `get()` values on the _Segment_, and the values will reside in an array under that reference.
 
 ```php
 <?php
@@ -106,6 +106,8 @@ Of course, we can force a session start or reactivation by calling the _Session_
 
 ### Saving, Clearing, and Destroying Sessions
 
+> N.b.: These methods apply to all session data and flashes across all segments.
+
 To save the session data and end its use during the current request, call the `commit()` method on the _Session_ manager:
 
 ```php
@@ -114,7 +116,7 @@ $session->commit(); // equivalent of session_write_close()
 ?>
 ```
 
-To clear all session data and flash values for all segments, but leave the session active during the current session, use the `clear()` method on the _Session_ manager.
+To clear all session data, but leave the session active during the current request, use the `clear()` method on the _Session_ manager.
 
 ```php
 <?php
@@ -122,7 +124,7 @@ $session->clear();
 ?>
 ```
 
-To clear the data *and* terminate the session, thereby destroying it completely, call the `destroy()` method:
+To clear the data *and* terminate the session for this and future requests, thereby destroying it completely, call the `destroy()` method:
 
 ```php
 <?php
@@ -251,6 +253,8 @@ implementation of the `RandvalInterface`. We suggest a wrapper around
 
 _Segment_ values persist until the session is cleared or destroyed. However, sometimes it is useful to set a value that propagates only through the next request, and is then discarded. These are called "flash" values.
 
+### Setting And Getting Flash Values
+
 To set a flash value on a _Segment_, use the `setFlash()` method.
 
 ```php
@@ -275,7 +279,8 @@ Using `setFlash()` makes the flash value available only in the *next* request, n
 
 Using `getFlash()` returns only the values that are available now from having been set in the previous request. To read a value that will be available in the next request, use `getFlashNext($key, $alt)`.
 
-Use the `clearFlash()` method to clear all flash values on a _Segment_.
+### Keeping and Clearing Flash Values
 
+Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method, or we can keep all flashes for all segments by calling the _Session_ `keepFlash()` method.
 
-
+Similarly, we can clear flash values on a per-segment basis or a session-wide bases.  Use the `clearFlash()` method on the _Segment_ to clear flashes just for that segment, or the same method on the _Session_ to clear all flash values for all segments.
