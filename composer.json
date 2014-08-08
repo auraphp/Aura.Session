@@ -22,7 +22,7 @@
     "autoload": {
         "psr-0": {
             "Aura\\Session": "src/"
-        },        
+        },
         "psr-4": {
             "Aura\\Session\\_Config\\": "config/"
         }
@@ -31,8 +31,11 @@
         "aura": {
             "type": "library",
             "config": {
-                "common": "Aura\\Session\\_Config\\Common"                
+                "common": "Aura\\Session\\_Config\\Common"
             }
+        },
+        "branch-alias": {
+            "dev-develop": "1.0.x-dev"
         }
     }
 }
