@@ -51,7 +51,7 @@ class CsrfToken
     {
         $this->segment = $segment;
         $this->randval = $randval;
-        if (! isset($this->segment->value)) {
+        if (! $this->segment->get('value')) {
             $this->regenerateValue();
         }
     }
