@@ -56,10 +56,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $segment->set('baz', 'dib');
 
         $expect = array(
-            'Aura\Session\Flash\Next' => array(
+            Session::FLASH_NEXT => array(
                 'test' => array(),
             ),
-            'Aura\Session\Flash\Now' => array(
+            Session::FLASH_NOW => array(
                 'test' => array(),
             ),
             'test' => array(
@@ -85,10 +85,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->session->isStarted());
 
         $expect = array(
-            'Aura\Session\Flash\Next' => array(
+            Session::FLASH_NEXT => array(
                 'test' => array(),
             ),
-            'Aura\Session\Flash\Now' => array(
+            Session::FLASH_NOW => array(
                     'test' => array(),
             ),
             'test' => array(
@@ -120,10 +120,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->session->isStarted());
 
         $expect = array(
-            'Aura\Session\Flash\Next' => array(
+            Session::FLASH_NEXT => array(
                 'test' => array(),
             ),
-            'Aura\Session\Flash\Now' => array(
+            Session::FLASH_NOW => array(
                 'test' => array(),
             ),
             'test' => array(

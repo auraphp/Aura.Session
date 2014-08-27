@@ -110,7 +110,7 @@ class Segment implements SegmentInterface
     public function setFlash($key, $val)
     {
         $this->resumeOrStartSession();
-        $_SESSION['Aura\Session\Flash\Next'][$this->name][$key] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
     /**
@@ -125,8 +125,8 @@ class Segment implements SegmentInterface
     public function getFlash($key, $alt = null)
     {
         $this->resumeSession();
-        return isset($_SESSION['Aura\Session\Flash\Now'][$this->name][$key])
-             ? $_SESSION['Aura\Session\Flash\Now'][$this->name][$key]
+        return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NOW][$this->name][$key]
              : $alt;
     }
 
@@ -140,7 +140,7 @@ class Segment implements SegmentInterface
     public function clearFlash()
     {
         if ($this->resumeSession()) {
-            $_SESSION['Aura\Session\Flash\Next'][$this->name] = array();
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
@@ -156,8 +156,8 @@ class Segment implements SegmentInterface
     public function getFlashNext($key, $alt = null)
     {
         $this->resumeSession();
-        return isset($_SESSION['Aura\Session\Flash\Next'][$this->name][$key])
-             ? $_SESSION['Aura\Session\Flash\Next'][$this->name][$key]
+        return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NEXT][$this->name][$key]
              : $alt;
     }
 
@@ -173,8 +173,8 @@ class Segment implements SegmentInterface
     public function setFlashNow($key, $val)
     {
         $this->resumeOrStartSession();
-        $_SESSION['Aura\Session\Flash\Now'][$this->name][$key] = $val;
-        $_SESSION['Aura\Session\Flash\Next'][$this->name][$key] = $val;
+        $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
     /**
@@ -187,8 +187,8 @@ class Segment implements SegmentInterface
     public function clearFlashNow()
     {
         if ($this->resumeSession()) {
-            $_SESSION['Aura\Session\Flash\Now'][$this->name] = array();
-            $_SESSION['Aura\Session\Flash\Next'][$this->name] = array();
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
@@ -203,9 +203,9 @@ class Segment implements SegmentInterface
     public function keepFlash()
     {
         if ($this->resumeSession()) {
-            $_SESSION['Aura\Session\Flash\Next'][$this->name] = array_merge(
-                $_SESSION['Aura\Session\Flash\Next'][$this->name],
-                $_SESSION['Aura\Session\Flash\Now'][$this->name]
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array_merge(
+                $_SESSION[Session::FLASH_NEXT][$this->name],
+                $_SESSION[Session::FLASH_NOW][$this->name]
             );
         }
     }
@@ -257,12 +257,12 @@ class Segment implements SegmentInterface
             $_SESSION[$this->name] = array();
         }
 
-        if (! isset($_SESSION['Aura\Session\Flash\Now'][$this->name])) {
-            $_SESSION['Aura\Session\Flash\Now'][$this->name] = array();
+        if (! isset($_SESSION[Session::FLASH_NOW][$this->name])) {
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
         }
 
-        if (! isset($_SESSION['Aura\Session\Flash\Next'][$this->name])) {
-            $_SESSION['Aura\Session\Flash\Next'][$this->name] = array();
+        if (! isset($_SESSION[Session::FLASH_NEXT][$this->name])) {
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
