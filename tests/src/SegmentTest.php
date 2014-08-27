@@ -90,7 +90,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $this->segment->getFlash('baz'));
 
         // set some current values and make sure they get kept
-        $now =& $_SESSION['Aura\Session']['flash_now'][$this->name];
+        $now =& $_SESSION['Aura\Session\Flash\Now'][$this->name];
         $now['foo'] = 'bar';
         $now['baz'] = 'dib';
         $this->segment->keepFlash();
@@ -170,7 +170,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->session->isStarted());
 
         // should see it in the session
-        $actual = $_SESSION['Aura\Session']['flash_next'][$this->name]['foo'];
+        $actual = $_SESSION['Aura\Session\Flash\Next'][$this->name]['foo'];
         $this->assertSame('bar', $actual);
 
     }

@@ -203,11 +203,11 @@ class Session
 
     protected function moveFlash()
     {
-        if (! isset($_SESSION['Aura\Session']['flash_next'])) {
-            $_SESSION['Aura\Session']['flash_next'] = array();
+        if (! isset($_SESSION['Aura\Session\Flash\Next'])) {
+            $_SESSION['Aura\Session\Flash\Next'] = array();
         }
-        $_SESSION['Aura\Session']['flash_now'] = $_SESSION['Aura\Session']['flash_next'];
-        $_SESSION['Aura\Session']['flash_next'] = array();
+        $_SESSION['Aura\Session\Flash\Now'] = $_SESSION['Aura\Session\Flash\Next'];
+        $_SESSION['Aura\Session\Flash\Next'] = array();
     }
 
     /**
