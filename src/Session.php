@@ -20,6 +20,9 @@ namespace Aura\Session;
  */
 class Session
 {
+    const FLASH_NEXT = 'Aura\Session\Flash\Next';
+    const FLASH_NOW = 'Aura\Session\Flash\Now';
+
     /**
      *
      * A session segment factory.
@@ -203,11 +206,11 @@ class Session
 
     protected function moveFlash()
     {
-        if (! isset($_SESSION['Aura\Session']['flash_next'])) {
-            $_SESSION['Aura\Session']['flash_next'] = array();
+        if (! isset($_SESSION[Session::FLASH_NEXT])) {
+            $_SESSION[Session::FLASH_NEXT] = array();
         }
-        $_SESSION['Aura\Session']['flash_now'] = $_SESSION['Aura\Session']['flash_next'];
-        $_SESSION['Aura\Session']['flash_next'] = array();
+        $_SESSION[Session::FLASH_NOW] = $_SESSION[Session::FLASH_NEXT];
+        $_SESSION[Session::FLASH_NEXT] = array();
     }
 
     /**

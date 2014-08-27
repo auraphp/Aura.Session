@@ -39,33 +39,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * The data in the segment is a reference to a $_SESSION key.
-     *
-     * @var array
-     *
-     */
-    protected $data;
-
-    /**
-     *
-     * Flash values for this request; a reference to a $_SESSION key.
-     *
-     * @var array
-     *
-     */
-    protected $flash_now;
-
-    /**
-     *
-     * Flash values for the next request; a reference to a $_SESSION key.
-     *
-     * @var array
-     *
-     */
-    protected $flash_next;
-
-    /**
-     *
      * Constructor.
      *
      * @param Session $session The session manager.
@@ -91,8 +64,8 @@ class Segment implements SegmentInterface
     public function get($key, $alt = null)
     {
         $this->resumeSession();
-        return isset($this->data[$key])
-             ? $this->data[$key]
+        return isset($_SESSION[$this->name][$key])
+             ? $_SESSION[$this->name][$key]
              : $alt;
     }
 
@@ -108,7 +81,7 @@ class Segment implements SegmentInterface
     public function set($key, $val)
     {
         $this->resumeOrStartSession();
-        $this->data[$key] = $val;
+        $_SESSION[$this->name][$key] = $val;
     }
 
     /**
@@ -121,7 +94,7 @@ class Segment implements SegmentInterface
     public function clear()
     {
         if ($this->resumeSession()) {
-            $this->data = array();
+            $_SESSION[$this->name] = array();
         }
     }
 
@@ -137,7 +110,7 @@ class Segment implements SegmentInterface
     public function setFlash($key, $val)
     {
         $this->resumeOrStartSession();
-        $this->flash_next[$key] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
     /**
@@ -152,8 +125,8 @@ class Segment implements SegmentInterface
     public function getFlash($key, $alt = null)
     {
         $this->resumeSession();
-        return isset($this->flash_now[$key])
-             ? $this->flash_now[$key]
+        return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NOW][$this->name][$key]
              : $alt;
     }
 
@@ -167,7 +140,7 @@ class Segment implements SegmentInterface
     public function clearFlash()
     {
         if ($this->resumeSession()) {
-            $this->flash_next = array();
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
@@ -183,8 +156,8 @@ class Segment implements SegmentInterface
     public function getFlashNext($key, $alt = null)
     {
         $this->resumeSession();
-        return isset($this->flash_next[$key])
-             ? $this->flash_next[$key]
+        return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NEXT][$this->name][$key]
              : $alt;
     }
 
@@ -200,8 +173,8 @@ class Segment implements SegmentInterface
     public function setFlashNow($key, $val)
     {
         $this->resumeOrStartSession();
-        $this->flash_now[$key] = $val;
-        $this->flash_next[$key] = $val;
+        $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
     /**
@@ -214,8 +187,8 @@ class Segment implements SegmentInterface
     public function clearFlashNow()
     {
         if ($this->resumeSession()) {
-            $this->flash_now = array();
-            $this->flash_next = array();
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
@@ -230,9 +203,9 @@ class Segment implements SegmentInterface
     public function keepFlash()
     {
         if ($this->resumeSession()) {
-            $this->flash_next = array_merge(
-                $this->flash_next,
-                $this->flash_now
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array_merge(
+                $_SESSION[Session::FLASH_NEXT][$this->name],
+                $_SESSION[Session::FLASH_NOW][$this->name]
             );
         }
     }
@@ -246,7 +219,7 @@ class Segment implements SegmentInterface
      */
     protected function isLoaded()
     {
-        return $this->data !== null;
+        return isset($_SESSION[$this->name]);
     }
 
     /**
@@ -284,17 +257,13 @@ class Segment implements SegmentInterface
             $_SESSION[$this->name] = array();
         }
 
-        if (! isset($_SESSION['Aura\Session']['flash_now'][$this->name])) {
-            $_SESSION['Aura\Session']['flash_now'][$this->name] = array();
+        if (! isset($_SESSION[Session::FLASH_NOW][$this->name])) {
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
         }
 
-        if (! isset($_SESSION['Aura\Session']['flash_next'][$this->name])) {
-            $_SESSION['Aura\Session']['flash_next'][$this->name] = array();
+        if (! isset($_SESSION[Session::FLASH_NEXT][$this->name])) {
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
-
-        $this->data       =& $_SESSION[$this->name];
-        $this->flash_now  =& $_SESSION['Aura\Session']['flash_now'][$this->name];
-        $this->flash_next =& $_SESSION['Aura\Session']['flash_next'][$this->name];
     }
 
     /**
