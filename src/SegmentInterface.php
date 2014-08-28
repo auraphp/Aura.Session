@@ -28,7 +28,7 @@ interface SegmentInterface
      * @return mixed
      *
      */
-    public function __get($key);
+    public function get($key, $alt = null);
 
     /**
      *
@@ -39,47 +39,16 @@ interface SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function __set($key, $val);
-
-    /**
-     *
-     * Check whether a key is set in the segment.
-     *
-     * @param string $key The key to check.
-     *
-     * @return bool
-     *
-     */
-    public function __isset($key);
-
-    /**
-     *
-     * Unsets a key in the segment.
-     *
-     * @param string $key The key to unset.
-     *
-     * @return void
-     *
-     */
-    public function __unset($key);
+    public function set($key, $val);
 
     /**
      *
      * Clear all data from the segment.
      *
-     * @return void
+     * @return null
      *
      */
     public function clear();
-
-    /**
-     *
-     * Gets the segment name.
-     *
-     * @return string
-     *
-     */
-    public function getName();
 
     /**
      *
@@ -101,24 +70,13 @@ interface SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key);
-
-    /**
-     *
-     * Checks whether a flash key is set, without reading it.
-     *
-     * @param string $key The flash key to check.
-     *
-     * @return bool True if it is set, false if not.
-     *
-     */
-    public function hasFlash($key);
+    public function getFlash($key, $alt = null);
 
     /**
      *
      * Clears all flash values.
      *
-     * @return void
+     * @return null
      *
      */
     public function clearFlash();

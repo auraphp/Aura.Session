@@ -51,7 +51,7 @@ class CsrfToken
     {
         $this->segment = $segment;
         $this->randval = $randval;
-        if (! isset($this->segment->value)) {
+        if (! $this->segment->get('value')) {
             $this->regenerateValue();
         }
     }
@@ -79,18 +79,19 @@ class CsrfToken
      */
     public function getValue()
     {
-        return $this->segment->value;
+        return $this->segment->get('value');
     }
 
     /**
      *
      * Regenerates the value of the outgoing CSRF token.
      *
-     * @return void
+     * @return null
      *
      */
     public function regenerateValue()
     {
-        $this->segment->value = hash('sha512', $this->randval->generate());
+        $hash = hash('sha512', $this->randval->generate());
+        $this->segment->set('value', $hash);
     }
 }

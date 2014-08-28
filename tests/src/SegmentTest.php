@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class SegmentTest extends \PHPUnit_Framework_TestCase
 {
     protected $session;
@@ -12,7 +15,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->session = $this->newSession();
-        $this->segment = $this->session->newSegment($this->name);
+        $this->segment = $this->session->getSegment($this->name);
     }
 
     protected function newSession(array $cookies = array())
@@ -20,6 +23,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
+            new Phpfunc,
             $cookies
         );
     }
@@ -38,88 +42,78 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $_SESSION[$this->name][$key] = $val;
     }
 
-    public function testGetName()
-    {
-        $this->assertSame($this->name, $this->segment->getName());
-    }
-
     public function testMagicMethods()
     {
-        // var not set
-        $this->assertFalse(isset($this->segment->foo));
+        $this->assertNull($this->segment->get('foo'));
 
-        // set the var and check isset
-        $this->segment->foo = 'bar';
-        $this->assertTrue(isset($this->segment->foo));
-
-        // is the var value correct?
-        $this->assertSame('bar', $this->segment->foo);
-
-        // is the var value referenced in the data location?
+        $this->segment->set('foo', 'bar');
+        $this->assertSame('bar', $this->segment->get('foo'));
         $this->assertSame('bar', $this->getValue('foo'));
 
-        // unset and check
-        unset($this->segment->foo);
-        $this->assertFalse(isset($this->segment->foo));
-
-        // set var from outside and check
         $this->setValue('foo', 'zim');
-        $this->assertSame('zim', $this->segment->foo);
-    }
-
-    public function test__getNoSuchKey()
-    {
-        $this->assertNull($this->segment->foo);
+        $this->assertSame('zim', $this->segment->get('foo'));
     }
 
     public function testClear()
     {
-        $this->segment->foo = 'bar';
-        $this->segment->baz = 'dib';
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
         $this->assertSame('bar', $this->getValue('foo'));
         $this->assertSame('dib', $this->getValue('baz'));
 
         // now clear the data
         $this->segment->clear();
         $this->assertSame(array(), $this->getValue());
-        $this->assertNull($this->segment->foo);
-        $this->assertNull($this->segment->baz);
+        $this->assertNull($this->segment->get('foo'));
+        $this->assertNull($this->segment->get('baz'));
     }
 
     public function testFlash()
     {
-        // no message yet
-        $this->assertFalse($this->segment->hasFlash('message'));
+        // set a value
+        $this->segment->setFlash('foo', 'bar');
+        $expect = 'bar';
+        $this->assertSame($expect, $this->segment->getFlashNext('foo'));
+        $this->assertNull($this->segment->getFlash('foo'));
 
-        // add a message
-        $this->segment->setFlash('message', 'doom');
-        $this->assertTrue($this->segment->hasFlash('message'));
+        // set a value and make it available now
+        $this->segment->setFlashNow('baz', 'dib');
+        $expect = 'dib';
+        $this->assertSame($expect, $this->segment->getFlash('baz'));
+        $this->assertSame($expect, $this->segment->getFlashNext('baz'));
 
-        // read the message
-        $expect = 'doom';
-        $actual = $this->segment->getFlash('message');
-        $this->assertSame($expect, $actual);
-
-        // read-once means the message should be gone now
-        $this->assertFalse($this->segment->hasFlash('message'));
-        $this->assertNull($this->segment->getFlash('message'));
-
-        // add message then clear it
-        $this->segment->setFlash('message', 'doom');
+        // clear the next values
         $this->segment->clearFlash();
-        $this->assertFalse($this->segment->hasFlash('message'));
-        $this->assertNull($this->segment->getFlash('message'));
+        $this->assertNull($this->segment->getFlashNext('foo'));
+        $this->assertNull($this->segment->getFlashNext('baz'));
+        $expect = 'dib';
+        $this->assertSame($expect, $this->segment->getFlash('baz'));
+
+        // set some current values and make sure they get kept
+        $now =& $_SESSION[Session::FLASH_NOW][$this->name];
+        $now['foo'] = 'bar';
+        $now['baz'] = 'dib';
+        $this->segment->keepFlash();
+        $this->assertSame('bar', $this->segment->getFlashNext('foo'));
+        $this->assertSame('dib', $this->segment->getFlashNext('baz'));
+
+        // clear the current and future values
+        $this->segment->clearFlashNow();
+        $this->assertNull($this->segment->getFlash('foo'));
+        $this->assertNull($this->segment->getFlashNext('foo'));
+        $this->assertNull($this->segment->getFlash('baz'));
+        $this->assertNull($this->segment->getFlashNext('baz'));
     }
 
-    public function test__getDoesNotStartSession()
+    public function testGetDoesNotStartSession()
     {
         $this->assertFalse($this->session->isStarted());
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertNull($foo);
         $this->assertFalse($this->session->isStarted());
     }
 
-    public function test__getReactivatesSession()
+    public function testGetResumesSession()
     {
         // fake a cookie
         $cookies = array(
@@ -128,47 +122,33 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->newSession($cookies);
 
         // should be active now, even though not started
-        $this->assertTrue($this->session->isAvailable());
+        $this->assertTrue($this->session->isResumable());
 
         // reset the segment to use the new session manager
-        $this->segment = $this->session->newSegment($this->name);
+        $this->segment = $this->session->getSegment($this->name);
 
         // this should restart the session
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertTrue($this->session->isStarted());
     }
 
-    public function test__setStartsSessionAndCanReadAfter()
+    public function testSetStartsSessionAndCanReadAfter()
     {
         // no session yet
         $this->assertFalse($this->session->isStarted());
 
         // set it
-        $this->segment->foo = 'bar';
+        $this->segment->set('foo', 'bar');
 
         // session should have started
         $this->assertTrue($this->session->isStarted());
 
         // get it from the session
-        $foo = $this->segment->foo;
+        $foo = $this->segment->get('foo');
         $this->assertSame('bar', $foo);
 
         // make sure it's actually in $_SESSION
         $this->assertSame($foo, $_SESSION[$this->name]['foo']);
-    }
-
-    public function test__issetDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        $this->assertFalse(isset($this->segment->foo));
-        $this->assertFalse($this->session->isStarted());
-    }
-
-    public function test__unsetDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        unset($this->segment->foo);
-        $this->assertFalse($this->session->isStarted());
     }
 
     public function testClearDoesNotStartSession()
@@ -189,32 +169,16 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         // session should have started
         $this->assertTrue($this->session->isStarted());
 
-        // should see it in the segment
-        $this->assertTrue($this->segment->hasFlash('foo'));
-
         // should see it in the session
-        $this->assertSame('bar', $_SESSION[$this->name]['__flash']['foo']);
+        $actual = $_SESSION[Session::FLASH_NEXT][$this->name]['foo'];
+        $this->assertSame('bar', $actual);
 
-        // now read it
-        $foo = $this->segment->getFlash('foo');
-        $this->assertSame('bar', $foo);
-
-        // should not be there any more
-        $this->assertFalse($this->segment->hasFlash('foo'));
-        $this->assertFalse(isset($_SESSION[$this->name]['__flash']['foo']));
     }
 
     public function testGetFlashDoesNotStartSession()
     {
         $this->assertFalse($this->session->isStarted());
         $this->assertNull($this->segment->getFlash('foo'));
-        $this->assertFalse($this->session->isStarted());
-    }
-
-    public function testHasFlashDoesNotStartSession()
-    {
-        $this->assertFalse($this->session->isStarted());
-        $this->assertFalse($this->segment->hasFlash('foo'));
         $this->assertFalse($this->session->isStarted());
     }
 }

@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class CsrfTokenTest extends \PHPUnit_Framework_TestCase
 {
     protected $session;
@@ -13,11 +16,12 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->phpfunc = new MockPhpfunc;
+        $this->phpfunc = new FakePhpfunc;
 
         $this->session = new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval($this->phpfunc)),
+            $this->phpfunc,
             $_COOKIE
         );
     }
@@ -45,19 +49,19 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($old != '');
 
         // with openssl
-        $this->phpfunc->setExtensions(array('openssl'));
+        $this->phpfunc->extensions = array('openssl');
         $token->regenerateValue();
         $openssl = $token->getValue();
         $this->assertTrue($old != $openssl);
 
         // with mcrypt
-        $this->phpfunc->setExtensions(array('mcrypt'));
+        $this->phpfunc->extensions = array('mcrypt');
         $token->regenerateValue();
         $mcrypt = $token->getValue();
         $this->assertTrue($old != $openssl && $old != $mcrypt);
 
         // with nothing
-        $this->phpfunc->setExtensions(array());
+        $this->phpfunc->extensions = array();
         $this->setExpectedException('Aura\Session\Exception');
         $token->regenerateValue();
     }

@@ -20,6 +20,9 @@ namespace Aura\Session;
  */
 class Session
 {
+    const FLASH_NEXT = 'Aura\Session\Flash\Next';
+    const FLASH_NOW = 'Aura\Session\Flash\Now';
+
     /**
      *
      * A session segment factory.
@@ -66,6 +69,8 @@ class Session
      */
     protected $cookie_params = array();
 
+    protected $phpfunc;
+
     /**
      *
      * Constructor
@@ -79,14 +84,41 @@ class Session
      *
      */
     public function __construct(
-        SegmentFactory   $segment_factory,
+        SegmentFactory $segment_factory,
         CsrfTokenFactory $csrf_token_factory,
-        array $cookies = array()
+        PhpFunc $phpfunc,
+        array $cookies = array(),
+        $delete_cookie = null
     ) {
         $this->segment_factory    = $segment_factory;
         $this->csrf_token_factory = $csrf_token_factory;
+        $this->phpfunc            = $phpfunc;
         $this->cookies            = $cookies;
-        $this->cookie_params      = session_get_cookie_params();
+
+        $this->setDeleteCookie($delete_cookie);
+
+        $this->cookie_params = $this->phpfunc->session_get_cookie_params();
+    }
+
+    public function setDeleteCookie($delete_cookie)
+    {
+        $this->delete_cookie = $delete_cookie;
+        if (! $this->delete_cookie) {
+            $phpfunc = $this->phpfunc;
+            $this->delete_cookie = function (
+                $name,
+                $path,
+                $domain
+            ) use ($phpfunc) {
+                $phpfunc->setcookie(
+                    $name,
+                    '',
+                    time() - 42000,
+                    $path,
+                    $domain
+                );
+            };
+        }
     }
 
     /**
@@ -102,20 +134,19 @@ class Session
      * @return Segment
      *
      */
-    public function newSegment($name)
+    public function getSegment($name)
     {
         return $this->segment_factory->newInstance($this, $name);
     }
 
     /**
      *
-     * Tells us if a session is available to be reactivated, but not if it has
-     * started yet.
+     * Is a session available to be resumed?
      *
      * @return bool
      *
      */
-    public function isAvailable()
+    public function isResumable()
     {
         $name = $this->getName();
         return isset($this->cookies[$name]);
@@ -123,26 +154,84 @@ class Session
 
     /**
      *
-     * Tells us if a session has started.
+     * Is the session already started?
      *
      * @return bool
      *
      */
     public function isStarted()
     {
-        return $this->getStatus() == PHP_SESSION_ACTIVE;
+        if ($this->phpfunc->function_exists('session_status')) {
+            $started = $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
+        } else {
+            $started = $this->sessionStatus();
+        }
+
+        return $started;
+    }
+
+    protected function sessionStatus()
+    {
+        // PHP 5.3 implementation of session_status for only active/none.
+        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
+        // changed when a session is active.
+        //
+        // ini_set raises a warning when we attempt to change this setting
+        // and session is active. note that the attempted change is to the
+        // pre-existing value, so nothing will actually change on success.
+
+        $setting = 'session.use_trans_sid';
+        $current = $this->phpfunc->ini_get($setting);
+        $level   = $this->phpfunc->error_reporting(0);
+        $result  = $this->phpfunc->ini_set($setting, $current);
+        $this->phpfunc->error_reporting($level);
+        return $result !== $current;
     }
 
     /**
      *
-     * Starts a new session, or resumes an existing one.
+     * Starts a new or existing session.
      *
      * @return bool
      *
      */
     public function start()
     {
-        return session_start();
+        $result = $this->phpfunc->session_start();
+        if ($result) {
+            $this->moveFlash();
+        }
+        return $result;
+    }
+
+    protected function moveFlash()
+    {
+        if (! isset($_SESSION[Session::FLASH_NEXT])) {
+            $_SESSION[Session::FLASH_NEXT] = array();
+        }
+        $_SESSION[Session::FLASH_NOW] = $_SESSION[Session::FLASH_NEXT];
+        $_SESSION[Session::FLASH_NEXT] = array();
+    }
+
+    /**
+     *
+     * Resumes a session, but does not start a new one if there is no
+     * existing one.
+     *
+     * @return bool
+     *
+     */
+    public function resume()
+    {
+        if ($this->isStarted()) {
+            return true;
+        }
+
+        if ($this->isResumable()) {
+            return $this->start();
+        }
+
+        return false;
     }
 
     /**
@@ -154,7 +243,7 @@ class Session
      */
     public function clear()
     {
-        return session_unset();
+        return $this->phpfunc->session_unset();
     }
 
     /**
@@ -166,7 +255,7 @@ class Session
      */
     public function commit()
     {
-        return session_write_close();
+        return $this->phpfunc->session_write_close();
     }
 
     /**
@@ -175,14 +264,30 @@ class Session
      *
      * @return bool
      *
+     * @see http://php.net/manual/en/function.session-destroy.php
+     *
      */
     public function destroy()
     {
         if (! $this->isStarted()) {
             $this->start();
         }
+
+        $name = $this->getName();
+        $params = $this->getCookieParams();
         $this->clear();
-        return session_destroy();
+
+        $destroyed = $this->phpfunc->session_destroy();
+        if ($destroyed) {
+            call_user_func(
+                $this->delete_cookie,
+                $name,
+                $params['path'],
+                $params['domain']
+            );
+        }
+
+        return $destroyed;
     }
 
     /**
@@ -220,7 +325,7 @@ class Session
      */
     public function setCacheExpire($expire)
     {
-        return session_cache_expire($expire);
+        return $this->phpfunc->session_cache_expire($expire);
     }
 
     /**
@@ -234,7 +339,7 @@ class Session
      */
     public function getCacheExpire()
     {
-        return session_cache_expire();
+        return $this->phpfunc->session_cache_expire();
     }
 
     /**
@@ -250,7 +355,7 @@ class Session
      */
     public function setCacheLimiter($limiter)
     {
-        return session_cache_limiter($limiter);
+        return $this->phpfunc->session_cache_limiter($limiter);
     }
 
     /**
@@ -264,7 +369,7 @@ class Session
      */
     public function getCacheLimiter()
     {
-        return session_cache_limiter();
+        return $this->phpfunc->session_cache_limiter();
     }
 
     /**
@@ -287,7 +392,7 @@ class Session
      *
      * @param array $params The array of session cookie param keys and values.
      *
-     * @return void
+     * @return null
      *
      * @see session_set_cookie_params()
      *
@@ -295,7 +400,7 @@ class Session
     public function setCookieParams(array $params)
     {
         $this->cookie_params = array_merge($this->cookie_params, $params);
-        session_set_cookie_params(
+        $this->phpfunc->session_set_cookie_params(
             $this->cookie_params['lifetime'],
             $this->cookie_params['path'],
             $this->cookie_params['domain'],
@@ -325,7 +430,7 @@ class Session
      */
     public function getId()
     {
-        return session_id();
+        return $this->phpfunc->session_id();
     }
 
     /**
@@ -333,12 +438,12 @@ class Session
      * Regenerates and replaces the current session id; also regenerates the
      * CSRF token value if one exists.
      *
-     * @return bool True is regeneration worked, false if not.
+     * @return bool True if regeneration worked, false if not.
      *
      */
     public function regenerateId()
     {
-        $result = session_regenerate_id(true);
+        $result = $this->phpfunc->session_regenerate_id(true);
         if ($result && $this->csrf_token) {
             $this->csrf_token->regenerateValue();
         }
@@ -358,7 +463,7 @@ class Session
      */
     public function setName($name)
     {
-        return session_name($name);
+        return $this->phpfunc->session_name($name);
     }
 
     /**
@@ -370,7 +475,7 @@ class Session
      */
     public function getName()
     {
-        return session_name();
+        return $this->phpfunc->session_name();
     }
 
     /**
@@ -386,7 +491,7 @@ class Session
      */
     public function setSavePath($path)
     {
-        return session_save_path($path);
+        return $this->phpfunc->session_save_path($path);
     }
 
     /**
@@ -400,24 +505,6 @@ class Session
      */
     public function getSavePath()
     {
-        return session_save_path();
-    }
-
-    /**
-     *
-     * Returns the current session status:
-     *
-     * - `PHP_SESSION_DISABLED` if sessions are disabled.
-     * - `PHP_SESSION_NONE` if sessions are enabled, but none exists.
-     * - `PHP_SESSION_ACTIVE` if sessions are enabled, and one exists.
-     *
-     * @return int
-     *
-     * @see session_status()
-     *
-     */
-    public function getStatus()
-    {
-        return session_status();
+        return $this->phpfunc->session_save_path();
     }
 }

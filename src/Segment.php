@@ -39,15 +39,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * The data in the segment is a reference to a $_SESSION key.
-     *
-     * @var array
-     *
-     */
-    protected $data;
-
-    /**
-     *
      * Constructor.
      *
      * @param Session $session The session manager.
@@ -63,59 +54,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Checks to see if the segment data has been loaded; if not, checks to
-     * see if a session has already been started or is available, and then
-     * loads the segment data from the session.
-     *
-     * @return bool
-     *
-     */
-    protected function isLoaded()
-    {
-        if ($this->data !== null) {
-            return true;
-        }
-
-        if ($this->session->isStarted() || $this->session->isAvailable()) {
-            $this->load();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     *
-     * Forces a session start (or reactivation) and loads the segment data
-     * from the session.
-     *
-     * @return void
-     *
-     */
-    protected function load()
-    {
-        // is data already loaded?
-        if ($this->data !== null) {
-            // no need to re-load
-            return;
-        }
-
-        // if the session is not started, start it
-        if (! $this->session->isStarted()) {
-            $this->session->start();
-        }
-
-        // if we don't have a $_SESSION key for the segment, create one
-        if (! isset($_SESSION[$this->name])) {
-            $_SESSION[$this->name] = array();
-        }
-
-        // set $data as a reference to the $_SESSION key
-        $this->data = &$_SESSION[$this->name];
-    }
-
-    /**
-     *
      * Returns the value of a key in the segment.
      *
      * @param string $key The key in the segment.
@@ -123,11 +61,12 @@ class Segment implements SegmentInterface
      * @return mixed
      *
      */
-    public function __get($key)
+    public function get($key, $alt = null)
     {
-        if ($this->isLoaded()) {
-            return isset($this->data[$key]) ? $this->data[$key] : null;
-        }
+        $this->resumeSession();
+        return isset($_SESSION[$this->name][$key])
+             ? $_SESSION[$this->name][$key]
+             : $alt;
     }
 
     /**
@@ -139,74 +78,29 @@ class Segment implements SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function __set($key, $val)
+    public function set($key, $val)
     {
-        $this->load();
-        $this->data[$key] = $val;
-    }
-
-    /**
-     *
-     * Check whether a key is set in the segment.
-     *
-     * @param string $key The key to check.
-     *
-     * @return bool
-     *
-     */
-    public function __isset($key)
-    {
-        if ($this->isLoaded()) {
-            return isset($this->data[$key]);
-        }
-        return false;
-    }
-
-    /**
-     *
-     * Unsets a key in the segment.
-     *
-     * @param string $key The key to unset.
-     *
-     * @return void
-     *
-     */
-    public function __unset($key)
-    {
-        if ($this->isLoaded()) {
-            unset($this->data[$key]);
-        }
+        $this->resumeOrStartSession();
+        $_SESSION[$this->name][$key] = $val;
     }
 
     /**
      *
      * Clear all data from the segment.
      *
-     * @return void
+     * @return null
      *
      */
     public function clear()
     {
-        if ($this->isLoaded()) {
-            $this->data = array();
+        if ($this->resumeSession()) {
+            $_SESSION[$this->name] = array();
         }
     }
 
     /**
      *
-     * Gets the segment name.
-     *
-     * @return string
-     *
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *
-     * Sets a read-once flash value on the segment.
+     * Sets a flash value for the *next* request.
      *
      * @param string $key The key for the flash value.
      *
@@ -215,56 +109,175 @@ class Segment implements SegmentInterface
      */
     public function setFlash($key, $val)
     {
-        $this->load();
-        $this->data['__flash'][$key] = $val;
+        $this->resumeOrStartSession();
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
     /**
      *
-     * Reads the flash value for a key, thereby removing it from the session.
+     * Gets the flash value for a key in the *current* request.
      *
      * @param string $key The key for the flash value.
      *
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key)
+    public function getFlash($key, $alt = null)
     {
-        if ($this->isLoaded() && isset($this->data['__flash'][$key])) {
-            $val = $this->data['__flash'][$key];
-            unset($this->data['__flash'][$key]);
-            return $val;
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NOW][$this->name][$key]
+             : $alt;
+    }
+
+    /**
+     *
+     * Clears flash values for *only* the next request.
+     *
+     * @return null
+     *
+     */
+    public function clearFlash()
+    {
+        if ($this->resumeSession()) {
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
         }
     }
 
     /**
      *
-     * Checks whether a flash key is set, without reading it.
+     * Gets the flash value for a key in the *next* request.
      *
-     * @param string $key The flash key to check.
+     * @param string $key The key for the flash value.
      *
-     * @return bool True if it is set, false if not.
+     * @return mixed The flash value itself.
      *
      */
-    public function hasFlash($key)
+    public function getFlashNext($key, $alt = null)
+    {
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
+             ? $_SESSION[Session::FLASH_NEXT][$this->name][$key]
+             : $alt;
+    }
+
+    /**
+     *
+     * Sets a flash value for the *next* request *and* the current one.
+     *
+     * @param string $key The key for the flash value.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function setFlashNow($key, $val)
+    {
+        $this->resumeOrStartSession();
+        $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
+    }
+
+    /**
+     *
+     * Clears flash values for *both* the next request *and* the current one.
+     *
+     * @return null
+     *
+     */
+    public function clearFlashNow()
+    {
+        if ($this->resumeSession()) {
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
+        }
+    }
+
+    /**
+     *
+     * Retains all the current flash values for the next request; values that
+     * already exist for the next request take precedence.
+     *
+     * @return null
+     *
+     */
+    public function keepFlash()
+    {
+        if ($this->resumeSession()) {
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array_merge(
+                $_SESSION[Session::FLASH_NEXT][$this->name],
+                $_SESSION[Session::FLASH_NOW][$this->name]
+            );
+        }
+    }
+
+    /**
+     *
+     * Has the segment been loaded with session values?
+     *
+     * @return bool
+     *
+     */
+    protected function isLoaded()
+    {
+        return isset($_SESSION[$this->name]);
+    }
+
+    /**
+     *
+     * Loads the segment only if the session has already been started, or if
+     * a session is available (in which case it resumes the session first).
+     *
+     * @return bool
+     *
+     */
+    protected function resumeSession()
     {
         if ($this->isLoaded()) {
-            return isset($this->data['__flash'][$key]);
+            return true;
         }
+
+        if ($this->session->isStarted() || $this->session->resume()) {
+            $this->load();
+            return true;
+        }
+
         return false;
     }
 
     /**
      *
-     * Clears all flash values.
+     * Sets the segment properties to $_SESSION references.
      *
-     * @return void
+     * @return null
      *
      */
-    public function clearFlash()
+    protected function load()
     {
-        if ($this->isLoaded()) {
-            unset($this->data['__flash']);
+        if (! isset($_SESSION[$this->name])) {
+            $_SESSION[$this->name] = array();
+        }
+
+        if (! isset($_SESSION[Session::FLASH_NOW][$this->name])) {
+            $_SESSION[Session::FLASH_NOW][$this->name] = array();
+        }
+
+        if (! isset($_SESSION[Session::FLASH_NEXT][$this->name])) {
+            $_SESSION[Session::FLASH_NEXT][$this->name] = array();
+        }
+    }
+
+    /**
+     *
+     * Resumes a previous session, or starts a new one, and loads the segment.
+     *
+     * @return null
+     *
+     */
+    protected function resumeOrStartSession()
+    {
+        if (! $this->resumeSession()) {
+            $this->session->start();
+            $this->load();
         }
     }
 }

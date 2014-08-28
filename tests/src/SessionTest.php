@@ -1,6 +1,9 @@
 <?php
 namespace Aura\Session;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class SessionTest extends \PHPUnit_Framework_TestCase
 {
     // the session object
@@ -8,7 +11,16 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        session_set_save_handler(new MockSessionHandler);
+        $this->phpfunc = new FakePhpfunc;
+        $handler = new FakeSessionHandler();
+        session_set_save_handler(
+            array($handler, 'open'),
+            array($handler, 'close'),
+            array($handler, 'read'),
+            array($handler, 'write'),
+            array($handler, 'destroy'),
+            array($handler, 'gc')
+        );
         $this->session = $this->newSession();
     }
 
@@ -17,6 +29,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         return new Session(
             new SegmentFactory,
             new CsrfTokenFactory(new Randval(new Phpfunc)),
+            $this->phpfunc,
             $cookies
         );
     }
@@ -38,11 +51,23 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testClear()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment = $this->session->getSegment('test');
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $expect = array(
+            Session::FLASH_NEXT => array(
+                'test' => array(),
+            ),
+            Session::FLASH_NOW => array(
+                'test' => array(),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         // now clear it
@@ -53,11 +78,25 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment = $this->session->getSegment('test');
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $this->assertTrue($this->session->isStarted());
+
+        $expect = array(
+            Session::FLASH_NEXT => array(
+                'test' => array(),
+            ),
+            Session::FLASH_NOW => array(
+                    'test' => array(),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         // now destroy it
@@ -74,22 +113,36 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     public function testCommitAndDestroy()
     {
         // get a test segment and set some data
-        $segment = $this->session->newSegment('test');
-        $segment->foo = 'bar';
-        $segment->baz = 'dib';
+        $segment = $this->session->getSegment('test');
+        $segment->set('foo', 'bar');
+        $segment->set('baz', 'dib');
 
-        $expect = array('test' => array('foo' => 'bar', 'baz' => 'dib'));
+        $this->assertTrue($this->session->isStarted());
+
+        $expect = array(
+            Session::FLASH_NEXT => array(
+                'test' => array(),
+            ),
+            Session::FLASH_NOW => array(
+                'test' => array(),
+            ),
+            'test' => array(
+                'foo' => 'bar',
+                'baz' => 'dib',
+            ),
+        );
+
         $this->assertSame($expect, $_SESSION);
 
         $this->session->commit();
         $this->session->destroy();
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $this->assertSame(array(), $_SESSION);
     }
 
-    public function testNewSegment()
+    public function testGetSegment()
     {
-        $segment = $this->session->newSegment('test');
+        $segment = $this->session->getSegment('test');
         $this->assertInstanceof('Aura\Session\Segment', $segment);
     }
 
@@ -100,10 +153,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf($expect, $actual);
     }
 
-    public function testisAvailable()
+    public function testisResumable()
     {
         // should not look active
-        $this->assertFalse($this->session->isAvailable());
+        $this->assertFalse($this->session->isResumable());
 
         // fake a cookie
         $cookies = array(
@@ -112,7 +165,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->newSession($cookies);
 
         // now it should look active
-        $this->assertTrue($this->session->isAvailable());
+        $this->assertTrue($this->session->isResumable());
     }
 
     public function testGetAndRegenerateId()
@@ -171,15 +224,29 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expect, $actual);
     }
 
-    public function testGetStatus()
+    public function testResume()
     {
-        $expect = PHP_SESSION_NONE;
-        $actual = $this->session->getStatus();
-        $this->assertSame($expect, $actual);
+        // should not look active
+        $this->assertFalse($this->session->isResumable());
+        $this->assertFalse($this->session->resume());
 
-        $expect = PHP_SESSION_ACTIVE;
+        // fake a cookie so a session looks available
+        $cookies = array(
+            $this->session->getName() => 'fake-cookie-value',
+        );
+        $this->session = $this->newSession($cookies);
+        $this->assertTrue($this->session->resume());
+
+        // now it should already active
+        $this->assertTrue($this->session->resume());
+    }
+
+    public function testIsStarted_php53()
+    {
+        $this->phpfunc->functions = array('session_status' => false);
+        $this->session = $this->newSession();
+        $this->assertFalse($this->session->isStarted());
         $this->session->start();
-        $actual = $this->session->getStatus();
-        $this->assertSame($expect, $actual);
+        $this->assertTrue($this->session->isStarted());
     }
 }
