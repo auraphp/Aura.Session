@@ -13,8 +13,8 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Session/rele
 
 ### Quality
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/quality-score.png?s=b80c5c00129306b48a885ac641f7c39f78988762)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
-[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/coverage.png?s=3afb424a5ffd1f469cefc6790a557cb280411f65)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/quality-score.png?b=develop-2)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
+[![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/coverage.png?b=develop-2)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
 [![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop-2)](https://travis-ci.org/auraphp/Aura.Session)
 
 To run the [PHPUnit][] tests at the command line, go to the _tests_ directory and issue `phpunit`.
@@ -83,7 +83,7 @@ $_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
 echo $segment->zim; // 'gir'
 ?>
 ```
-    
+
 The benefit of a session segment is that we can deconflict the keys in the
 `$_SESSION` superglobal by using class names (or some other unique name) for
 the segment names. With segments, different packages can use the `$_SESSION`
@@ -160,7 +160,7 @@ if ($segment->hasFlash('message')) {
 }
 ?>
 ```
-    
+
 To clear all flash values on a segment, use the `clearFlash()` method:
 
 ```php
@@ -184,8 +184,8 @@ $session->commit();
 ?>
 ```
 
-> N.b.: The `commit()` method is the equivalent of `session_write_close()`. 
-> If you do not commit the session, its values will not be available when we 
+> N.b.: The `commit()` method is the equivalent of `session_write_close()`.
+> If you do not commit the session, its values will not be available when we
 > continue the session later.
 
 ## Session Security
@@ -200,7 +200,7 @@ rights within a system) be sure to regenerate the session ID:
 $session->regenerateId();
 ?>
 ```
-    
+
 > N.b.: The `regenerateId()` method also regenerates the CSRF token value.
 
 ### Clearing and Destroying Sessions
@@ -254,7 +254,7 @@ field:
 
 ```php
 <?php
-/**  
+/**
  * @var Vendor\Package\User $user A user-authentication object.
  * @var Aura\Session\Session $session A session management object.
  */
@@ -267,9 +267,9 @@ field:
            . $csrf_value
            . '"></input>';
     } ?>
-    
+
     <!-- other form fields -->
-    
+
 </form>
 ```
 
@@ -278,7 +278,7 @@ for the authenticated user:
 
 ```php
 <?php
-/**  
+/**
  * @var Vendor\Package\User $user A user-authentication object.
  * @var Aura\Session\Session $session A session management object.
  */
