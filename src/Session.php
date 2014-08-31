@@ -20,7 +20,22 @@ namespace Aura\Session;
  */
 class Session
 {
+    /**
+     *
+     * Session key for the "next" flash values.
+     *
+     * @const string
+     *
+     */
     const FLASH_NEXT = 'Aura\Session\Flash\Next';
+
+    /**
+     *
+     * Session key for the "current" flash values.
+     *
+     * @const string
+     *
+     */
     const FLASH_NOW = 'Aura\Session\Flash\Now';
 
     /**
@@ -69,7 +84,30 @@ class Session
      */
     protected $cookie_params = array();
 
+    /**
+     *
+     * An object to intercept PHP function calls; this makes testing easier.
+     *
+     * @var Phpfunc
+     *
+     */
     protected $phpfunc;
+
+    /**
+     *
+     * A callable to invoke when deleting the session cookie. The callable
+     * should have the signature ...
+     *
+     *      function ($cookie_name, $cookie_params)
+     *
+     * ... and return null.
+     *
+     * @param callable
+     *
+     * @see setDeleteCookie()
+     *
+     */
+    protected $delete_cookie;
 
     /**
      *
@@ -79,8 +117,14 @@ class Session
      *
      * @param CsrfTokenFactory A CSRF token factory.
      *
+     * @param Phpfunc $phpfunc An object to intercept PHP function calls;
+     * this makes testing easier.
+     *
      * @param array $cookies An arry of cookies from the client, typically a
      * copy of $_COOKIE.
+     *
+     * @param callable $delete_cookie A alternative callable to invoke when
+     * deleting the session cookie.
      *
      */
     public function __construct(
@@ -100,6 +144,14 @@ class Session
         $this->cookie_params = $this->phpfunc->session_get_cookie_params();
     }
 
+    /**
+     *
+     * Sets the delete-cookie callable.
+     *
+     * @param callable $delete_cookie The callable to invoke when deleting the
+     * session cookie.
+     *
+     */
     public function setDeleteCookie($delete_cookie)
     {
         $this->delete_cookie = $delete_cookie;
@@ -107,15 +159,14 @@ class Session
             $phpfunc = $this->phpfunc;
             $this->delete_cookie = function (
                 $name,
-                $path,
-                $domain
+                $params
             ) use ($phpfunc) {
                 $phpfunc->setcookie(
                     $name,
                     '',
                     time() - 42000,
-                    $path,
-                    $domain
+                    $params['path'],
+                    $params['domain']
                 );
             };
         }
@@ -170,16 +221,23 @@ class Session
         return $started;
     }
 
+    /**
+     *
+     * Returns the session status.
+     *
+     * Nota bene:
+     *
+     * PHP 5.3 implementation of session_status() for only active/none.
+     * Relies on the fact that ini setting 'session.use_trans_sid' cannot be
+     * changed when a session is active.
+     *
+     * PHP ini_set() raises a warning when we attempt to change this setting
+     * and session is active. Note that the attempted change is to the
+     * pre-existing value, so nothing will actually change on success.
+     *
+     */
     protected function sessionStatus()
     {
-        // PHP 5.3 implementation of session_status for only active/none.
-        // Relies on the fact that ini setting 'session.use_trans_sid' cannot be
-        // changed when a session is active.
-        //
-        // ini_set raises a warning when we attempt to change this setting
-        // and session is active. note that the attempted change is to the
-        // pre-existing value, so nothing will actually change on success.
-
         $setting = 'session.use_trans_sid';
         $current = $this->phpfunc->ini_get($setting);
         $level   = $this->phpfunc->error_reporting(0);
@@ -204,6 +262,14 @@ class Session
         return $result;
     }
 
+    /**
+     *
+     * Moves the "next" flash values to the "now" values, thereby clearing the
+     * "next" values.
+     *
+     * @return null
+     *
+     */
     protected function moveFlash()
     {
         if (! isset($_SESSION[Session::FLASH_NEXT])) {
@@ -279,12 +345,7 @@ class Session
 
         $destroyed = $this->phpfunc->session_destroy();
         if ($destroyed) {
-            call_user_func(
-                $this->delete_cookie,
-                $name,
-                $params['path'],
-                $params['domain']
-            );
+            call_user_func($this->delete_cookie, $name, $params);
         }
 
         return $destroyed;

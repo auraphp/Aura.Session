@@ -25,6 +25,8 @@ interface SegmentInterface
      *
      * @param string $key The key in the segment.
      *
+     * @param mixed $alt An alternative value to return if the key is not set.
+     *
      * @return mixed
      *
      */
@@ -52,7 +54,7 @@ interface SegmentInterface
 
     /**
      *
-     * Sets a read-once flash value on the segment.
+     * Sets a flash value for the *next* request.
      *
      * @param string $key The key for the flash value.
      *
@@ -63,9 +65,11 @@ interface SegmentInterface
 
     /**
      *
-     * Reads the flash value for a key, thereby removing it from the session.
+     * Gets the flash value for a key in the *current* request.
      *
      * @param string $key The key for the flash value.
+     *
+     * @param mixed $alt An alternative value to return if the key is not set.
      *
      * @return mixed The flash value itself.
      *
@@ -74,10 +78,53 @@ interface SegmentInterface
 
     /**
      *
-     * Clears all flash values.
+     * Clears flash values for *only* the next request.
      *
      * @return null
      *
      */
     public function clearFlash();
+
+    /**
+     *
+     * Gets the flash value for a key in the *next* request.
+     *
+     * @param string $key The key for the flash value.
+     *
+     * @param mixed $alt An alternative value to return if the key is not set.
+     *
+     * @return mixed The flash value itself.
+     *
+     */
+    public function getFlashNext($key, $alt = null);
+
+    /**
+     *
+     * Sets a flash value for the *next* request *and* the current one.
+     *
+     * @param string $key The key for the flash value.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function setFlashNow($key, $val);
+
+    /**
+     *
+     * Clears flash values for *both* the next request *and* the current one.
+     *
+     * @return null
+     *
+     */
+    public function clearFlashNow();
+
+    /**
+     *
+     * Retains all the current flash values for the next request; values that
+     * already exist for the next request take precedence.
+     *
+     * @return null
+     *
+     */
+    public function keepFlash();
 }

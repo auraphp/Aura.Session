@@ -23,6 +23,15 @@ class Randval implements RandvalInterface
 {
     /**
      *
+     * An object to intercept PHP function calls; this makes testing easier.
+     *
+     * @var Phpfunc
+     *
+     */
+    protected $phpfuncl;
+
+    /**
+     *
      * Constructor.
      *
      * @param Phpfunc $phpfunc An object to intercept PHP function calls;

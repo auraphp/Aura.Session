@@ -58,6 +58,8 @@ class Segment implements SegmentInterface
      *
      * @param string $key The key in the segment.
      *
+     * @param mixed $alt An alternative value to return if the key is not set.
+     *
      * @return mixed
      *
      */
@@ -119,6 +121,8 @@ class Segment implements SegmentInterface
      *
      * @param string $key The key for the flash value.
      *
+     * @param mixed $alt An alternative value to return if the key is not set.
+     *
      * @return mixed The flash value itself.
      *
      */
@@ -149,6 +153,8 @@ class Segment implements SegmentInterface
      * Gets the flash value for a key in the *next* request.
      *
      * @param string $key The key for the flash value.
+     *
+     * @param mixed $alt An alternative value to return if the key is not set.
      *
      * @return mixed The flash value itself.
      *

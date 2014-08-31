@@ -10,8 +10,25 @@
  */
 namespace Aura\Session;
 
+/**
+ *
+ * A factory to create a Session manager.
+ *
+ * @package Aura.Session
+ *
+ */
 class SessionFactory
 {
+    /**
+     *
+     * Creates a new Session manager.
+     *
+     * @param array $cookies An array of cookie values, typically $_COOKIE.
+     *
+     * @param callable $delete_cookie A alternative callable to invoke when
+     * deleting the session cookie.
+     *
+     */
     public function newInstance(array $cookies, $delete_cookie = null)
     {
         $phpfunc = new Phpfunc;
