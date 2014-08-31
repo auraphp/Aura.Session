@@ -28,7 +28,7 @@ class Randval implements RandvalInterface
      * @var Phpfunc
      *
      */
-    protected $phpfuncl;
+    protected $phpfunc;
 
     /**
      *
