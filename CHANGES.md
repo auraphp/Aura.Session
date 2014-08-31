@@ -1,1 +1,1 @@
-First 2.0 beta release.
+First 2.0.0 beta release.
