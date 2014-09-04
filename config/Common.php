@@ -20,7 +20,7 @@ class Common extends Config
         /**
          * Services
          */
-        $di->set('session', $di->lazyNew('Aura\Session\Session'));
+        $di->set('aura/session:session', $di->lazyNew('Aura\Session\Session'));
 
         /**
          * Aura\Session\CsrfTokenFactory
@@ -46,7 +46,7 @@ class Common extends Config
          * Aura\Session\Segment
          */
         $di->params['Aura\Session\Segment'] = array(
-            'session' => $di->lazyGet('session'),
+            'session' => $di->lazyGet('aura/session:session'),
         );
     }
 }

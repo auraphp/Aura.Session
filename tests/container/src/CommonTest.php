@@ -16,7 +16,7 @@ class CommonTest extends \PHPUnit_Framework_TestCase
 
     public function test()
     {
-        $this->assertGet('session', 'Aura\Session\Session');
+        $this->assertGet('aura/session:session', 'Aura\Session\Session');
         $this->assertNewInstance('Aura\Session\CsrfTokenFactory');
         $this->assertNewInstance('Aura\Session\Session');
         $this->assertNewInstance('Aura\Session\Randval');
