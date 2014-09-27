@@ -1,25 +1,31 @@
 <?php
 namespace Aura\Session\_Config;
 
-use Aura\Di\ContainerAssertionsTrait;
+use Aura\Di\_Config\AbstractContainerTest;
 
-class CommonTest extends \PHPUnit_Framework_TestCase
+class CommonTest extends AbstractContainerTest
 {
-    use ContainerAssertionsTrait;
-
-    public function setUp()
+    protected function getConfigClasses()
     {
-        $this->setUpContainer(array(
+        return array(
             'Aura\Session\_Config\Common',
-        ));
+        );
     }
 
-    public function test()
+    public function provideGet()
     {
-        $this->assertGet('aura/session:session', 'Aura\Session\Session');
-        $this->assertNewInstance('Aura\Session\CsrfTokenFactory');
-        $this->assertNewInstance('Aura\Session\Session');
-        $this->assertNewInstance('Aura\Session\Randval');
-        $this->assertNewInstance('Aura\Session\Segment');
+        return array(
+            array('aura/session:session', 'Aura\Session\Session')
+        );
+    }
+
+    public function provideNewInstance()
+    {
+        return array(
+            array('Aura\Session\CsrfTokenFactory'),
+            array('Aura\Session\Session'),
+            array('Aura\Session\Randval'),
+            array('Aura\Session\Segment'),
+        );
     }
 }
