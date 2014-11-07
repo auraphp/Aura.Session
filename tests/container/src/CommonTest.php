@@ -12,6 +12,11 @@ class CommonTest extends AbstractContainerTest
         );
     }
 
+    protected function getAutoResolve()
+    {
+        return false;
+    }
+
     public function provideGet()
     {
         return array(
@@ -25,7 +30,9 @@ class CommonTest extends AbstractContainerTest
             array('Aura\Session\CsrfTokenFactory'),
             array('Aura\Session\Session'),
             array('Aura\Session\Randval'),
-            array('Aura\Session\Segment'),
+            array('Aura\Session\Segment', array(
+                'name' => 'fake-name',
+            ))
         );
     }
 }
