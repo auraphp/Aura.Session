@@ -218,18 +218,6 @@ class Segment implements SegmentInterface
 
     /**
      *
-     * Has the segment been loaded with session values?
-     *
-     * @return bool
-     *
-     */
-    protected function isLoaded()
-    {
-        return isset($_SESSION[$this->name]);
-    }
-
-    /**
-     *
      * Loads the segment only if the session has already been started, or if
      * a session is available (in which case it resumes the session first).
      *
@@ -238,10 +226,6 @@ class Segment implements SegmentInterface
      */
     protected function resumeSession()
     {
-        if ($this->isLoaded()) {
-            return true;
-        }
-
         if ($this->session->isStarted() || $this->session->resume()) {
             $this->load();
             return true;

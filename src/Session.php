@@ -111,6 +111,15 @@ class Session
 
     /**
      *
+     * Session can be started some other way
+     *
+     * @var bool
+     *
+     */
+    protected $started_via = false;
+
+    /**
+     *
      * Constructor
      *
      * @param SegmentFactory $segment_factory A session segment factory.
@@ -218,6 +227,11 @@ class Session
             $started = $this->sessionStatus();
         }
 
+        // if the session is started via session_start() flash is not moved
+        if ($started && ! $this->started_via) {
+            $this->moveFlash();
+            $this->started_via = true;
+        }
         return $started;
     }
 
@@ -255,6 +269,7 @@ class Session
      */
     public function start()
     {
+        $this->started_via = true;
         $result = $this->phpfunc->session_start();
         if ($result) {
             $this->moveFlash();
