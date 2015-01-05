@@ -103,6 +103,15 @@ superglobal without stepping on each other's toes.
 
 To clear all the values on a _Segment_, use the `clear()` method.
 
+### Session Lifetime
+
+We can create remember me session cookies, so even when the browser is closed, the session data will be available. In these case you can use `setCookieParams` on _Session_ object.
+
+```
+$session->setCookieParams(array('lifetime' => '172800'));
+```
+
+The `setCookieParams` method internally calls [session_set_cookie_params](http://in1.php.net/session_set_cookie_params).
 
 ### Lazy Session Starting
 
