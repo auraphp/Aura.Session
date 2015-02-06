@@ -35,5 +35,6 @@ class FakeSessionHandler
     public function write($session_id, $session_data)
     {
         $this->data = $session_data;
+        return true;
     }
 }
