@@ -139,7 +139,7 @@ class Session
     public function __construct(
         SegmentFactory $segment_factory,
         CsrfTokenFactory $csrf_token_factory,
-        PhpFunc $phpfunc,
+        Phpfunc $phpfunc,
         array $cookies = array(),
         $delete_cookie = null
     ) {
