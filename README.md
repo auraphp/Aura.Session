@@ -19,8 +19,6 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Session/rele
 [![Code Coverage](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/coverage.png?b=develop-2)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/)
 [![Build Status](https://travis-ci.org/auraphp/Aura.Session.png?branch=develop-2)](https://travis-ci.org/auraphp/Aura.Session)
 
-To run the [PHPUnit][] tests at the command line, go to the _tests_ directory and issue `phpunit`.
-
 To run the unit tests at the command line, issue `phpunit -c tests/unit/`. (This requires [PHPUnit][] to be available as `phpunit`.)
 
 [PHPUnit]: http://phpunit.de/manual/
