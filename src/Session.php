@@ -129,11 +129,11 @@ class Session
      * @param Phpfunc $phpfunc An object to intercept PHP function calls;
      * this makes testing easier.
      *
-     * @param array $cookies An arry of cookies from the client, typically a
-     * copy of $_COOKIE.
+     * @param array $cookies Optional: An array of cookies from the client, typically a
+     * copy of $_COOKIE. Empty array by default.
      *
-     * @param callable $delete_cookie A alternative callable to invoke when
-     * deleting the session cookie.
+     * @param callable|null $delete_cookie Optional: An alternative callable
+     * to invoke when deleting the session cookie. Defaults to `null`.
      *
      */
     public function __construct(
@@ -157,7 +157,10 @@ class Session
      *
      * Sets the delete-cookie callable.
      *
-     * @param callable $delete_cookie The callable to invoke when deleting the
+     * If parameter is `null`, the session cookie will be deleted using the
+     * traditional way, i.e. using an expiration date in the past.
+     *
+     * @param callable|null $delete_cookie The callable to invoke when deleting the
      * session cookie.
      *
      */
