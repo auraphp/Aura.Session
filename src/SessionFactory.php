@@ -25,8 +25,8 @@ class SessionFactory
      *
      * @param array $cookies An array of cookie values, typically $_COOKIE.
      *
-     * @param callable $delete_cookie A alternative callable to invoke when
-     * deleting the session cookie.
+     * @param callable|null $delete_cookie Optional: An alternative callable
+     * to invoke when deleting the session cookie. Defaults to `null`.
      *
      */
     public function newInstance(array $cookies, $delete_cookie = null)
