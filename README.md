@@ -55,7 +55,6 @@ $session = $session_factory->newInstance($_COOKIE);
 
 We can then use the _Session_ instance to create _Segment_ objects to manage session values and flashes. (In general, we should not need to manipulate the _Session_ manager directly -- we will work mostly with _Segment_ objects.)
 
-
 ### Segments
 
 In normal PHP, we keep session values in the `$_SESSION` array. However, when different libraries and projects try to modify the same keys, the resulting conflicts can result in unexpected behavior. To resolve this, we use _Segment_ objects. Each _Segment_ addresses a named key within the `$_SESSION` array for deconfliction purposes.
@@ -101,15 +100,41 @@ superglobal without stepping on each other's toes.
 
 To clear all the values on a _Segment_, use the `clear()` method.
 
-### Session Lifetime
+### Flash Values
 
-We can create remember me session cookies, so even when the browser is closed, the session data will be available. In these case you can use `setCookieParams` on _Session_ object.
+_Segment_ values persist until the session is cleared or destroyed. However, sometimes it is useful to set a value that propagates only through the next request, and is then discarded. These are called "flash" values.
 
+#### Setting And Getting Flash Values
+
+To set a flash value on a _Segment_, use the `setFlash()` method.
+
+```php
+<?php
+$segment = $session->getSegment('Vendor\Package\ClassName');
+$segment->setFlash('message', 'Hello world!');
+?>
 ```
-$session->setCookieParams(array('lifetime' => '172800'));
+
+Then, in subsequent requests, we can read the flash value using `getFlash()`:
+
+```php
+<?php
+$segment = $session->getSegment('Vendor\Package\ClassName');
+$message = $segment->getFlash('message'); // 'Hello world!'
+?>
 ```
 
-The `setCookieParams` method internally calls [session_set_cookie_params](http://in1.php.net/session_set_cookie_params).
+> N.b. As with `get()`, we can provide an alternative value if the flash key does not exist. For example, `getFlash('foo', 'not set')` will return 'not set' if there is no 'foo' key available.
+
+Using `setFlash()` makes the flash value available only in the *next* request, not the current one. To make the flash value available immediately as well as in the next request, use `setFlashNow($key, $val)`.
+
+Using `getFlash()` returns only the values that are available now from having been set in the previous request. To read a value that will be available in the next request, use `getFlashNext($key, $alt)`.
+
+#### Keeping and Clearing Flash Values
+
+Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method, or we can keep all flashes for all segments by calling the _Session_ `keepFlash()` method.
+
+Similarly, we can clear flash values on a per-segment basis or a session-wide bases.  Use the `clearFlash()` method on the _Segment_ to clear flashes just for that segment, or the same method on the _Session_ to clear all flash values for all segments.
 
 ### Lazy Session Starting
 
@@ -274,39 +299,12 @@ have one of these extensions installed, you will need your own random-value
 implementation of the `RandvalInterface`. We suggest a wrapper around
 [RandomLib](https://github.com/ircmaxell/RandomLib).
 
+### Session Lifetime
 
-## Flash Values
+We can set the session lifetime to as long (or as short) as we like, using the `setCookieParams` on _Session_ object. The lifetime is in seconds. To set the session cookie lifetime to two weeks:
 
-_Segment_ values persist until the session is cleared or destroyed. However, sometimes it is useful to set a value that propagates only through the next request, and is then discarded. These are called "flash" values.
-
-### Setting And Getting Flash Values
-
-To set a flash value on a _Segment_, use the `setFlash()` method.
-
-```php
-<?php
-$segment = $session->getSegment('Vendor\Package\ClassName');
-$segment->setFlash('message', 'Hello world!');
-?>
+```
+$session->setCookieParams(array('lifetime' => '1209600'));
 ```
 
-Then, in subsequent requests, we can read the flash value using `getFlash()`:
-
-```php
-<?php
-$segment = $session->getSegment('Vendor\Package\ClassName');
-$message = $segment->getFlash('message'); // 'Hello world!'
-?>
-```
-
-> N.b. As with `get()`, we can provide an alternative value if the flash key does not exist. For example, `getFlash('foo', 'not set')` will return 'not set' if there is no 'foo' key available.
-
-Using `setFlash()` makes the flash value available only in the *next* request, not the current one. To make the flash value available immediately as well as in the next request, use `setFlashNow($key, $val)`.
-
-Using `getFlash()` returns only the values that are available now from having been set in the previous request. To read a value that will be available in the next request, use `getFlashNext($key, $alt)`.
-
-### Keeping and Clearing Flash Values
-
-Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method, or we can keep all flashes for all segments by calling the _Session_ `keepFlash()` method.
-
-Similarly, we can clear flash values on a per-segment basis or a session-wide bases.  Use the `clearFlash()` method on the _Segment_ to clear flashes just for that segment, or the same method on the _Session_ to clear all flash values for all segments.
+The `setCookieParams` method internally calls [session_set_cookie_params](http://php.net/session_set_cookie_params).
