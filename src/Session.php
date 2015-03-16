@@ -3,8 +3,6 @@
  *
  * This file is part of Aura for PHP.
  *
- * @package Aura.Session
- *
  * @license http://opensource.org/licenses/bsd-license.php BSD
  *
  */
@@ -111,12 +109,12 @@ class Session
 
     /**
      *
-     * Session can be started some other way
+     * Have the flash values been moved forward?
      *
      * @var bool
      *
      */
-    protected $started_via = false;
+    protected $flash_moved = false;
 
     /**
      *
@@ -124,7 +122,7 @@ class Session
      *
      * @param SegmentFactory $segment_factory A session segment factory.
      *
-     * @param CsrfTokenFactory A CSRF token factory.
+     * @param CsrfTokenFactory $csrf_token_factory A CSRF token factory.
      *
      * @param Phpfunc $phpfunc An object to intercept PHP function calls;
      * this makes testing easier.
@@ -230,11 +228,12 @@ class Session
             $started = $this->sessionStatus();
         }
 
-        // if the session is started via session_start() flash is not moved
-        if ($started && ! $this->started_via) {
+        // if the session was started externally, move the flash values forward
+        if ($started && ! $this->flash_moved) {
             $this->moveFlash();
-            $this->started_via = true;
         }
+
+        // done
         return $started;
     }
 
@@ -272,7 +271,6 @@ class Session
      */
     public function start()
     {
-        $this->started_via = true;
         $result = $this->phpfunc->session_start();
         if ($result) {
             $this->moveFlash();
@@ -295,6 +293,7 @@ class Session
         }
         $_SESSION[Session::FLASH_NOW] = $_SESSION[Session::FLASH_NEXT];
         $_SESSION[Session::FLASH_NEXT] = array();
+        $this->flash_moved = true;
     }
 
     /**
