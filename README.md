@@ -301,10 +301,12 @@ implementation of the `RandvalInterface`. We suggest a wrapper around
 
 ### Session Lifetime
 
-We can set the session lifetime to as long (or as short) as we like, using the `setCookieParams` on _Session_ object. The lifetime is in seconds. To set the session cookie lifetime to two weeks:
+We can set the session lifetime to as long (or as short) as we like using the `setCookieParams` on _Session_ object. The lifetime is in seconds. To set the session cookie lifetime to two weeks:
 
 ```
+<?php
 $session->setCookieParams(array('lifetime' => '1209600'));
+?>
 ```
 
-The `setCookieParams` method internally calls [session_set_cookie_params](http://php.net/session_set_cookie_params).
+> N.b: The `setCookieParams` method calls [session_set_cookie_params](http://php.net/session_set_cookie_params) internally.
