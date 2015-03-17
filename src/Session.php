@@ -102,7 +102,7 @@ class Session
      *
      * ... and return null.
      *
-     * @param callable
+     * @var callable|null
      *
      * @see setDeleteCookie()
      *
