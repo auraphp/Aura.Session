@@ -194,7 +194,7 @@ class Session
      * @param string $name The name of the session segment, typically a
      * fully-qualified class name.
      *
-     * @return Segment
+     * @return Segment New Segment instance.
      *
      */
     public function getSegment($name)
