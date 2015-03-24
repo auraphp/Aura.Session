@@ -157,13 +157,14 @@ To save the session data and end its use during the current request, call the `c
 
 ```php
 <?php
-$session->commit(); // equivalent of session_write_close()
+$session->commit();
 ?>
 ```
 
-> N.b.: The `commit()` method is the equivalent of `session_write_close()`.
-> If you do not commit the session, its values will not be available when we
-> continue the session later.
+> N.b.: Per <http://php.net/manual/en/session.examples.basic.php>, "Sessions
+> normally shutdown automatically when PHP is finished executing a script, but
+> can be manually shutdown using the session_write_close() function."
+> The `commit()` method is the equivalent of `session_write_close()`.
 
 To clear all session data, but leave the session active during the current request, use the `clear()` method on the _Session_ manager.
 
