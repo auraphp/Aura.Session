@@ -26,6 +26,7 @@ class SessionFactory
      * @param callable|null $delete_cookie Optional: An alternative callable
      * to invoke when deleting the session cookie. Defaults to `null`.
      *
+     * @return Session New Session manager instance
      */
     public function newInstance(array $cookies, $delete_cookie = null)
     {
