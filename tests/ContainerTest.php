@@ -3,7 +3,7 @@ namespace Aura\Session\_Config;
 
 use Aura\Di\_Config\AbstractContainerTest;
 
-class CommonTest extends AbstractContainerTest
+class ContainerTest extends AbstractContainerTest
 {
     protected function getConfigClasses()
     {
