@@ -33,9 +33,6 @@
             "config": {
                 "common": "Aura\\Session\\_Config\\Common"
             }
-        },
-        "branch-alias": {
-            "dev-develop": "1.0.x-dev"
         }
     }
 }
