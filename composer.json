@@ -32,9 +32,6 @@
             "config": {
                 "common": "Aura\\Session\\_Config\\Common"
             }
-        },
-        "branch-alias": {
-            "dev-develop-2": "2.0.x-dev"
         }
     },
     "suggest": {
