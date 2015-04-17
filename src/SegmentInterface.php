@@ -32,6 +32,15 @@ interface SegmentInterface
 
     /**
      *
+     * Returns the entire segment.
+     *
+     * @return mixed
+     *
+     */
+    public function getSegment();
+
+    /**
+     *
      * Sets the value of a key in the segment.
      *
      * @param string $key The key to set.
