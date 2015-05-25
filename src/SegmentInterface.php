@@ -134,4 +134,11 @@ interface SegmentInterface
      *
      */
     public function keepFlash();
+
+    /**
+     * Remove a key from the segment, or remove the entire segment (including key) from the session
+     *
+     * @param null $key
+     */
+    public function remove($key = null);
 }
