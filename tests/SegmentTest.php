@@ -68,6 +68,17 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->segment->get('baz'));
     }
 
+    public function testGetSegment()
+    {
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
+        $this->assertSame('bar', $this->getValue('foo'));
+        $this->assertSame('dib', $this->getValue('baz'));
+
+        // now get the data
+        $this->assertSame(array('foo' => 'bar', 'baz' => 'dib'), $this->segment->getSegment());
+    }
+
     public function testFlash()
     {
         // set a value
