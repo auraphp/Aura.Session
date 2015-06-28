@@ -60,10 +60,13 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         $mcrypt = $token->getValue();
         $this->assertTrue($old != $openssl && $old != $mcrypt);
 
-        // with nothing
-        $this->phpfunc->extensions = array();
-        $this->setExpectedException('Aura\Session\Exception');
-        $token->regenerateValue();
+        if (!$this->phpfunc->function_exists('random_bytes')) {
+            // with nothing
+            $this->phpfunc->extensions = array();
+            $this->setExpectedException('Aura\Session\Exception');
+            $token->regenerateValue();
+        }
+
     }
 
     public function testIsValid()
