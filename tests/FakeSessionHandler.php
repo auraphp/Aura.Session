@@ -13,7 +13,7 @@ class FakeSessionHandler
 
     public function destroy($session_id)
     {
-        $this->data = null;
+        $this->data[$session_id] = null;
         return true;
     }
 
@@ -29,12 +29,12 @@ class FakeSessionHandler
 
     public function read($session_id)
     {
-        return $this->data;
+        return isset($this->data[$session_id]) ? $this->data[$session_id] : '';
     }
 
     public function write($session_id, $session_data)
     {
-        $this->data = $session_data;
+        $this->data[$session_id] = $session_data;
         return true;
     }
 }
