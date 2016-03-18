@@ -32,6 +32,17 @@ interface SegmentInterface
 
     /**
      *
+     * Returns array of all key/value pairs in the segment.
+     *
+     * @param mixed $alt An alternative value to return if the segment name is not set.
+     *
+     * @return mixed
+     *
+     */
+    public function getAll($alt = array());
+
+    /**
+     *
      * Sets the value of a key in the segment.
      *
      * @param string $key The key to set.
@@ -76,6 +87,17 @@ interface SegmentInterface
 
     /**
      *
+     * Gets all the flash values in the *current* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values are set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getFlashAll($alt = array());
+
+    /**
+     *
      * Clears flash values for *only* the next request.
      *
      * @return null
@@ -95,6 +117,17 @@ interface SegmentInterface
      *
      */
     public function getFlashNext($key, $alt = null);
+
+    /**
+     *
+     * Gets all flash values for the *next* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getFlashNextAll($alt = array());
 
     /**
      *
