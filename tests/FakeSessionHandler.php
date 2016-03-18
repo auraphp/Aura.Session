@@ -29,7 +29,7 @@ class FakeSessionHandler
 
     public function read($session_id)
     {
-        return return isset($this->data[$session_id]) ? $this->data[$session_id] : '';
+        return isset($this->data[$session_id]) ? $this->data[$session_id] : '';
     }
 
     public function write($session_id, $session_data)
