@@ -22,16 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Aura\\Session\\": "src/",
-            "Aura\\Session\\_Config\\": "config/"
-        }
-    },
-    "extra": {
-        "aura": {
-            "type": "library",
-            "config": {
-                "common": "Aura\\Session\\_Config\\Common"
-            }
+            "Aura\\Session\\": "src/"
         }
     },
     "suggest": {
@@ -39,13 +30,9 @@
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens.",
         "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers"
     },
-    "require-dev": {
-        "aura/di": "~2.0"
-    },
     "autoload-dev": {
         "psr-4": {
-            "Aura\\Session\\": "tests/",
-            "Aura\\Di\\": "vendor/aura/di/tests/"
+            "Aura\\Session\\": "tests/"
         }
     }
 }
