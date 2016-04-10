@@ -167,6 +167,23 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Gets all the flash values in the *current* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values are set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getFlashAll($alt = array())
+    {
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NOW][$this->name])
+             ? $_SESSION[Session::FLASH_NOW][$this->name]
+             : $alt;
+    }
+
+    /**
+     *
      * Clears flash values for *only* the next request.
      *
      * @return null
@@ -195,6 +212,23 @@ class Segment implements SegmentInterface
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
              ? $_SESSION[Session::FLASH_NEXT][$this->name][$key]
+             : $alt;
+    }
+
+    /**
+     *
+     * Gets all flash values for the *next* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getFlashNextAll($alt = array())
+    {
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NEXT][$this->name])
+             ? $_SESSION[Session::FLASH_NEXT][$this->name]
              : $alt;
     }
 

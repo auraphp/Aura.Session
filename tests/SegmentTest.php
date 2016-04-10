@@ -84,13 +84,18 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         // set a value
         $this->segment->setFlash('foo', 'bar');
         $expect = 'bar';
+        $expectAll = ['foo' => 'bar'];
         $this->assertSame($expect, $this->segment->getFlashNext('foo'));
+        $this->assertSame($expectAll, $this->segment->getFlashNextAll());
         $this->assertNull($this->segment->getFlash('foo'));
+        $this->assertSame(array(), $this->segment->getFlashAll());
 
         // set a value and make it available now
         $this->segment->setFlashNow('baz', 'dib');
         $expect = 'dib';
+        $expectAll = ['baz' => 'dib'];
         $this->assertSame($expect, $this->segment->getFlash('baz'));
+        $this->assertSame($expectAll, $this->segment->getFlashAll());
         $this->assertSame($expect, $this->segment->getFlashNext('baz'));
 
         // clear the next values

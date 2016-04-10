@@ -114,6 +114,9 @@ Then, in subsequent requests, we can read the flash value using `getFlash()`:
 <?php
 $segment = $session->getSegment('Vendor\Package\ClassName');
 $message = $segment->getFlash('message'); // 'Hello world!'
+
+// You can also get all the flash messages
+$messages = $segment->getFlashAll();
 ?>
 ```
 
