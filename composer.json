@@ -10,7 +10,7 @@
         "csrf"
     ],
     "homepage": "https://github.com/auraphp/Aura.Session",
-    "license": "BSD-2-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Aura.Session Contributors",
