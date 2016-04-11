@@ -174,7 +174,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash values themselves.
      *
      */
-    public function getFlashAll($alt = array())
+    public function getAllCurrentFlash($alt = array())
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NOW][$this->name])
@@ -224,7 +224,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash values themselves.
      *
      */
-    public function getFlashNextAll($alt = array())
+    public function getAllFlashNext($alt = array())
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NEXT][$this->name])

@@ -92,7 +92,7 @@ interface SegmentInterface
      * @return mixed The flash values themselves.
      *
      */
-    public function getFlashAll($alt = array());
+    public function getAllCurrentFlash($alt = array());
 
     /**
      *
@@ -125,7 +125,7 @@ interface SegmentInterface
      * @return mixed The flash values themselves.
      *
      */
-    public function getFlashNextAll($alt = array());
+    public function getAllFlashNext($alt = array());
 
     /**
      *
