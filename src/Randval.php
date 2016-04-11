@@ -62,6 +62,10 @@ class Randval implements RandvalInterface
             return $this->phpfunc->mcrypt_create_iv($bytes, MCRYPT_DEV_URANDOM);
         }
 
+        if ($this->phpfunc->function_exists('random_bytes')) {
+            return $this->phpfunc->random_bytes($bytes);
+        }
+
         $message = "Cannot generate cryptographically secure random values. "
                  . "Please install extension 'openssl' or 'mcrypt', or use "
                  . "another cryptographically secure implementation.";

@@ -65,6 +65,10 @@ class CsrfToken
      */
     public function isValid($value)
     {
+        if (function_exists('hash_equals')) {
+            return hash_equals($value, $this->getValue());
+        }
+
         return $value === $this->getValue();
     }
 
