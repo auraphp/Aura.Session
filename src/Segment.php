@@ -101,6 +101,19 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Append a value to a numeric key in the segment.
+     *
+     * @param mixed $val The value to append.
+     *
+     */
+    public function add($val)
+    {
+        $this->resumeOrStartSession();
+        $_SESSION[$this->name][] = $val;
+    }
+
+    /**
+     *
      * Clear all data from the segment.
      *
      * @return null
@@ -146,6 +159,20 @@ class Segment implements SegmentInterface
         $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
     }
 
+
+    /**
+     *
+     * Append a flash value with a numeric key for the *next* request.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlash($val)
+    {
+        $this->resumeOrStartSession();
+        $_SESSION[Session::FLASH_NEXT][$this->name][] = $val;
+    }
+
     /**
      *
      * Gets the flash value for a key in the *current* request.
@@ -162,6 +189,23 @@ class Segment implements SegmentInterface
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
              ? $_SESSION[Session::FLASH_NOW][$this->name][$key]
+             : $alt;
+    }
+
+    /**
+     *
+     * Gets all the flash values in the *current* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values are set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getAllCurrentFlash($alt = array())
+    {
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NOW][$this->name])
+             ? $_SESSION[Session::FLASH_NOW][$this->name]
              : $alt;
     }
 
@@ -200,6 +244,23 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Gets all flash values for the *next* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getAllFlashNext($alt = array())
+    {
+        $this->resumeSession();
+        return isset($_SESSION[Session::FLASH_NEXT][$this->name])
+             ? $_SESSION[Session::FLASH_NEXT][$this->name]
+             : $alt;
+    }
+
+    /**
+     *
      * Sets a flash value for the *next* request *and* the current one.
      *
      * @param string $key The key for the flash value.
@@ -212,6 +273,20 @@ class Segment implements SegmentInterface
         $this->resumeOrStartSession();
         $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
         $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
+    }
+
+    /**
+     *
+     * Append a flash value with a numeric key for the *next* request *and* the current one.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlashNow($val)
+    {
+        $this->resumeOrStartSession();
+        $_SESSION[Session::FLASH_NOW][$this->name][] = $val;
+        $_SESSION[Session::FLASH_NEXT][$this->name][] = $val;
     }
 
     /**

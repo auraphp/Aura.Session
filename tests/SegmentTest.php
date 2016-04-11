@@ -72,25 +72,33 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
     {
         $this->segment->set('foo', 'bar');
         $this->segment->set('baz', 'dib');
+        $this->segment->add('qux');
         $this->assertSame('bar', $this->getValue('foo'));
         $this->assertSame('dib', $this->getValue('baz'));
 
         // now get the data
-        $this->assertSame(array('foo' => 'bar', 'baz' => 'dib'), $this->segment->getSegment());
+        $this->assertSame(array('foo' => 'bar', 'baz' => 'dib', 'qux'), $this->segment->getSegment());
     }
 
     public function testFlash()
     {
         // set a value
         $this->segment->setFlash('foo', 'bar');
+        $this->segment->addFlash('baz');
         $expect = 'bar';
+        $expectAll = ['foo' => 'bar', 'baz'];
         $this->assertSame($expect, $this->segment->getFlashNext('foo'));
+        $this->assertSame($expectAll, $this->segment->getAllFlashNext());
         $this->assertNull($this->segment->getFlash('foo'));
+        $this->assertSame(array(), $this->segment->getAllCurrentFlash());
 
         // set a value and make it available now
         $this->segment->setFlashNow('baz', 'dib');
+        $this->segment->addFlashNow('qux');
         $expect = 'dib';
+        $expectAll = ['baz' => 'dib', 'qux'];
         $this->assertSame($expect, $this->segment->getFlash('baz'));
+        $this->assertSame($expectAll, $this->segment->getAllCurrentFlash());
         $this->assertSame($expect, $this->segment->getFlashNext('baz'));
 
         // clear the next values

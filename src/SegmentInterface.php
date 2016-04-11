@@ -52,6 +52,15 @@ interface SegmentInterface
 
     /**
      *
+     * Append a value to a numeric key in the segment.
+     *
+     * @param mixed $val The value to append.
+     *
+     */
+    public function add($val);
+
+    /**
+     *
      * Clear all data from the segment.
      *
      * @return null
@@ -72,6 +81,15 @@ interface SegmentInterface
 
     /**
      *
+     * Append a flash value with a numeric key for the *next* request.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlash($val);
+
+    /**
+     *
      * Gets the flash value for a key in the *current* request.
      *
      * @param string $key The key for the flash value.
@@ -82,6 +100,17 @@ interface SegmentInterface
      *
      */
     public function getFlash($key, $alt = null);
+
+    /**
+     *
+     * Gets all the flash values in the *current* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values are set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getAllCurrentFlash($alt = array());
 
     /**
      *
@@ -107,6 +136,17 @@ interface SegmentInterface
 
     /**
      *
+     * Gets all flash values for the *next* request.
+     *
+     * @param mixed $alt An alternative value to return if no flash values set.
+     *
+     * @return mixed The flash values themselves.
+     *
+     */
+    public function getAllFlashNext($alt = array());
+
+    /**
+     *
      * Sets a flash value for the *next* request *and* the current one.
      *
      * @param string $key The key for the flash value.
@@ -115,6 +155,15 @@ interface SegmentInterface
      *
      */
     public function setFlashNow($key, $val);
+
+    /**
+     *
+     * Append a flash value with a numeric key for the *next* request *and* the current one.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlashNow($val);
 
     /**
      *
