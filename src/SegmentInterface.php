@@ -52,6 +52,15 @@ interface SegmentInterface
 
     /**
      *
+     * Append a value to a numeric key in the segment.
+     *
+     * @param mixed $val The value to append.
+     *
+     */
+    public function add($val);
+
+    /**
+     *
      * Clear all data from the segment.
      *
      * @return null
@@ -69,6 +78,15 @@ interface SegmentInterface
      *
      */
     public function setFlash($key, $val);
+
+    /**
+     *
+     * Append a flash value with a numeric key for the *next* request.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlash($val);
 
     /**
      *
@@ -137,6 +155,15 @@ interface SegmentInterface
      *
      */
     public function setFlashNow($key, $val);
+
+    /**
+     *
+     * Append a flash value with a numeric key for the *next* request *and* the current one.
+     *
+     * @param mixed $val The flash value itself.
+     *
+     */
+    public function addFlashNow($val);
 
     /**
      *
