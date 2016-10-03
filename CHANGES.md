@@ -1,2 +1,4 @@
-This release modifies the testing structure and updates other support files.
-
+- (ADD) Add support for hash_equals() in CsrfToken::isValid()
+- (ADD) Add support for random_bytes() in Randval::generate()
+- (TST) Update tests and test support files
+- (DOC) Update license year and remove branch alias
