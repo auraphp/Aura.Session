@@ -287,9 +287,10 @@ if ($unsafe && $user->auth->isValid()) {
 
 For a CSRF token to be useful, its random value must be cryptographically
 secure. Using things like `mt_rand()` is insufficient. Aura.Session comes with
-a `Randval` class that implements a `RandvalInterface`, and uses either the
-`openssl` or the `mcrypt` extension to generate a random value. If you do not
-have one of these extensions installed, you will need your own random-value
+a `Randval` class that implements a `RandvalInterface`. It uses the
+[`random_bytes()`](http://php.net/random_bytes) function preferentially, then
+`openssl`, or finally `mcrypt` to generate a random value. If you do not
+have one of these installed, you will need your own random-value
 implementation of the `RandvalInterface`. We suggest a wrapper around
 [RandomLib](https://github.com/ircmaxell/RandomLib).
 
