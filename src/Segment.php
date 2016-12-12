@@ -71,6 +71,21 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Returns the entire segment.
+     *
+     * @return mixed
+     *
+     */
+    public function getSegment()
+    {
+        $this->resumeSession();
+        return isset($_SESSION[$this->name])
+            ? $_SESSION[$this->name]
+            : null;
+    }
+
+    /**
+     *
      * Sets the value of a key in the segment.
      *
      * @param string $key The key to set.
