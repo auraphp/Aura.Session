@@ -79,9 +79,13 @@ $segment->set('baz', 'dib');
 // try again to get a value from the segment
 echo $segment->get('foo'); // 'bar'
 
+// get all values from the segment
+// $all = array(foo' => 'bar', 'baz' => 'dib');
+$all = $segment->getAll();
+
 // because the segment is a reference to $_SESSION, we can modify
 // the superglobal directly and the segment values will also change
-$_SESSION['Vendor\Package\ClassName']['zim'] = 'gir'
+$_SESSION['Vendor\Package\ClassName']['zim'] = 'gir';
 echo $segment->get('zim'); // 'gir'
 ?>
 ```
@@ -114,6 +118,9 @@ Then, in subsequent requests, we can read the flash value using `getFlash()`:
 <?php
 $segment = $session->getSegment('Vendor\Package\ClassName');
 $message = $segment->getFlash('message'); // 'Hello world!'
+
+// You can also get all the flash messages
+$messages = $segment->getFlashAll();
 ?>
 ```
 
@@ -185,7 +192,7 @@ Calling `destroy()` will also delete the session cookie via `setcookie()`. If we
 // this will be used to delete the session cookie.
 $delete_cookie = function ($name, $path, $domain) use ($response) {
     $response->cookies->delete($name, $path, $domain);
-}
+};
 
 $session = $session_factory->newInstance($_COOKIE, $delete_cookie);
 ?>
