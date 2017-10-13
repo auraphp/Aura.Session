@@ -49,9 +49,6 @@ class CsrfToken
     {
         $this->segment = $segment;
         $this->randval = $randval;
-        if (! $this->segment->get('value')) {
-            $this->regenerateValue();
-        }
     }
 
     /**
@@ -60,40 +57,55 @@ class CsrfToken
      *
      * @param string $value The incoming token value.
      *
+     * @param string $key  A string key name which session value is saved. Defaults `value`
+     *
      * @return bool True if valid, false if not.
      *
      */
-    public function isValid($value)
+    public function isValid($value, $key = 'value')
     {
+        $oldval = $this->segment->get($key);
+
+        // Regenerate value for key
+        $this->regenerateValue($key);
+
         if (function_exists('hash_equals')) {
-            return hash_equals($value, $this->getValue());
+            return hash_equals($value, $oldval);
         }
 
-        return $value === $this->getValue();
+        return $value === $oldval;
     }
 
     /**
      *
      * Gets the value of the outgoing CSRF token.
      *
+     * @param string $key  A string key name which session value is saved. Defaults `value`
+     *
      * @return string
      *
      */
-    public function getValue()
+    public function getValue($key = 'value')
     {
-        return $this->segment->get('value');
+        if ($this->segment->get($key) == null ) {
+            $this->regenerateValue($key);
+        }
+
+        return $this->segment->get($key);
     }
 
     /**
      *
      * Regenerates the value of the outgoing CSRF token.
      *
+     * @param string $key  A string key name which session value is saved. Defaults `value`
+     *
      * @return null
      *
      */
-    public function regenerateValue()
+    public function regenerateValue($key = 'value')
     {
         $hash = hash('sha512', $this->randval->generate());
-        $this->segment->set('value', $hash);
+        $this->segment->set($key, $hash);
     }
 }
