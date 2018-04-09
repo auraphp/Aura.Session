@@ -181,4 +181,29 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->segment->getFlash('foo'));
         $this->assertFalse($this->session->isStarted());
     }
+
+    public function testRestartSessionFlashNotMove()
+    {
+        $this->assertFalse($this->session->isStarted());
+
+        // set it
+        $this->segment->setFlash('foo', 'bar');
+
+        // session should have started
+        $this->assertTrue($this->session->isStarted());
+
+        // should see it in the session
+        $actual = $_SESSION[Session::FLASH_NEXT][$this->name]['foo'];
+        $this->assertSame('bar', $actual);
+
+        $this->session->commit();
+
+        $this->assertFalse($this->session->isStarted());
+
+        $this->session->start();
+
+        // should see it in the session
+        $actual = $_SESSION[Session::FLASH_NEXT][$this->name]['foo'];
+        $this->assertSame('bar', $actual);
+    }
 }

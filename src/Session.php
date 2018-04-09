@@ -272,7 +272,7 @@ class Session
     public function start()
     {
         $result = $this->phpfunc->session_start();
-        if ($result) {
+        if ($result && ! $this->flash_moved) {
             $this->moveFlash();
         }
         return $result;
