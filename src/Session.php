@@ -475,13 +475,18 @@ class Session
      *
      * @return null
      *
+     * @throws Exception
+     *
      * @see session_set_cookie_params()
      *
      */
     public function setCookieParams(array $params)
     {
         if ($this->isStarted()) {
-            return;
+            $message = 'Cannot change session cookie parameters when session is active.'
+                     . 'Please call setCookieParams() before start session.';
+
+            throw new Exception($message);
         }
 
         $this->cookie_params = array_merge($this->cookie_params, $params);
