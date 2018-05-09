@@ -477,14 +477,16 @@ class Session
      */
     public function setCookieParams(array $params)
     {
-        $this->cookie_params = array_merge($this->cookie_params, $params);
-        $this->phpfunc->session_set_cookie_params(
-            $this->cookie_params['lifetime'],
-            $this->cookie_params['path'],
-            $this->cookie_params['domain'],
-            $this->cookie_params['secure'],
-            $this->cookie_params['httponly']
-        );
+        if (!$this->isStarted()) {
+            $this->cookie_params = array_merge($this->cookie_params, $params);
+            $this->phpfunc->session_set_cookie_params(
+                $this->cookie_params['lifetime'],
+                $this->cookie_params['path'],
+                $this->cookie_params['domain'],
+                $this->cookie_params['secure'],
+                $this->cookie_params['httponly']
+            );
+        }
     }
 
     /**
