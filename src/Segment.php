@@ -126,10 +126,11 @@ class Segment implements SegmentInterface
      */
     public function getFlash($key, $alt = null)
     {
-        $this->resumeSession();
-        return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
+        $session_data = isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
              ? $_SESSION[Session::FLASH_NOW][$this->name][$key]
              : $alt;
+        $this->resumeSession();
+        return $session_data;
     }
 
     /**
