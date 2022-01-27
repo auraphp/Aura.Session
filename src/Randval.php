@@ -59,7 +59,7 @@ class Randval implements RandvalInterface
         }
 
         if ($this->phpfunc->extension_loaded('mcrypt')) {
-            return $this->phpfunc->mcrypt_create_iv($bytes, MCRYPT_DEV_URANDOM);
+            return $this->phpfunc->random_bytes($bytes);
         }
 
         if ($this->phpfunc->function_exists('random_bytes')) {

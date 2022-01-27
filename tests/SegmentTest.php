@@ -1,10 +1,12 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @runTestsInSeparateProcesses
  */
-class SegmentTest extends \PHPUnit_Framework_TestCase
+class SegmentTest extends TestCase
 {
     protected $session;
 
@@ -12,7 +14,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
     protected $name = __CLASS__;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->newSession();
         $this->segment = $this->session->getSegment($this->name);

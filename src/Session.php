@@ -468,6 +468,9 @@ class Session
      * - `httponly` : If set to TRUE then PHP will attempt to send the httponly
      *   flag when setting the session cookie.
      *
+     * - `samesite` : Set if the cookie should be restricted to a first-party or same-site context.
+     *   Possible values are 'Lax', 'Strict' or 'None'.
+     *
      * @param array $params The array of session cookie param keys and values.
      *
      * @return null
@@ -478,13 +481,17 @@ class Session
     public function setCookieParams(array $params)
     {
         $this->cookie_params = array_merge($this->cookie_params, $params);
-        $this->phpfunc->session_set_cookie_params(
-            $this->cookie_params['lifetime'],
-            $this->cookie_params['path'],
-            $this->cookie_params['domain'],
-            $this->cookie_params['secure'],
-            $this->cookie_params['httponly']
-        );
+        if (PHP_VERSION_ID < 70300) {
+            $this->phpfunc->session_set_cookie_params(
+                $this->cookie_params['lifetime'],
+                $this->cookie_params['path'],
+                $this->cookie_params['domain'],
+                $this->cookie_params['secure'],
+                $this->cookie_params['httponly']
+            );
+        } else {
+            $this->phpfunc->session_set_cookie_params($this->cookie_params);
+        }
     }
 
     /**
