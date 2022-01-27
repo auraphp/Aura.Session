@@ -32,6 +32,15 @@ interface SegmentInterface
 
     /**
      *
+     * Returns the entire segment.
+     *
+     * @return mixed
+     *
+     */
+    public function getSegment();
+
+    /**
+     *
      * Sets the value of a key in the segment.
      *
      * @param string $key The key to set.
@@ -125,4 +134,11 @@ interface SegmentInterface
      *
      */
     public function keepFlash();
+
+    /**
+     * Remove a key from the segment, or remove the entire segment (including key) from the session
+     *
+     * @param null $key
+     */
+    public function remove($key = null);
 }

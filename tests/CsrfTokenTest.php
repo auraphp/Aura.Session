@@ -1,10 +1,12 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @runTestsInSeparateProcesses
  */
-class CsrfTokenTest extends \PHPUnit_Framework_TestCase
+class CsrfTokenTest extends TestCase
 {
     protected $session;
 
@@ -14,7 +16,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
 
     protected $phpfunc;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->phpfunc = new FakePhpfunc;
 
@@ -26,7 +28,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function teardown()
+    public function teardown(): void
     {
         session_unset();
         if (session_id() !== '') {
@@ -65,7 +67,7 @@ class CsrfTokenTest extends \PHPUnit_Framework_TestCase
         if (!$this->phpfunc->function_exists('random_bytes')) {
             // with nothing
             $this->phpfunc->extensions = array();
-            $this->setExpectedException('Aura\Session\Exception');
+            $this->expectException('Aura\Session\Exception');
             $token->regenerateValue();
         }
 

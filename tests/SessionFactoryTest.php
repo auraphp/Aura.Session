@@ -1,7 +1,9 @@
 <?php
 namespace Aura\Session;
 
-class SessionFactoryTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class SessionFactoryTest extends TestCase
 {
     public function testNewInstance()
     {

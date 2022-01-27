@@ -1,10 +1,12 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @runTestsInSeparateProcesses
  */
-class SegmentTest extends \PHPUnit_Framework_TestCase
+class SegmentTest extends TestCase
 {
     protected $session;
 
@@ -12,7 +14,7 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
 
     protected $name = __CLASS__;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = $this->newSession();
         $this->segment = $this->session->getSegment($this->name);
@@ -66,6 +68,17 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(array(), $this->getValue());
         $this->assertNull($this->segment->get('foo'));
         $this->assertNull($this->segment->get('baz'));
+    }
+
+    public function testGetSegment()
+    {
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
+        $this->assertSame('bar', $this->getValue('foo'));
+        $this->assertSame('dib', $this->getValue('baz'));
+
+        // now get the data
+        $this->assertSame(array('foo' => 'bar', 'baz' => 'dib'), $this->segment->getSegment());
     }
 
     public function testFlash()
@@ -180,5 +193,29 @@ class SegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->session->isStarted());
         $this->assertNull($this->segment->getFlash('foo'));
         $this->assertFalse($this->session->isStarted());
+    }
+
+    public function testRemoveKey(){
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
+        $this->assertSame('bar', $this->getValue('foo'));
+        $this->assertSame('dib', $this->getValue('baz'));
+
+        // now remove the key
+        $this->segment->remove('foo');
+        $this->assertNull($this->segment->get('foo'));
+        $this->assertArrayNotHasKey('foo', $_SESSION[$this->name]);
+        $this->assertSame('dib', $this->getValue('baz'));
+    }
+
+    public function testRemoveSegment(){
+        $this->segment->set('foo', 'bar');
+        $this->segment->set('baz', 'dib');
+        $this->assertSame('bar', $this->getValue('foo'));
+        $this->assertSame('dib', $this->getValue('baz'));
+
+        // now remove the key
+        $this->segment->remove();
+        $this->assertArrayNotHasKey($this->name, $_SESSION);
     }
 }

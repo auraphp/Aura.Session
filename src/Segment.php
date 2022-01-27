@@ -71,6 +71,21 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Returns the entire segment.
+     *
+     * @return mixed
+     *
+     */
+    public function getSegment()
+    {
+        $this->resumeSession();
+        return isset($_SESSION[$this->name])
+            ? $_SESSION[$this->name]
+            : null;
+    }
+
+    /**
+     *
      * Sets the value of a key in the segment.
      *
      * @param string $key The key to set.
@@ -95,6 +110,24 @@ class Segment implements SegmentInterface
     {
         if ($this->resumeSession()) {
             $_SESSION[$this->name] = array();
+        }
+    }
+
+
+    /**
+     * Remove a key from the segment, or remove the entire segment (including key) from the session
+     *
+     * @param null $key
+     */
+    public function remove($key = null) {
+        if ($this->resumeSession()) {
+            if($key){
+                if(isset($_SESSION[$this->name]) && array_key_exists($key, $_SESSION[$this->name])){
+                    unset($_SESSION[$this->name][$key]);
+                }
+            } else {
+                unset($_SESSION[$this->name]);
+            }
         }
     }
 

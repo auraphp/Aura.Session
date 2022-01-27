@@ -10,7 +10,7 @@
         "csrf"
     ],
     "homepage": "https://github.com/auraphp/Aura.Session",
-    "license": "BSD-2-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Aura.Session Contributors",
@@ -18,36 +18,24 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": "^7.2 || ^8.0"
     },
     "autoload": {
         "psr-4": {
-            "Aura\\Session\\": "src/",
-            "Aura\\Session\\_Config\\": "config/"
-        }
-    },
-    "extra": {
-        "aura": {
-            "type": "library",
-            "config": {
-                "common": "Aura\\Session\\_Config\\Common"
-            }
+            "Aura\\Session\\": "src/"
         }
     },
     "suggest": {
         "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens.",
-        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers",
-        "paragonie/random_compat": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7"
+        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers"
     },
     "require-dev": {
-        "aura/di": "~2.0",
-        "phpunit/phpunit": "~5.7 || ~4.8"
+        "phpunit/phpunit": "^8.5"
     },
     "autoload-dev": {
         "psr-4": {
-            "Aura\\Session\\": "tests/",
-            "Aura\\Di\\": "vendor/aura/di/tests/"
+            "Aura\\Session\\": "tests/"
         }
     }
 }
