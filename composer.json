@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0"
+        "php": "^7.2 || ^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -28,7 +28,12 @@
     "suggest": {
         "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens.",
-        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers"
+        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers",
+        "paragonie/random_compat": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7"
+    },
+    "require-dev": {
+        "aura/di": "~2.0",
+        "phpunit/phpunit": "^8.5"
     },
     "autoload-dev": {
         "psr-4": {

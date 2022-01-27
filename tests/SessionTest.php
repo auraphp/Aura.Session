@@ -1,15 +1,17 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @runTestsInSeparateProcesses
  */
-class SessionTest extends \PHPUnit_Framework_TestCase
+class SessionTest extends TestCase
 {
     // the session object
     protected $session;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->phpfunc = new FakePhpfunc;
         $handler = new FakeSessionHandler();
@@ -34,7 +36,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function teardown()
+    public function teardown(): void
     {
         session_unset();
         if (session_id() !== '') {
