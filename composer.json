@@ -28,7 +28,7 @@
     "suggest": {
         "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
         "ext-mcrypt": "Mcrypt generates the next best secure CSRF tokens.",
-        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers",
+        "ircmaxell/random-lib": "A Library For Generating Secure Random Numbers"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5"
