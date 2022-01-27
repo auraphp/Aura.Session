@@ -480,6 +480,10 @@ class Session
      */
     public function setCookieParams(array $params)
     {
+        if ($this->isStarted()) {
+            return;
+        }
+
         $this->cookie_params = array_merge($this->cookie_params, $params);
         if (PHP_VERSION_ID < 70300) {
             $this->phpfunc->session_set_cookie_params(

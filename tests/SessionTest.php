@@ -208,6 +208,14 @@ class SessionTest extends TestCase
         $this->session->setCookieParams($expect);
         $actual = $this->session->getCookieParams();
         $this->assertSame($expect, $actual);
+
+        // Cannot change session cookie parameters when session is active
+        $this->session->start();
+        $newParams = $expect;
+        $newParams['lifetime'] = '0';
+        $this->session->setCookieParams($newParams);
+        $this->assertNotSame($newParams, $this->session->getCookieParams());
+        $this->assertSame($expect, $this->session->getCookieParams());
     }
 
     public function testSetAndGetCacheExpire()
