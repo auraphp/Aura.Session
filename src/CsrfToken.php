@@ -101,4 +101,22 @@ class CsrfToken
 
         return $this->segment->get($key);
     }
+
+
+    /**
+     * Regenerates all csrf tokens
+     *
+     * @return void
+     */
+    public function regenerateAllKeyValues()
+    {
+        $segment = $this->segment->getSegment();
+
+        if ($segment) {
+            foreach ($segment as $key => $value) {
+                $this->regenerateValue($key);
+            }
+        }
+    }
+
 }

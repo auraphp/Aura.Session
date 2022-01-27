@@ -183,6 +183,15 @@ class SessionTest extends TestCase
         $this->session->regenerateId();
         $new_value = $this->session->getCsrfToken()->getValue();
         $this->assertTrue($old_value != $new_value);
+
+        // Regenerates multiple keys
+        $csrf1_old_value = $this->session->getCsrfToken('csrf1')->getValue();
+        $csrf2_old_value = $this->session->getCsrfToken('csrf2')->getValue();
+        $this->session->regenerateId();
+        $csrf1_new_value = $this->session->getCsrfToken('csrf1')->getValue();
+        $csrf2_new_value = $this->session->getCsrfToken('csrf2')->getValue();
+        $this->assertTrue($csrf1_old_value != $csrf1_new_value);
+        $this->assertTrue($csrf2_old_value != $csrf2_new_value);
     }
 
     public function testSetAndGetName()
