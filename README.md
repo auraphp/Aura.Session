@@ -283,6 +283,10 @@ if ($unsafe && $user->auth->isValid()) {
 ?>
 ```
 
+> Note : By default the above code only works for single form. If you need
+multiple tokens, pass different keys to `getValue` and `isValid` methods.
+For examples please look into the unit test class `CsrfTokenTest`.
+
 #### CSRF Value Generation
 
 For a CSRF token to be useful, its random value must be cryptographically
