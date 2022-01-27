@@ -530,7 +530,7 @@ class Session
     {
         $result = $this->phpfunc->session_regenerate_id(true);
         if ($result && $this->csrf_token) {
-            $this->csrf_token->regenerateValue();
+            $this->csrf_token->regenerateAllKeyValues();
         }
         return $result;
     }
