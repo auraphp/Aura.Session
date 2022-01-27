@@ -26,7 +26,7 @@ class Issue23Test extends TestCase
         session_start();
         return new Session(
             new SegmentFactory,
-            new CsrfTokenFactory(new Randval(new Phpfunc)),
+            new CsrfTokenFactory(new Randval()),
             new Phpfunc,
             $cookies
         );

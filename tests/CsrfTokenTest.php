@@ -22,7 +22,7 @@ class CsrfTokenTest extends TestCase
 
         $this->session = new Session(
             new SegmentFactory,
-            new CsrfTokenFactory(new Randval($this->phpfunc)),
+            new CsrfTokenFactory(new Randval()),
             $this->phpfunc,
             $_COOKIE
         );
