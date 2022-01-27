@@ -40,6 +40,8 @@ class CsrfTokenTest extends TestCase
     {
         $this->assertFalse($this->session->isStarted());
         $token = $this->session->getCsrfToken();
+        $this->assertFalse($this->session->isStarted());
+        $token->getValue('__csrf');
         $this->assertTrue($this->session->isStarted());
     }
 
@@ -79,5 +81,24 @@ class CsrfTokenTest extends TestCase
         $this->assertTrue($token->isValid($value));
         $token->regenerateValue();
         $this->assertFalse($token->isValid($value));
+    }
+
+    public function testDifferentTokens()
+    {
+        $this->assertFalse($this->session->isStarted());
+        $token = $this->session->getCsrfToken();
+
+        $value1 = $token->getValue('__csrf1');
+        $value2 = $token->getValue('__csrf2');
+        $value3 = $token->getValue('__csrf3');
+
+        $this->assertTrue($token->isValid($value1, '__csrf1'));
+        $this->assertTrue($token->isValid($value2, '__csrf2'));
+        $this->assertTrue($token->isValid($value3, '__csrf3'));
+
+        // After isValid call, the value stored in session will not be reset
+        $this->assertEquals($value3, $token->getValue('__csrf3'));
+
+        $this->assertNotEquals($value3, $token->regenerateValue('__csrf3'));
     }
 }

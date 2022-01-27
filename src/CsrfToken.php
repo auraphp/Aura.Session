@@ -30,7 +30,7 @@ class CsrfToken
      *
      * Session segment for values in this class.
      *
-     * @var Segment
+     * @var SegmentInterface
      *
      */
     protected $segment;
@@ -39,19 +39,16 @@ class CsrfToken
      *
      * Constructor.
      *
-     * @param Segment $segment A segment for values in this class.
+     * @param SegmentInterface $segment A segment for values in this class.
      *
      * @param RandvalInterface $randval A cryptographically-secure random
      * value generator.
      *
      */
-    public function __construct(Segment $segment, RandvalInterface $randval)
+    public function __construct(SegmentInterface $segment, RandvalInterface $randval)
     {
         $this->segment = $segment;
         $this->randval = $randval;
-        if (! $this->segment->get('value')) {
-            $this->regenerateValue();
-        }
     }
 
     /**
@@ -60,40 +57,48 @@ class CsrfToken
      *
      * @param string $value The incoming token value.
      *
+     * @param string $key  A string key name which session value is saved.
+     *
      * @return bool True if valid, false if not.
      *
      */
-    public function isValid($value)
+    public function isValid($value, $key = 'value')
     {
-        if (function_exists('hash_equals')) {
-            return hash_equals($value, $this->getValue());
-        }
-
-        return $value === $this->getValue();
+        return hash_equals($value, $this->getValue($key));
     }
 
     /**
      *
      * Gets the value of the outgoing CSRF token.
      *
+     * @param string $key  A string key name which session value is saved.
+     *
      * @return string
      *
      */
-    public function getValue()
+    public function getValue($key = 'value')
     {
-        return $this->segment->get('value');
+        if ($this->segment->get($key) == null ) {
+            $this->regenerateValue($key);
+        }
+
+        return $this->segment->get($key);
     }
 
     /**
      *
      * Regenerates the value of the outgoing CSRF token.
      *
-     * @return null
+     * @param string $key  A string key name which session value is saved.
+     *
+     * @return string
      *
      */
-    public function regenerateValue()
+    public function regenerateValue($key = 'value')
     {
         $hash = hash('sha512', $this->randval->generate());
-        $this->segment->set('value', $hash);
+        $this->segment->set($key, $hash);
+
+        return $this->segment->get($key);
     }
 }
