@@ -8,6 +8,8 @@
  */
 namespace Aura\Session;
 
+use Aura\Session\Exception\SessionAlreadyStarted;
+
 /**
  *
  * A central control point for new session segments, PHP session management
@@ -475,11 +477,17 @@ class Session
      *
      * @return null
      *
+     * @throws SessionAlreadyStarted
+     *
      * @see session_set_cookie_params()
      *
      */
     public function setCookieParams(array $params)
     {
+        if ($this->isStarted()) {
+            throw new SessionAlreadyStarted();
+        }
+
         $this->cookie_params = array_merge($this->cookie_params, $params);
         if (PHP_VERSION_ID < 70300) {
             $this->phpfunc->session_set_cookie_params(

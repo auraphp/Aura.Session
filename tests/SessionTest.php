@@ -1,6 +1,7 @@
 <?php
 namespace Aura\Session;
 
+use Aura\Session\Exception\SessionAlreadyStarted;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -217,6 +218,13 @@ class SessionTest extends TestCase
         $this->session->setCookieParams($expect);
         $actual = $this->session->getCookieParams();
         $this->assertSame($expect, $actual);
+
+        // Cannot change session cookie parameters when session is active
+        $this->expectException(SessionAlreadyStarted::class);
+        $this->session->start();
+        $newParams = $expect;
+        $newParams['lifetime'] = '0';
+        $this->session->setCookieParams($newParams);
     }
 
     public function testSetAndGetCacheExpire()
