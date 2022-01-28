@@ -8,7 +8,7 @@
  */
 namespace Aura\Session;
 
-use Aura\Session\Exception\SessionAlreadyStartedException;
+use Aura\Session\Exception\SessionAlreadyStarted;
 
 /**
  *
@@ -477,7 +477,7 @@ class Session
      *
      * @return null
      *
-     * @throws SessionAlreadyStartedException
+     * @throws SessionAlreadyStarted
      *
      * @see session_set_cookie_params()
      *
@@ -485,7 +485,7 @@ class Session
     public function setCookieParams(array $params)
     {
         if ($this->isStarted()) {
-            throw new SessionAlreadyStartedException();
+            throw new SessionAlreadyStarted();
         }
 
         $this->cookie_params = array_merge($this->cookie_params, $params);
