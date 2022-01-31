@@ -24,7 +24,7 @@ class SegmentTest extends TestCase
     {
         return new Session(
             new SegmentFactory,
-            new CsrfTokenFactory(new Randval(new Phpfunc)),
+            new CsrfTokenFactory(new Randval()),
             new Phpfunc,
             $cookies
         );

@@ -289,12 +289,10 @@ For examples please look into the unit test class `CsrfTokenTest`.
 #### CSRF Value Generation
 
 For a CSRF token to be useful, its random value must be cryptographically
-secure. Using things like `mt_rand()` is insufficient. Aura.Session comes with
-a `Randval` class that implements a `RandvalInterface`, and uses either the
-`openssl` or the `mcrypt` extension to generate a random value. If you do not
-have one of these extensions installed, you will need your own random-value
-implementation of the `RandvalInterface`. We suggest a wrapper around
-[RandomLib](https://github.com/ircmaxell/RandomLib).
+secure. Aura.Session comes with a `Randval` class that implements a
+`RandvalInterface`, and uses default `random_bytes` to generate a
+random value. If you are not satisified,
+you can create your own implementation of the `RandvalInterface`.
 
 ### Session Lifetime
 

@@ -33,7 +33,7 @@ class SessionFactory
         $phpfunc = new Phpfunc;
         return new Session(
             new SegmentFactory,
-            new CsrfTokenFactory(new Randval($phpfunc)),
+            new CsrfTokenFactory(new Randval()),
             $phpfunc,
             $cookies,
             $delete_cookie
