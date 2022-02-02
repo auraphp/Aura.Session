@@ -34,4 +34,4 @@ To ask questions, provide feedback, or otherwise communicate with the Aura commu
 
 ## Documentation
 
-This package is fully documented [here](./docs/index.md).
+This package is fully documented [here](./docs/getting-started.md).
