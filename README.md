@@ -16,6 +16,7 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Session/rele
 ### Quality
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/auraphp/Aura.Session/badges/quality-score.png?b=4.x)](https://scrutinizer-ci.com/g/auraphp/Aura.Session/?branch=4.x)
+[![codecov](https://codecov.io/gh/auraphp/Aura.Session/branch/4.x/graph/badge.svg)](https://codecov.io/gh/auraphp/Aura.Session)
 [![Continuous Integration](https://github.com/auraphp/Aura.Session/actions/workflows/continuous-integration.yml/badge.svg?branch=4.x)](https://github.com/auraphp/Aura.Session/actions/workflows/continuous-integration.yml)
 
 To run the unit tests at the command line, issue `composer install` and then `phpunit` at the package root. This requires [Composer](http://getcomposer.org/) to be available as `composer`, and [PHPUnit](http://phpunit.de/manual/) to be available as `phpunit`.
