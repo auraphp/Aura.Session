@@ -9,6 +9,9 @@ use PHPUnit\Framework\TestCase;
  */
 class SessionTest extends TestCase
 {
+    /** @var FakePhpfunc */
+    private $phpfunc;
+
     // the session object
     protected $session;
 
