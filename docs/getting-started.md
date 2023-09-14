@@ -270,4 +270,4 @@ $session->setCookieParams(array('lifetime' => '1209600'));
 ?>
 ```
 
-> N.b: The `setCookieParams` method calls [session_set_cookie_params](http://php.net/session_set_cookie_params) internally.
+> N.b: The `setCookieParams` method calls [session_set_cookie_params](http://php.net/session_set_cookie_params) internally. Thus, you need to call `setCookieParams` for every request and before session_start() is called.
