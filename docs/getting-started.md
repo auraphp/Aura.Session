@@ -90,9 +90,9 @@ Using `getFlash()` returns only the values that are available now from having be
 
 #### Keeping and Clearing Flash Values
 
-Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method, or we can keep all flashes for all segments by calling the _Session_ `keepFlash()` method.
+Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method.
 
-Similarly, we can clear flash values on a per-segment basis or a session-wide bases.  Use the `clearFlash()` method on the _Segment_ to clear flashes just for that segment, or the same method on the _Session_ to clear all flash values for all segments.
+Similarly, we can clear flash values just for that _Segment_ with `clearFlash()` method.
 
 ### Lazy Session Starting
 
