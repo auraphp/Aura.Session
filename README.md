@@ -7,11 +7,9 @@ session segments, next-request-only ("flash") values, and CSRF tools.
 
 ### Installation
 
-This library requires PHP 7.2 or later. It has been tested on PHP 7.2-8.2. we recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
+This library requires PHP 8.1 or later. It has been tested on PHP 8.1-8.5. We recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
 
 It is installable and autoloadable via Composer as [aura/session](https://packagist.org/packages/aura/session).
-
-Alternatively, [download a release](https://github.com/auraphp/Aura.Session/releases) or clone this repository, then require or include its _autoload.php_ file.
 
 ### Quality
 
@@ -21,16 +19,16 @@ Alternatively, [download a release](https://github.com/auraphp/Aura.Session/rele
 
 To run the unit tests at the command line, issue `composer install` and then `phpunit` at the package root. This requires [Composer](http://getcomposer.org/) to be available as `composer`, and [PHPUnit](http://phpunit.de/manual/) to be available as `phpunit`.
 
-This library attempts to comply with [PSR-1][], [PSR-2][], and [PSR-4][]. If
+This library attempts to comply with [PSR-1][], [PSR-12][], and [PSR-4][]. If
 you notice compliance oversights, please send a patch via pull request.
 
 [PSR-1]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
-[PSR-2]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
+[PSR-12]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md
 [PSR-4]: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md
 
 ### Community
 
-To ask questions, provide feedback, or otherwise communicate with the Aura community, please join our [Google Group](http://groups.google.com/group/auraphp), follow [@auraphp on Twitter](http://twitter.com/auraphp), or chat with us on #auraphp on Freenode.
+To ask questions, provide feedback, or otherwise communicate with the Aura community, please join our [Google Group](http://groups.google.com/group/auraphp) or follow [@auraphp on X](https://x.com/auraphp).
 
 
 ## Documentation
