@@ -224,11 +224,7 @@ class Session
      */
     public function isStarted()
     {
-        if ($this->phpfunc->function_exists('session_status')) {
-            $started = $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
-        } else {
-            $started = $this->sessionStatus();
-        }
+        $started = $this->phpfunc->session_status() === PHP_SESSION_ACTIVE;
 
         // if the session was started externally, move the flash values forward
         if ($started && ! $this->flash_moved) {
@@ -237,31 +233,6 @@ class Session
 
         // done
         return $started;
-    }
-
-    /**
-     *
-     * Returns the session status.
-     *
-     * Nota bene:
-     *
-     * PHP 5.3 implementation of session_status() for only active/none.
-     * Relies on the fact that ini setting 'session.use_trans_sid' cannot be
-     * changed when a session is active.
-     *
-     * PHP ini_set() raises a warning when we attempt to change this setting
-     * and session is active. Note that the attempted change is to the
-     * pre-existing value, so nothing will actually change on success.
-     *
-     */
-    protected function sessionStatus()
-    {
-        $setting = 'session.use_trans_sid';
-        $current = $this->phpfunc->ini_get($setting);
-        $level   = $this->phpfunc->error_reporting(0);
-        $result  = $this->phpfunc->ini_set($setting, $current);
-        $this->phpfunc->error_reporting($level);
-        return $result !== $current;
     }
 
     /**
@@ -489,17 +460,7 @@ class Session
         }
 
         $this->cookie_params = array_merge($this->cookie_params, $params);
-        if (PHP_VERSION_ID < 70300) {
-            $this->phpfunc->session_set_cookie_params(
-                $this->cookie_params['lifetime'],
-                $this->cookie_params['path'],
-                $this->cookie_params['domain'],
-                $this->cookie_params['secure'],
-                $this->cookie_params['httponly']
-            );
-        } else {
-            $this->phpfunc->session_set_cookie_params($this->cookie_params);
-        }
+        $this->phpfunc->session_set_cookie_params($this->cookie_params);
     }
 
     /**

@@ -255,12 +255,4 @@ class SessionTest extends TestCase
         $this->assertTrue($this->session->resume());
     }
 
-    public function testIsStarted_php53()
-    {
-        $this->phpfunc->functions = array('session_status' => false);
-        $this->session = $this->newSession();
-        $this->assertFalse($this->session->isStarted());
-        $this->session->start();
-        $this->assertTrue($this->session->isStarted());
-    }
 }
