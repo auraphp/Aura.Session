@@ -6,7 +6,7 @@ use SessionHandlerInterface;
 // a session handler that does nothing, for testing purposes only
 class FakeSessionHandler implements SessionHandlerInterface
 {
-    public $data;
+    public array $data = [];
 
     public function close(): bool
     {
@@ -15,7 +15,7 @@ class FakeSessionHandler implements SessionHandlerInterface
 
     public function destroy(string $session_id): bool
     {
-        $this->data[$session_id] = null;
+        unset($this->data[$session_id]);
         return true;
     }
 
@@ -31,7 +31,7 @@ class FakeSessionHandler implements SessionHandlerInterface
 
     public function read(string $session_id): string|false
     {
-        return isset($this->data[$session_id]) ? $this->data[$session_id] : '';
+        return $this->data[$session_id] ?? '';
     }
 
     public function write(string $session_id, string $session_data): bool
