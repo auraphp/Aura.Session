@@ -1,11 +1,10 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[RunTestsInSeparateProcesses]
 class SegmentTest extends TestCase
 {
     protected $session;

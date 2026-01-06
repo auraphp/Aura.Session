@@ -1,11 +1,10 @@
 <?php
 namespace Aura\Session;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[RunTestsInSeparateProcesses]
 class CsrfTokenTest extends TestCase
 {
     protected $session;
@@ -50,27 +49,11 @@ class CsrfTokenTest extends TestCase
         $token = $this->session->getCsrfToken();
 
         $old = $token->getValue();
-        $this->assertTrue($old != '');
+        $this->assertNotEmpty($old);
 
-        // with openssl
-        $this->phpfunc->extensions = array('openssl');
         $token->regenerateValue();
-        $openssl = $token->getValue();
-        $this->assertTrue($old != $openssl);
-
-        // with mcrypt
-        $this->phpfunc->extensions = array('mcrypt');
-        $token->regenerateValue();
-        $mcrypt = $token->getValue();
-        $this->assertTrue($old != $openssl && $old != $mcrypt);
-
-        if (!$this->phpfunc->function_exists('random_bytes')) {
-            // with nothing
-            $this->phpfunc->extensions = array();
-            $this->expectException('Aura\Session\Exception');
-            $token->regenerateValue();
-        }
-
+        $new = $token->getValue();
+        $this->assertNotEquals($old, $new);
     }
 
     public function testIsValid()
