@@ -17,7 +17,7 @@ class CsrfTokenTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->phpfunc = new FakePhpfunc;
+        $this->phpfunc = new Phpfunc;
 
         $this->session = new Session(
             new SegmentFactory,

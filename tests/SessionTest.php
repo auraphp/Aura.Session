@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 #[RunTestsInSeparateProcesses]
 class SessionTest extends TestCase
 {
-    /** @var FakePhpfunc */
+    /** @var Phpfunc */
     private $phpfunc;
 
     // the session object
@@ -16,7 +16,7 @@ class SessionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->phpfunc = new FakePhpfunc;
+        $this->phpfunc = new Phpfunc;
         $handler = new FakeSessionHandler();
         session_set_save_handler($handler, true);
         $this->session = $this->newSession();
