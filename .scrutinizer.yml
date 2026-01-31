@@ -1,8 +1,12 @@
 build:
-    nodes:
-        analysis:
-            tests:
-                override:
-                    - php-scrutinizer-run
+  image: default-jammy
+  environment:
+    php: 8.4
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
+
 filter:
-    paths: ["src/*"]
+  paths: ["src/*"]
