@@ -1,38 +1,40 @@
 <?php
 namespace Aura\Session;
 
+use SessionHandlerInterface;
+
 // a session handler that does nothing, for testing purposes only
-class FakeSessionHandler
+class FakeSessionHandler implements SessionHandlerInterface
 {
-    public $data;
+    public array $data = [];
 
-    public function close()
+    public function close(): bool
     {
         return true;
     }
 
-    public function destroy($session_id)
+    public function destroy(string $session_id): bool
     {
-        $this->data[$session_id] = null;
+        unset($this->data[$session_id]);
         return true;
     }
 
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime): int|false
+    {
+        return 0;
+    }
+
+    public function open(string $save_path, string $session_id): bool
     {
         return true;
     }
 
-    public function open($save_path, $session_id)
+    public function read(string $session_id): string|false
     {
-        return true;
+        return $this->data[$session_id] ?? '';
     }
 
-    public function read($session_id)
-    {
-        return isset($this->data[$session_id]) ? $this->data[$session_id] : '';
-    }
-
-    public function write($session_id, $session_data)
+    public function write(string $session_id, string $session_data): bool
     {
         $this->data[$session_id] = $session_data;
         return true;

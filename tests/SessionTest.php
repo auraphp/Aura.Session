@@ -2,14 +2,13 @@
 namespace Aura\Session;
 
 use Aura\Session\Exception\SessionAlreadyStarted;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @runTestsInSeparateProcesses
- */
+#[RunTestsInSeparateProcesses]
 class SessionTest extends TestCase
 {
-    /** @var FakePhpfunc */
+    /** @var Phpfunc */
     private $phpfunc;
 
     // the session object
@@ -17,16 +16,9 @@ class SessionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->phpfunc = new FakePhpfunc;
+        $this->phpfunc = new Phpfunc;
         $handler = new FakeSessionHandler();
-        session_set_save_handler(
-            array($handler, 'open'),
-            array($handler, 'close'),
-            array($handler, 'read'),
-            array($handler, 'write'),
-            array($handler, 'destroy'),
-            array($handler, 'gc')
-        );
+        session_set_save_handler($handler, true);
         $this->session = $this->newSession();
     }
 
@@ -263,12 +255,4 @@ class SessionTest extends TestCase
         $this->assertTrue($this->session->resume());
     }
 
-    public function testIsStarted_php53()
-    {
-        $this->phpfunc->functions = array('session_status' => false);
-        $this->session = $this->newSession();
-        $this->assertFalse($this->session->isStarted());
-        $this->session->start();
-        $this->assertTrue($this->session->isStarted());
-    }
 }
