@@ -28,7 +28,7 @@ interface SegmentInterface
      * @return mixed
      *
      */
-    public function get($key, $alt = null);
+    public function get(string $key, $alt = null);
 
     /**
      *
@@ -48,7 +48,7 @@ interface SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function set($key, $val);
+    public function set(string $key, $val);
 
     /**
      *
@@ -68,7 +68,7 @@ interface SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlash($key, $val);
+    public function setFlash(string $key, $val);
 
     /**
      *
@@ -81,7 +81,7 @@ interface SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key, $alt = null);
+    public function getFlash(string $key, $alt = null);
 
     /**
      *
@@ -103,7 +103,7 @@ interface SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlashNext($key, $alt = null);
+    public function getFlashNext(string $key, $alt = null);
 
     /**
      *
@@ -114,7 +114,7 @@ interface SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlashNow($key, $val);
+    public function setFlashNow(string $key, $val);
 
     /**
      *
@@ -138,7 +138,7 @@ interface SegmentInterface
     /**
      * Remove a key from the segment, or remove the entire segment (including key) from the session
      *
-     * @param null $key
+     * @param string|null $key The key to remove, or null to clear the entire segment.
      */
-    public function remove($key = null);
+    public function remove(?string $key = null);
 }

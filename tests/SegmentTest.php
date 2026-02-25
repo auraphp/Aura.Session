@@ -194,6 +194,12 @@ class SegmentTest extends TestCase
         $this->assertFalse($this->session->isStarted());
     }
 
+    public function testRemoveDoesNothingWhenSessionNotStarted(): void
+    {
+        $this->segment->remove('foo');
+        $this->assertFalse($this->session->isStarted());
+    }
+
     public function testRemoveKey(){
         $this->segment->set('foo', 'bar');
         $this->segment->set('baz', 'dib');
