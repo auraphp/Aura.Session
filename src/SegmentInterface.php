@@ -138,7 +138,7 @@ interface SegmentInterface
     /**
      * Remove a key from the segment, or remove the entire segment (including key) from the session
      *
-     * @param null $key
+     * @param string|null $key The key to remove, or null to clear the entire segment.
      */
     public function remove(?string $key = null);
 }

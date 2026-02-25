@@ -117,17 +117,20 @@ class Segment implements SegmentInterface
     /**
      * Remove a key from the segment, or remove the entire segment (including key) from the session
      *
-     * @param null $key
+     * @param string|null $key The key to remove, or null to clear the entire segment.
      */
     public function remove(?string $key = null) {
-        if ($this->resumeSession()) {
-            if($key){
-                if(isset($_SESSION[$this->name]) && array_key_exists($key, $_SESSION[$this->name])){
-                    unset($_SESSION[$this->name][$key]);
-                }
-            } else {
-                unset($_SESSION[$this->name]);
-            }
+        if (! $this->resumeSession()) {
+            return;
+        }
+        if ($key === null) {
+            unset($_SESSION[$this->name]);
+            unset($_SESSION[Session::FLASH_NOW][$this->name]);
+            unset($_SESSION[Session::FLASH_NEXT][$this->name]);
+            return;
+        }
+        if (array_key_exists($key, $_SESSION[$this->name])) {
+            unset($_SESSION[$this->name][$key]);
         }
     }
 
