@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 6.0.0
+
+- (CHG) Add `string` type declarations to `$key` parameters in `Segment`, `SegmentInterface` to fix PHP 8.5 deprecation of null as array offset.
+- (CHG) Change `remove()` parameter to `?string $key = null` in `Segment` and `SegmentInterface`.
+
 ## 4.0.0
 
 - PHP 7.2+ is now required.

@@ -61,7 +61,7 @@ class Segment implements SegmentInterface
      * @return mixed
      *
      */
-    public function get($key, $alt = null)
+    public function get(string $key, $alt = null)
     {
         $this->resumeSession();
         return isset($_SESSION[$this->name][$key])
@@ -93,7 +93,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function set($key, $val)
+    public function set(string $key, $val)
     {
         $this->resumeOrStartSession();
         $_SESSION[$this->name][$key] = $val;
@@ -119,7 +119,7 @@ class Segment implements SegmentInterface
      *
      * @param null $key
      */
-    public function remove($key = null) {
+    public function remove(?string $key = null) {
         if ($this->resumeSession()) {
             if($key){
                 if(isset($_SESSION[$this->name]) && array_key_exists($key, $_SESSION[$this->name])){
@@ -140,7 +140,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlash($key, $val)
+    public function setFlash(string $key, $val)
     {
         $this->resumeOrStartSession();
         $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
@@ -157,7 +157,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash($key, $alt = null)
+    public function getFlash(string $key, $alt = null)
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
@@ -190,7 +190,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlashNext($key, $alt = null)
+    public function getFlashNext(string $key, $alt = null)
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
@@ -207,7 +207,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlashNow($key, $val)
+    public function setFlashNow(string $key, $val)
     {
         $this->resumeOrStartSession();
         $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
