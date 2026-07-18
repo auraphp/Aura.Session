@@ -156,6 +156,96 @@ $session = $session_factory->newInstance($_COOKIE, $delete_cookie);
 ?>
 ```
 
+## Storing Sessions in Redis
+
+Aura.Session works on top of PHP's native session machinery, so where session
+data is stored is decided by the registered [session save handler](https://www.php.net/manual/en/class.sessionhandler.php).
+Aura.Session ships an optional `RedisSessionHandler` that stores each session as
+a Redis **hash**, with one field per top-level session key (i.e. per Segment),
+instead of a single serialized string. This makes the stored data easy to
+inspect field-by-field and lets Redis manage expiration through a key TTL.
+
+The handler is decoupled from any specific Redis client through
+`Aura\Session\Redis\RedisClientInterface`. Two adapters are bundled:
+
+- `Aura\Session\Redis\PhpredisClient` — for the [phpredis](https://github.com/phpredis/phpredis) extension (`ext-redis`).
+- `Aura\Session\Redis\PredisClient` — for the [predis/predis](https://github.com/predis/predis) package.
+
+You can also implement `RedisClientInterface` yourself to back the handler with
+another client.
+
+### Requirements
+
+The handler splits and rebuilds session data as hash fields, which requires the
+`php_serialize` session serialize handler so that the encoded session is a plain
+`serialize()` of the `$_SESSION` array:
+
+```php
+<?php
+ini_set('session.serialize_handler', 'php_serialize');
+?>
+```
+
+If any other serialize handler is in effect, the handler throws a
+`RuntimeException` explaining the requirement.
+
+### Usage
+
+Register the handler with `session_set_save_handler()` **before** starting the
+session (i.e. before `$session->start()` or the first lazy start).
+
+Using the phpredis extension:
+
+```php
+<?php
+ini_set('session.serialize_handler', 'php_serialize');
+
+$redis = new \Redis();
+$redis->connect('127.0.0.1', 6379);
+
+$handler = new \Aura\Session\RedisSessionHandler(
+    new \Aura\Session\Redis\PhpredisClient($redis)
+);
+session_set_save_handler($handler, true);
+?>
+```
+
+Using predis/predis:
+
+```php
+<?php
+ini_set('session.serialize_handler', 'php_serialize');
+
+$predis = new \Predis\Client(array('host' => '127.0.0.1', 'port' => 6379));
+
+$handler = new \Aura\Session\RedisSessionHandler(
+    new \Aura\Session\Redis\PredisClient($predis)
+);
+session_set_save_handler($handler, true);
+?>
+```
+
+The constructor accepts two optional arguments after the client:
+
+```php
+<?php
+$handler = new \Aura\Session\RedisSessionHandler(
+    $client,
+    3600,             // key TTL in seconds; defaults to session.gc_maxlifetime
+    'my-app-session:' // Redis key prefix; defaults to 'aura-session:'
+);
+?>
+```
+
+Once the handler is registered, use the `Session` object exactly as usual;
+segments, flash values, and CSRF tokens all continue to work unchanged.
+
+> N.b. Because PHP reads and writes the whole session per request, the hash
+> layout is primarily about structured storage and TTL management rather than
+> partial reads/writes. When session data is unchanged, the handler refreshes
+> only the key's TTL (via `session.lazy_write`) instead of rewriting every
+> field.
+
 ## Session Security
 
 ### Session ID Regeneration

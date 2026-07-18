@@ -2,6 +2,7 @@
 
 ## 7.0.0
 
+- (ADD) Add `RedisSessionHandler`, an optional `SessionHandlerInterface` implementation that stores each session as a Redis hash (one field per Segment) with a key TTL. It is decoupled from any specific client via `Aura\Session\Redis\RedisClientInterface`, with bundled `PhpredisClient` (ext-redis) and `PredisClient` (predis/predis) adapters. Requires `session.serialize_handler = php_serialize`. No new hard dependency: `ext-redis` and `predis/predis` are listed under `suggest`.
 - (ADD) Depend on the new `aura/session-interface` (`^6.0`) package, which provides the shared session/segment contracts.
 - (CHG) `Session` now implements `Aura\Session_Interface\SessionInterface`.
 - (CHG) `SegmentInterface` no longer declares its own methods; it now composes the shared `Aura\Session_Interface\SegmentInterface` (get/set), `ManageableSegmentInterface` (getSegment/clear/remove), and `FlashSegmentInterface` (flash values). The full method set is unchanged, so existing implementations remain compatible.
