@@ -56,6 +56,15 @@ The benefit of a session segment is that we can deconflict the keys in the
 the segment names. With segments, different packages can use the `$_SESSION`
 superglobal without stepping on each other's toes.
 
+To remove a single value from a _Segment_, use the `remove()` method with the key. Calling `remove()` with no argument (or `null`) removes the entire segment from `$_SESSION`.
+
+```php
+<?php
+$segment->remove('foo'); // unset just the 'foo' key
+$segment->remove();      // unset the whole segment
+?>
+```
+
 To clear all the values on a _Segment_, use the `clear()` method.
 
 ### Flash Values
@@ -153,6 +162,45 @@ $delete_cookie = function ($name, $path, $domain) use ($response) {
 }
 
 $session = $session_factory->newInstance($_COOKIE, $delete_cookie);
+?>
+```
+
+## Shared Interfaces
+
+Aura.Session implements the contracts published by the standalone
+[aura/session-interface](https://packagist.org/packages/aura/session-interface)
+package. Depending on these interfaces instead of the concrete classes lets our
+code stay decoupled from Aura.Session, and lets it interoperate with other
+packages built on the same contracts (such as Aura.Auth).
+
+The contracts are deliberately segregated so consumers depend only on what they
+use:
+
+- `Aura\Session_Interface\SessionInterface` — the _Session_ manager
+  (`start()`, `resume()`, `regenerateId()`). Implemented by `Aura\Session\Session`.
+- `Aura\Session_Interface\SegmentInterface` — plain read/write on a segment
+  (`get()`, `set()`).
+- `Aura\Session_Interface\ManageableSegmentInterface` — whole-segment
+  management (`getSegment()`, `clear()`, `remove()`).
+- `Aura\Session_Interface\FlashSegmentInterface` — flash values (`setFlash()`,
+  `getFlash()`, `getFlashNext()`, `setFlashNow()`, `clearFlash()`,
+  `clearFlashNow()`, `keepFlash()`).
+
+The Aura.Session `Aura\Session\SegmentInterface` composes all three segment
+contracts, and `Aura\Session\Segment` implements it. To type-hint against the
+narrowest contract our code needs:
+
+```php
+<?php
+use Aura\Session_Interface\SessionInterface;
+use Aura\Session_Interface\SegmentInterface;
+
+function currentUserId(SessionInterface $session): ?int
+{
+    /** @var SegmentInterface $segment */
+    $segment = $session->getSegment('Vendor\Package\Auth');
+    return $segment->get('user_id');
+}
 ?>
 ```
 

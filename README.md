@@ -7,7 +7,7 @@ session segments, next-request-only ("flash") values, and CSRF tools.
 
 ### Installation
 
-This library requires PHP 8.1 or later. It has been tested on PHP 8.1-8.5. We recommend using the latest available version of PHP as a matter of principle. It has no userland dependencies.
+This library requires PHP 8.1 or later. It has been tested on PHP 8.1-8.5. We recommend using the latest available version of PHP as a matter of principle. Its only dependency is [aura/session-interface](https://packagist.org/packages/aura/session-interface), which provides the shared session and segment contracts.
 
 It is installable and autoloadable via Composer as [aura/session](https://packagist.org/packages/aura/session).
 
