@@ -224,6 +224,36 @@ class SegmentTest extends TestCase
         $this->assertArrayNotHasKey($this->name, $_SESSION);
     }
 
+    /**
+     * A flash value set for the *next* request must be readable via getFlash()
+     * in the following request. resumeSession() has to run *before* the value
+     * is read so that Session::moveFlash() promotes FLASH_NEXT to FLASH_NOW.
+     *
+     * Regression guard for GitHub PR #68, which reordered getFlash() to read
+     * the value before resuming the session; that always returns the alternate
+     * (null) here because FLASH_NOW is still empty at read time.
+     */
+    public function testGetFlashResumesSessionBeforeReading()
+    {
+        // ---- request 1: set a flash for the next request ----
+        $this->segment->setFlash('foo', 'bar');
+        $this->assertSame('bar', $_SESSION[Session::FLASH_NEXT][$this->name]['foo']);
+        // not visible via getFlash() in the same request (reads FLASH_NOW)
+        $this->assertNull($this->segment->getFlash('foo'));
+
+        $name = $this->session->getName();
+        $id = $this->session->getId();
+        $this->session->commit();
+
+        // ---- request 2: brand new Session object so flash_moved is false ----
+        $cookies = array($name => $id);
+        $session = $this->newSession($cookies);
+        $segment = $session->getSegment($this->name);
+
+        // getFlash() resumes, promotes FLASH_NEXT -> FLASH_NOW, and returns it
+        $this->assertSame('bar', $segment->getFlash('foo'));
+    }
+
     public function testRestartSessionFlashNotMove()
     {
         $this->assertFalse($this->session->isStarted());
