@@ -61,7 +61,7 @@ class Segment implements SegmentInterface
      * @return mixed
      *
      */
-    public function get(string $key, $alt = null)
+    public function get(string $key, mixed $alt = null): mixed
     {
         $this->resumeSession();
         return isset($_SESSION[$this->name][$key])
@@ -76,7 +76,7 @@ class Segment implements SegmentInterface
      * @return mixed
      *
      */
-    public function getSegment()
+    public function getSegment(): mixed
     {
         $this->resumeSession();
         return isset($_SESSION[$this->name])
@@ -93,7 +93,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The value to set it to.
      *
      */
-    public function set(string $key, $val)
+    public function set(string $key, mixed $val): void
     {
         $this->resumeOrStartSession();
         $_SESSION[$this->name][$key] = $val;
@@ -103,10 +103,10 @@ class Segment implements SegmentInterface
      *
      * Clear all data from the segment.
      *
-     * @return null
+     * @return void
      *
      */
-    public function clear()
+    public function clear(): void
     {
         if ($this->resumeSession()) {
             $_SESSION[$this->name] = array();
@@ -119,7 +119,8 @@ class Segment implements SegmentInterface
      *
      * @param string|null $key The key to remove, or null to clear the entire segment.
      */
-    public function remove(?string $key = null) {
+    public function remove(?string $key = null): void
+    {
         if (! $this->resumeSession()) {
             return;
         }
@@ -143,7 +144,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlash(string $key, $val)
+    public function setFlash(string $key, mixed $val): void
     {
         $this->resumeOrStartSession();
         $_SESSION[Session::FLASH_NEXT][$this->name][$key] = $val;
@@ -160,7 +161,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlash(string $key, $alt = null)
+    public function getFlash(string $key, mixed $alt = null): mixed
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NOW][$this->name][$key])
@@ -172,10 +173,10 @@ class Segment implements SegmentInterface
      *
      * Clears flash values for *only* the next request.
      *
-     * @return null
+     * @return void
      *
      */
-    public function clearFlash()
+    public function clearFlash(): void
     {
         if ($this->resumeSession()) {
             $_SESSION[Session::FLASH_NEXT][$this->name] = array();
@@ -193,7 +194,7 @@ class Segment implements SegmentInterface
      * @return mixed The flash value itself.
      *
      */
-    public function getFlashNext(string $key, $alt = null)
+    public function getFlashNext(string $key, mixed $alt = null): mixed
     {
         $this->resumeSession();
         return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
@@ -210,7 +211,7 @@ class Segment implements SegmentInterface
      * @param mixed $val The flash value itself.
      *
      */
-    public function setFlashNow(string $key, $val)
+    public function setFlashNow(string $key, mixed $val): void
     {
         $this->resumeOrStartSession();
         $_SESSION[Session::FLASH_NOW][$this->name][$key] = $val;
@@ -221,10 +222,10 @@ class Segment implements SegmentInterface
      *
      * Clears flash values for *both* the next request *and* the current one.
      *
-     * @return null
+     * @return void
      *
      */
-    public function clearFlashNow()
+    public function clearFlashNow(): void
     {
         if ($this->resumeSession()) {
             $_SESSION[Session::FLASH_NOW][$this->name] = array();
@@ -237,10 +238,10 @@ class Segment implements SegmentInterface
      * Retains all the current flash values for the next request; values that
      * already exist for the next request take precedence.
      *
-     * @return null
+     * @return void
      *
      */
-    public function keepFlash()
+    public function keepFlash(): void
     {
         if ($this->resumeSession()) {
             $_SESSION[Session::FLASH_NEXT][$this->name] = array_merge(
@@ -272,7 +273,7 @@ class Segment implements SegmentInterface
      *
      * Sets the segment properties to $_SESSION references.
      *
-     * @return null
+     * @return void
      *
      */
     protected function load()
@@ -294,7 +295,7 @@ class Segment implements SegmentInterface
      *
      * Resumes a previous session, or starts a new one, and loads the segment.
      *
-     * @return null
+     * @return void
      *
      */
     protected function resumeOrStartSession()

@@ -9,6 +9,7 @@
 namespace Aura\Session;
 
 use Aura\Session\Exception\SessionAlreadyStarted;
+use Aura\Session_Interface\SessionInterface;
 
 /**
  *
@@ -18,7 +19,7 @@ use Aura\Session\Exception\SessionAlreadyStarted;
  * @package Aura.Session
  *
  */
-class Session
+class Session implements SessionInterface
 {
     /**
      *
@@ -242,7 +243,7 @@ class Session
      * @return bool
      *
      */
-    public function start()
+    public function start(): bool
     {
         $result = $this->phpfunc->session_start();
         if ($result && ! $this->flash_moved) {
@@ -277,7 +278,7 @@ class Session
      * @return bool
      *
      */
-    public function resume()
+    public function resume(): bool
     {
         if ($this->isStarted()) {
             return true;
@@ -495,7 +496,7 @@ class Session
      * @return bool True if regeneration worked, false if not.
      *
      */
-    public function regenerateId()
+    public function regenerateId(): bool
     {
         $result = $this->phpfunc->session_regenerate_id(true);
         if ($result && $this->csrf_token) {
