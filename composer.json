@@ -18,8 +18,8 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "aura/session-interface": "^6.0"
+        "php": "^8.4",
+        "aura/session-interface": "^7.0@beta"
     },
     "autoload": {
         "psr-4": {
