@@ -54,7 +54,9 @@ class PredisClient implements RedisClientInterface
 
     public function del(string $key): void
     {
-        $this->redis->del([$key]);
+        // UNLINK reclaims memory in a background thread. It needs Redis 4.0,
+        // which is older than the PHP version this package requires.
+        $this->redis->unlink([$key]);
     }
 
     public function expire(string $key, int $ttl): void

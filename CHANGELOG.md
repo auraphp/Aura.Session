@@ -2,6 +2,7 @@
 
 ## 7.0.0
 
+- (CHG) `RedisSessionHandler` now requires Redis 4.0 or later. `PhpredisClient::del()` no longer falls back to `DEL` when `UNLINK` is unavailable, and `PredisClient::del()` uses `UNLINK` too, so both adapters behave the same. The fallback could not be reached by any supported server, so it was untestable dead weight.
 - (ADD) Add `RedisSessionHandler`, an optional `SessionHandlerInterface` implementation that stores each session as a single Redis string with a key TTL (the approach used by Symfony, Laravel, and the phpredis native handler). It refreshes only the TTL when data is unchanged (`lazy_write`), destroys empty sessions, and leaves expiry to Redis. It is decoupled from any specific client via `Aura\Session\Redis\RedisClientInterface`, with bundled `PhpredisClient` (ext-redis) and `PredisClient` (predis/predis) adapters. No hard Redis-client dependency: `ext-redis` and `predis/predis` are listed under `suggest`.
 - (ADD) Add `Segment::getFlashAll()` and `Segment::getFlashNextAll()`, which return every flash value for the current or the next request, so flash messages can be rendered without knowing their keys. Both return an empty array when nothing is set. Originally proposed by Jake Johns in #47/#52.
 - (ADD) Depend on the new `aura/session-interface` (`^7.0`) package, which provides the shared session/segment contracts.

@@ -241,6 +241,9 @@ The handler is decoupled from any specific Redis client through
 - `Aura\Session\Redis\PhpredisClient` — for the [phpredis](https://github.com/phpredis/phpredis) extension (`ext-redis`).
 - `Aura\Session\Redis\PredisClient` — for the [predis/predis](https://github.com/predis/predis) package.
 
+Redis 4.0 or later is required: the handler deletes keys with `UNLINK`, so the
+memory is reclaimed in a background thread rather than blocking the server.
+
 You can also implement `RedisClientInterface` yourself to back the handler with
 another client.
 

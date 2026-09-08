@@ -48,7 +48,8 @@ interface RedisClientInterface
 
     /**
      *
-     * Deletes $key.
+     * Deletes $key, using UNLINK so the memory is reclaimed in a background
+     * thread. This needs Redis 4.0 or later.
      *
      * @param string $key The Redis key.
      *
