@@ -278,4 +278,68 @@ class SegmentTest extends TestCase
         $actual = $_SESSION[Session::FLASH_NEXT][$this->name]['foo'];
         $this->assertSame('bar', $actual);
     }
+
+    public function testGetFlashAll()
+    {
+        // nothing set yet
+        $this->assertSame(array(), $this->segment->getFlashAll());
+        $this->assertSame(array(), $this->segment->getFlashNextAll());
+
+        // values for the next request only
+        $this->segment->setFlash('foo', 'bar');
+        $this->segment->setFlash('baz', 'dib');
+        $this->assertSame(
+            array('foo' => 'bar', 'baz' => 'dib'),
+            $this->segment->getFlashNextAll()
+        );
+        $this->assertSame(array(), $this->segment->getFlashAll());
+
+        // a value for the current request as well
+        $this->segment->setFlashNow('zim', 'gir');
+        $this->assertSame(array('zim' => 'gir'), $this->segment->getFlashAll());
+        $this->assertSame(
+            array('foo' => 'bar', 'baz' => 'dib', 'zim' => 'gir'),
+            $this->segment->getFlashNextAll()
+        );
+
+        // clearing the next request leaves the current one alone
+        $this->segment->clearFlash();
+        $this->assertSame(array(), $this->segment->getFlashNextAll());
+        $this->assertSame(array('zim' => 'gir'), $this->segment->getFlashAll());
+
+        // clearing both empties them
+        $this->segment->clearFlashNow();
+        $this->assertSame(array(), $this->segment->getFlashAll());
+        $this->assertSame(array(), $this->segment->getFlashNextAll());
+    }
+
+    public function testGetFlashAllDoesNotStartSession()
+    {
+        $this->assertFalse($this->session->isStarted());
+        $this->assertSame(array(), $this->segment->getFlashAll());
+        $this->assertSame(array(), $this->segment->getFlashNextAll());
+        $this->assertFalse($this->session->isStarted());
+    }
+
+    public function testGetFlashAllResumesSessionBeforeReading()
+    {
+        // ---- request 1: set a flash for the next request ----
+        $this->segment->setFlash('foo', 'bar');
+        $this->segment->setFlash('baz', 'dib');
+
+        $name = $this->session->getName();
+        $id = $this->session->getId();
+        $this->session->commit();
+
+        // ---- request 2: brand new Session object so flash_moved is false ----
+        $cookies = array($name => $id);
+        $session = $this->newSession($cookies);
+        $segment = $session->getSegment($this->name);
+
+        // getFlashAll() resumes, promotes FLASH_NEXT -> FLASH_NOW, and returns it
+        $this->assertSame(
+            array('foo' => 'bar', 'baz' => 'dib'),
+            $segment->getFlashAll()
+        );
+    }
 }

@@ -171,6 +171,20 @@ class Segment implements SegmentInterface
 
     /**
      *
+     * Gets all the flash values for the *current* request.
+     *
+     * @return array All the flash values for the current request; empty when
+     * there are none.
+     *
+     */
+    public function getFlashAll(): array
+    {
+        $this->resumeSession();
+        return $_SESSION[Session::FLASH_NOW][$this->name] ?? array();
+    }
+
+    /**
+     *
      * Clears flash values for *only* the next request.
      *
      * @return void
@@ -200,6 +214,20 @@ class Segment implements SegmentInterface
         return isset($_SESSION[Session::FLASH_NEXT][$this->name][$key])
              ? $_SESSION[Session::FLASH_NEXT][$this->name][$key]
              : $alt;
+    }
+
+    /**
+     *
+     * Gets all the flash values for the *next* request.
+     *
+     * @return array All the flash values for the next request; empty when
+     * there are none.
+     *
+     */
+    public function getFlashNextAll(): array
+    {
+        $this->resumeSession();
+        return $_SESSION[Session::FLASH_NEXT][$this->name] ?? array();
     }
 
     /**
