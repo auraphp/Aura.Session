@@ -27,10 +27,13 @@
         }
     },
     "suggest": {
-        "ext-openssl": "OpenSSL generates the best secure CSRF tokens."
+        "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
+        "ext-redis": "Use RedisSessionHandler with the phpredis PhpredisClient adapter to store sessions in Redis.",
+        "predis/predis": "Use RedisSessionHandler with the PredisClient adapter to store sessions in Redis."
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5 || ^11.0"
+        "phpunit/phpunit": "^10.5 || ^11.0",
+        "predis/predis": "^2.0 || ^3.0"
     },
     "autoload-dev": {
         "psr-4": {
