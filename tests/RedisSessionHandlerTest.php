@@ -80,10 +80,12 @@ class RedisSessionHandlerTest extends TestCase
         $prev = ini_get('session.gc_maxlifetime');
         ini_set('session.gc_maxlifetime', '1234');
 
-        $handler = new RedisSessionHandler($this->redis, null, 'test-session:');
-        $handler->write('abc', 'something');
-        $this->assertSame(1234, $this->redis->ttls['test-session:abc']);
-
-        ini_set('session.gc_maxlifetime', (string) $prev);
+        try {
+            $handler = new RedisSessionHandler($this->redis, null, 'test-session:');
+            $handler->write('abc', 'something');
+            $this->assertSame(1234, $this->redis->ttls['test-session:abc']);
+        } finally {
+            ini_set('session.gc_maxlifetime', (string) $prev);
+        }
     }
 }
