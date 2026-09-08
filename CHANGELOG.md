@@ -2,7 +2,7 @@
 
 ## 7.0.0
 
-- (ADD) Depend on the new `aura/session-interface` (`^6.0`) package, which provides the shared session/segment contracts.
+- (ADD) Depend on the new `aura/session-interface` (`^7.0`) package, which provides the shared session/segment contracts.
 - (CHG) `Session` now implements `Aura\Session_Interface\SessionInterface`.
 - (CHG) `SegmentInterface` no longer declares its own methods; it now composes the shared `Aura\Session_Interface\SegmentInterface` (get/set), `ManageableSegmentInterface` (getSegment/clear/remove), and `FlashSegmentInterface` (flash values). The full method set is unchanged, so existing implementations remain compatible.
 - (CHG) Add native return types (`bool`, `mixed`, `void`) to `Session::start()`/`resume()`/`regenerateId()` and to all `Segment` methods. This is a BC break for subclasses that override these methods without declaring matching return types.
