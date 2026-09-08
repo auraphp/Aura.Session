@@ -112,9 +112,11 @@ foreach ($segment->getFlashAll() as $key => $message) {
 ?>
 ```
 
-Both return an empty array when nothing is set, so the result is always safe to
-iterate. Neither takes an alternative value: unlike `getFlash()`, there is no
-"key set to null" case to tell apart from "key not set".
+Both return an empty array when no keys are set, so the result is always safe to
+iterate. Neither takes an alternative value, because the array already carries
+that information: a key holding `null` is still present in it, and
+`array_key_exists()` tells it apart from a key that was never set. That is a
+distinction `getFlash()` cannot make, since it falls back to `$alt` for both.
 
 #### Keeping and Clearing Flash Values
 

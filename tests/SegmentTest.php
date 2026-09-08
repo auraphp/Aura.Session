@@ -313,6 +313,21 @@ class SegmentTest extends TestCase
         $this->assertSame(array(), $this->segment->getFlashNextAll());
     }
 
+    public function testGetFlashAllKeepsKeysHoldingNull()
+    {
+        $this->segment->setFlashNow('nullkey', null);
+
+        // getFlash() cannot tell "set to null" from "never set"
+        $this->assertSame('alt', $this->segment->getFlash('nullkey', 'alt'));
+        $this->assertSame('alt', $this->segment->getFlash('missing', 'alt'));
+
+        // the all-getter keeps the key, so the caller can
+        $all = $this->segment->getFlashAll();
+        $this->assertTrue(array_key_exists('nullkey', $all));
+        $this->assertNull($all['nullkey']);
+        $this->assertFalse(array_key_exists('missing', $all));
+    }
+
     public function testGetFlashAllDoesNotStartSession()
     {
         $this->assertFalse($this->session->isStarted());
