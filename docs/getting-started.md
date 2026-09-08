@@ -97,6 +97,27 @@ Using `setFlash()` makes the flash value available only in the *next* request, n
 
 Using `getFlash()` returns only the values that are available now from having been set in the previous request. To read a value that will be available in the next request, use `getFlashNext($key, $alt)`.
 
+#### Reading All Flash Values
+
+Rendering a list of flash messages usually means reading them without knowing
+the keys in advance. `getFlashAll()` returns every flash value available in the
+current request, and `getFlashNextAll()` every value set for the next one:
+
+```php
+<?php
+$segment = $session->getSegment('Vendor\Package\ClassName');
+foreach ($segment->getFlashAll() as $key => $message) {
+    echo $message;
+}
+?>
+```
+
+Both return an empty array when no keys are set, so the result is always safe to
+iterate. Neither takes an alternative value, because the array already carries
+that information: a key holding `null` is still present in it, and
+`array_key_exists()` tells it apart from a key that was never set. That is a
+distinction `getFlash()` cannot make, since it falls back to `$alt` for both.
+
 #### Keeping and Clearing Flash Values
 
 Sometimes we will want to keep the flash values in the current request for the next request.  We can do so on a per-segment basis by calling the _Segment_ `keepFlash()` method.
@@ -183,8 +204,8 @@ use:
 - `Aura\Session_Interface\ManageableSegmentInterface` — whole-segment
   management (`getSegment()`, `clear()`, `remove()`).
 - `Aura\Session_Interface\FlashSegmentInterface` — flash values (`setFlash()`,
-  `getFlash()`, `getFlashNext()`, `setFlashNow()`, `clearFlash()`,
-  `clearFlashNow()`, `keepFlash()`).
+  `getFlash()`, `getFlashAll()`, `getFlashNext()`, `getFlashNextAll()`,
+  `setFlashNow()`, `clearFlash()`, `clearFlashNow()`, `keepFlash()`).
 
 The Aura.Session `Aura\Session\SegmentInterface` composes all three segment
 contracts, and `Aura\Session\Segment` implements it. To type-hint against the
