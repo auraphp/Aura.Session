@@ -24,7 +24,7 @@ on:
 
 jobs:
   release:
-    uses: auraphp/bin/.github/workflows/release.yml@master
+    uses: auraphp/bin/.github/workflows/release.yml@v1.0.0
     permissions:
       contents: write
     with:
