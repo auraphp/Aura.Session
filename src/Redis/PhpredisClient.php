@@ -14,7 +14,8 @@ use Redis;
  *
  * Adapts the phpredis `\Redis` client to RedisClientInterface.
  *
- * Requires the `redis` (phpredis) extension.
+ * Requires the `redis` (phpredis) extension 4.0.0 or later, which is the
+ * release that added `Redis::unlink()`, and a Redis 4.0 or later server.
  *
  * @package Aura.Session
  *
@@ -55,8 +56,9 @@ class PhpredisClient implements RedisClientInterface
 
     public function del(string $key): void
     {
-        // UNLINK reclaims memory in a background thread. It needs Redis 4.0,
-        // which is older than the PHP version this package requires.
+        // UNLINK reclaims memory in a background thread. It needs phpredis
+        // 4.0.0 on the client and Redis 4.0 on the server, both of which are
+        // older than the PHP version this package requires.
         $this->redis->unlink($key);
     }
 
