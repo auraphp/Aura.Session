@@ -28,7 +28,7 @@
     },
     "suggest": {
         "ext-openssl": "OpenSSL generates the best secure CSRF tokens.",
-        "ext-redis": "Use RedisSessionHandler with the phpredis PhpredisClient adapter to store sessions in Redis.",
+        "ext-redis": "Use RedisSessionHandler with the phpredis PhpredisClient adapter to store sessions in Redis; requires 4.0.0 or later for Redis::unlink().",
         "predis/predis": "Use RedisSessionHandler with the PredisClient adapter to store sessions in Redis."
     },
     "require-dev": {

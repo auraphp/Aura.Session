@@ -241,6 +241,13 @@ The handler is decoupled from any specific Redis client through
 - `Aura\Session\Redis\PhpredisClient` — for the [phpredis](https://github.com/phpredis/phpredis) extension (`ext-redis`).
 - `Aura\Session\Redis\PredisClient` — for the [predis/predis](https://github.com/predis/predis) package.
 
+`PhpredisClient` deletes keys with `UNLINK`, so the memory is reclaimed in a
+background thread rather than blocking the server. That needs a Redis 4.0 or
+later server and phpredis 4.0.0 or later, which is the release that added
+`Redis::unlink()` — every phpredis build that supports PHP 8.4 is well past it.
+`PredisClient` deletes with `DEL`, because predis only registered the `UNLINK`
+command in 3.5.0 and the adapter supports predis `^2.0 || ^3.0`.
+
 You can also implement `RedisClientInterface` yourself to back the handler with
 another client.
 
